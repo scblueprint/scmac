@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
+import NavBar from '../components/NavBar.js'
 
 const eventsData = [
   // Replace with your actual events data
@@ -32,6 +33,7 @@ export default function Events() {
         )}
         keyExtractor={item => item.id}
       />
+    <NavBar />
     </View>
   );
 }
