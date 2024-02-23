@@ -63,7 +63,7 @@ export default function EventDetailScreen() {
         <Text style={styles.label}>Item 4</Text>
       </View>
       <Text style={styles.sectionTitle}>Comments</Text>
-      <TextInput style={styles.input} multiline placeholder="Additional comments" />
+      <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Confirm</Text>
       </TouchableOpacity>
@@ -136,13 +136,17 @@ const styles = StyleSheet.create({
   picker: {
     width: '100%',
   },
-  input: {
-    borderColor: 'gray',
-    padding: 10,
-    margin: 10,
+  textInput: {
+    height: 100,
+    textAlignVertical: 'top',
+    textAlign: 'left',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10, 
+    fontSize: 16,
     borderRadius: 5,
     backgroundColor: "#F1F1F2",
-    height: 125
+    margin: 10,
   },
   button: {
     backgroundColor: '#6A466C',
@@ -150,6 +154,8 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     alignItems: 'center',
+    borderRadius: 10,
+
   },
   buttonText: {
     color: 'white',
