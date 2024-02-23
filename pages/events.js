@@ -21,7 +21,7 @@ const EventItem = ({ date, eventName, location }) => (
 
 );
 
-export default function Notification() {
+export default function Events() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Events</Text>
