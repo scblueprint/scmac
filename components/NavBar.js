@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
 
-// You can use icons from a library like react-native-vector-icons if you like
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const Navbar = () => {
