@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import IndividualEvent from './pages/IndividualEvent.js'
-import Events from './pages/Events.js'
+import Notifications from './pages/notifications.js';
 
 export default function App() {
   return (
-    <Events />
+    <View style={{flex: 1}}>
+      <Notifications />
+    </View>
   );
 }
 
@@ -17,3 +18,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+

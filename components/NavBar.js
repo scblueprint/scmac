@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
     justifyContent: 'space-around',
-    paddingVertical: 10,
+    paddingVertical: 30, //increased because too short for iOS screens
   },
   navItem: {
     alignItems: 'center',
