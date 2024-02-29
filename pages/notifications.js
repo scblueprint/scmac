@@ -12,6 +12,9 @@ export default function Notifications() {
 
   const renderNotificationItem = ({item}) => (
     <View style = {styles.notification}>
+      <View style={styles.imageContainer}>
+        <View style={styles.imagePlaceholder} />
+      </View>
       <View style = {styles.notifText}>
         <Text style = {styles.text}>Notification Description</Text>
         <Text style = {styles.dateTime}>Date/Time</Text>
@@ -98,5 +101,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#E9E8E8', 
     marginVertical: 5,
   },
+  imageContainer: {
+    marginRight: 10,
+  },
+  imagePlaceholder: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'lightgray',
+  },
+
 
 });
