@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function EventDetailScreen() {
     const [selectedValueShift, setSelectedValueShift] = useState("");
     const [isMaterialSelected, setIsMaterialSelected] = useState(false)
+      const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+             {label: 'First', value: 1},                  
+             {label: 'Second', value: 2},
+             {label: 'Third', value: 3},
+               ]);
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.header}>Event</Text>
@@ -15,20 +23,35 @@ export default function EventDetailScreen() {
       <Text style={styles.sectionTitle}>Event Description</Text>
       <Text style={styles.description}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...</Text>
       <Text style={styles.sectionTitle}>Select a Work Shift</Text>
-       <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={selectedValueShift}
-          onValueChange={(itemValue, itemIndex) => setSelectedValueShift(itemValue)}
-          style={styles.picker}
-          dropdownIconColor={"#000000"}
-          mode={"dropdown"}
-          prompt={"select"}
-        >
-          <Picker.Item label="Morning Shift" value="morning" />
-          <Picker.Item label="Afternoon Shift" value="afternoon" />
-          <Picker.Item label="Night Shift" value="night" />
-        </Picker>
-      </View>
+       <>
+<DropDownPicker
+  open={open}
+  value={value}
+  items={items}
+  setOpen={setOpen}
+  setValue={setValue}
+  setItems={setItems}
+  placeholder={"Select"}
+  style={{
+    backgroundColor: "#F1F1F2",
+    borderWidth: 1,
+    borderColor: "#dcdcdc",
+    width: "90%",
+    paddingHorizontal: 10,
+    marginHorizontal: "5%",
+    marginVertical: 5,
+    borderRadius: 10,
+
+  }}
+  placeholderStyle={{
+    color: "#808080",
+  }}
+  dropDownContainerStyle={{
+    borderColor: "#ccc",
+  }}
+/>
+
+      </>
       <Text style={styles.sectionTitle}>Materials Checklist</Text>
       <View style={styles.checkboxContainer}>
         <CheckBox
