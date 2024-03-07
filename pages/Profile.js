@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
-import Navbar from './components.js/NavBar.js'
-export default function App() {
+// import Navbar from './components.js/NavBar.js'
+export default function Profile() {
   return (
     <View style={styles.container}>
     <View style={styles.header}>
@@ -24,13 +24,13 @@ export default function App() {
       <Text style={{fontSize:15, marginLeft:30 }}>Birthday</Text>
         </View>
       </View>
-    <Navbar/>
+    {/* <Navbar/> */}
     </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: .1,
     backgroundColor: 'white',
     alignItems: 'center',
     //justifyContent: 'center',
