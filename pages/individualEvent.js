@@ -47,7 +47,9 @@ export default function EventDetailScreen() {
     color: "#808080",
   }}
   dropDownContainerStyle={{
-    borderColor: "#ccc",
+  borderColor: "#ccc",
+  width: "90%", // Set this to match the width of the main container
+  marginHorizontal: "5%", 
   }}
 />
 
