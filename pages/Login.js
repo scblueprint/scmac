@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-
+import { Link } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { EvilIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
-
+import {login} from "./api/users.js"
 const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
 
@@ -15,6 +15,8 @@ export default function Login() {
     // console.log(windowWidth);
   const [isChecked, setIsChecked] = useState(false);
   const [isEyeOpen, setIsEyeOpen] = useState(true);
+  const [email, setEmail] = useState("");
+  const [pword, setPword] = useState("");
 
   return (
     <View style={styles.container}>
@@ -31,6 +33,8 @@ export default function Login() {
             style={styles.emailInput}
             placeholder="johndoe@gmail.com"
             placeholderTextColor="#808080"
+            onChangeText={text => setEmail(text)}
+
           />
         </View>
 
@@ -39,6 +43,7 @@ export default function Login() {
             style={styles.passwordInput}
             placeholder="●●●●●●●"
             placeholderTextColor="#808080"
+            onChangeText={text => setPword(text)}
           />
         </View>
 
@@ -68,7 +73,8 @@ export default function Login() {
             <TouchableOpacity
               style={styles.loginButton}
               onPress={() => {
-                // Handle login logic here
+                await login(email,pword, "hello");
+                router.push('/events')
               }}
             >
             <Text style={styles.loginButtonText}>Log In</Text>
