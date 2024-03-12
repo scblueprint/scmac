@@ -1,10 +1,25 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View, TextInput} from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { auth } from '../../../firebaseConfig';
+import { sendPasswordResetEmail } from "firebase/auth";
+
 const ForgotPassword1 = () => {
+    const auth = getAuth();
     const [text, setText] = useState('');
+    sendPasswordResetEmail(auth, email)
+        .then(() => {
+            // Password reset email sent!
+            // Link to next page
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+        });
+
     const handleButtonPress = () => {
-        alert('Button Pressed');
+        sendPasswordResetEmail(auth, inputText);
     };
     const handleTextChange = (inputText) => {
         setText(inputText);
