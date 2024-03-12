@@ -35,7 +35,7 @@ const ForgotPassword1 = () => {
                 value = {text}
                 autoCapitalize='none'
             />
-            <Link href="/forgotPassword2">
+            <Link href="/Login">
                 <TouchableOpacity style = {styles.resetButton} onPress = {handleButtonPress}> 
                     <Text style ={styles.buttonText}> Request Reset Code </Text>
                 </TouchableOpacity>
