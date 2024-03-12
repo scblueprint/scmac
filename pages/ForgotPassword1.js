@@ -1,25 +1,23 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, TextInput} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import { auth } from '../../../firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { sendPasswordResetEmail } from "firebase/auth";
+import { Link } from "expo-router";
 
 const ForgotPassword1 = () => {
-    const auth = getAuth();
+    // const auth = getAuth();
     const [text, setText] = useState('');
-    sendPasswordResetEmail(auth, email)
-        .then(() => {
-            // Password reset email sent!
-            // Link to next page
-        })
+    
+    const handleButtonPress = async () => {
+
+        await sendPasswordResetEmail(auth, text)
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
             // ..
         });
 
-    const handleButtonPress = () => {
-        sendPasswordResetEmail(auth, inputText);
     };
     const handleTextChange = (inputText) => {
         setText(inputText);
@@ -37,9 +35,11 @@ const ForgotPassword1 = () => {
                 value = {text}
                 autoCapitalize='none'
             />
-            <TouchableOpacity style = {styles.resetButton} onPress = {handleButtonPress}> 
-                <Text style ={styles.buttonText}> Request Reset Code </Text>
-            </TouchableOpacity>
+            <Link href="/forgotPassword2">
+                <TouchableOpacity style = {styles.resetButton} onPress = {handleButtonPress}> 
+                    <Text style ={styles.buttonText}> Request Reset Code </Text>
+                </TouchableOpacity>
+            </Link>
         </View>
     );
 };
