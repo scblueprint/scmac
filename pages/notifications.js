@@ -17,12 +17,20 @@ export default function Notifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const snapshot = await getDocs(notificationsCollection);
+        const snapshot = await getDocs(collection(db,'notifications'));
         const notificationsData = snapshot.docs.map(doc => {
           const data = doc.data();
           // Convert timestamp to readable 
-          const dateTime = new Date(data.dateTime).toLocaleString();
-          return { ...data, dateTime }; 
+          // const dateTime = new Date(data.date).toLocaleString();
+          
+          return { id: doc.id, description: data.description, dateTime: new Date(data.date).toLocaleString([], {
+            month: '2-digit',
+            day: '2-digit',
+            year: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          }) }; 
         });
         setNotifications(notificationsData);
       } catch (error) {
@@ -57,7 +65,8 @@ export default function Notifications() {
           <FlatList
             data={notifications}
             renderItem={renderNotificationItem}
-            keyExtractor={(item) => item.id.toString()}
+            //keyExtractor={(item) => item.id.toString()} 
+            keyExtractor={(item) => item.id}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </View>
@@ -65,7 +74,7 @@ export default function Notifications() {
       <Navbar />
     </View>
   );
-}
+} 
 
 const styles = StyleSheet.create({
   container: {
