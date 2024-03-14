@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { auth } from '../firebaseConfig';
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -15,6 +15,7 @@ const ForgotPassword1 = () => {
     const [text, setText] = useState('');
     
     const handleButtonPress = async () => {
+        console.log("hello");
 
         await sendPasswordResetEmail(auth, text)
         .catch((error) => {
@@ -32,7 +33,7 @@ const ForgotPassword1 = () => {
         router.back();
     }
     return (
-        <View style = {styles.container}>
+        <SafeAreaView style = {styles.container}>
             <TouchableOpacity style = {styles.backButton} onPress = {handleBackButton}>
                 <AntDesign name="leftcircleo" size={50} color="#A3A3A3" />
             </TouchableOpacity>
@@ -49,30 +50,28 @@ const ForgotPassword1 = () => {
                     <Text style ={styles.buttonText}> Request Reset Code </Text>
                 </TouchableOpacity>
             </Link>
-        </View>
+        </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
         justifyContent: 'flex-start',
-        paddingLeft: 10, // 10
-        paddingRight: 20, // 10
-        paddingTop: 150, // 200
+        marginLeft: '5%',
+        marginRight: '5%'
+        // backgroundColor: 'red'
     },
     forgotPasswordText: {
         fontSize: 30,
         textAlign: 'left',
-        margin: 5,
+        marginTop: '30%',
         paddingBottom: 10,
-        top: screenHeight * 0.01,
         color: '#6A466C',
         fontWeight: 'bold',
     },
     text1: {
         fontSize: 15,
         textAlign: 'left',
-        margin: 5,
     },
     text2: {
         fontSize: 15,
@@ -85,15 +84,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
-        margin: 10,
+        // position: 'absolute',
+        // marginTop: '50%', 
+        // left: screenWidth * 0.5 - (screenWidth * 0.4), 
+        height: "30%", 
+        width: "180%",
     },
     buttonText: {
         fontSize: 20,
         color: 'white',
-        textAlign: 'center',
-        justifyContent: 'center',
         alignItems: 'center',
-        padding: 15,
     }, 
     textInput: {
         height: 40,
@@ -102,12 +102,12 @@ const styles = StyleSheet.create({
         borderLeftColor: 'white',
         borderRightColor: 'white',
         borderWidth: 1,
-        margin: 3,
+        marginBottom: '5%',
     },
     backButton: {
-        position: 'absolute',
-        top: screenHeight * 0.056, // 91 / 2556
-        left: screenWidth * 0.0254, // 30 / 1179
+        // position: 'absolute',
+        // top: screenHeight * 0.056, // 91 / 2556
+        // left: screenWidth * 0.0254, // 30 / 1179
     },
 });
 export default ForgotPassword1;
