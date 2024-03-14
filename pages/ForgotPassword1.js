@@ -4,6 +4,10 @@ import { AntDesign } from '@expo/vector-icons';
 import { auth } from '../firebaseConfig';
 import { sendPasswordResetEmail } from "firebase/auth";
 import { Link } from "expo-router";
+import {Dimensions} from 'react-native';
+
+const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get('window').width;
 
 const ForgotPassword1 = () => {
     // const auth = getAuth();
@@ -23,7 +27,7 @@ const ForgotPassword1 = () => {
         setText(inputText);
     }
     return (
-         <View style = {styles.container}>
+        <View style = {styles.container}>
             <TouchableOpacity style = {styles.backButton} onPress = {handleButtonPress}>
                 <AntDesign name="leftcircleo" size={50} color="#A3A3A3" />
             </TouchableOpacity>
@@ -47,15 +51,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, 
         justifyContent: 'flex-start',
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingTop: 200,
+        paddingLeft: 10, // 10
+        paddingRight: 20, // 10
+        paddingTop: 150, // 200
     },
     forgotPasswordText: {
         fontSize: 30,
         textAlign: 'left',
         margin: 5,
         paddingBottom: 10,
+        top: screenHeight * 0.01,
         color: '#6A466C',
         fontWeight: 'bold',
     },
@@ -95,9 +100,9 @@ const styles = StyleSheet.create({
         margin: 3,
     },
     backButton: {
-        position: 'relative',
-        top: -80,
-        left: 0,
+        position: 'absolute',
+        top: screenHeight * 0.056, // 91 / 2556
+        left: screenWidth * 0.0254, // 30 / 1179
     },
 });
 export default ForgotPassword1;
