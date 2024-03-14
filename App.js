@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Test from './pages/Test.js'
+import Profile from './pages/Profile.js';
 import Notifications from './pages/notifications.js';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Notifications />
+      {/* <Notifications /> */}
+      <Profile/>
     </View>
   );  
 }
