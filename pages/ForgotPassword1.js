@@ -5,6 +5,7 @@ import { auth } from '../firebaseConfig';
 import { sendPasswordResetEmail } from "firebase/auth";
 import { Link } from "expo-router";
 import {Dimensions} from 'react-native';
+import {router} from 'expo-router';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -21,14 +22,18 @@ const ForgotPassword1 = () => {
             const errorMessage = error.message;
             // ..
         });
+        router.back();
 
     };
     const handleTextChange = (inputText) => {
         setText(inputText);
     }
+    const handleBackButton = async () => {
+        router.back();
+    }
     return (
         <View style = {styles.container}>
-            <TouchableOpacity style = {styles.backButton} onPress = {handleButtonPress}>
+            <TouchableOpacity style = {styles.backButton} onPress = {handleBackButton}>
                 <AntDesign name="leftcircleo" size={50} color="#A3A3A3" />
             </TouchableOpacity>
             <Text style = {styles.forgotPasswordText} >Forgot Password</Text>
