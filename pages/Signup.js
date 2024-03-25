@@ -52,7 +52,7 @@ export default function Signup() {
       <View style={styles.line} />
       <TouchableOpacity 
       style={styles.continueButton}
-              onPress={() => {
+              onPress={async () =>  {
                 await signup(email,pword, fname, lname, phone);
                 router.push('/events')
               }}
