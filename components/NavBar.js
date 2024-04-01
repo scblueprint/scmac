@@ -1,6 +1,7 @@
 // import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
+//import { Link } from 'expo-router';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -12,6 +13,10 @@ const Navbar = () => {
       >
         <Icon name="calendar-outline" size={25} color="#4F4F4F" />
         <Text style={styles.navText}>Events</Text>
+        onPress={async () =>  {
+                <Link href="/pages/events"></Link>
+        }
+      }
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -19,6 +24,10 @@ const Navbar = () => {
       >
         <Icon name="notifications-outline" size={25} color="#4F4F4F" />
         <Text style={styles.navText}>Notifications</Text>
+        onPress={async () =>  {
+                <Link href="/pages/notifications"></Link>
+        }
+      }
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -26,6 +35,10 @@ const Navbar = () => {
       >
         <Icon name="person-outline" size={25} color="#4F4F4F" />
         <Text style={styles.navText}>Profile</Text>
+        onPress={async () =>  {
+                <Link href="/pages/Profile"></Link>
+        }
+      }
       </TouchableOpacity>
     </View>
   );
