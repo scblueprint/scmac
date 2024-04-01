@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Test from './pages/Test.js'
+import CreateEventScreen from './pages/createEvent.js';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
+    <CreateEventScreen/>
+    // <View style={styles.container}>
+      // {/* <Text>Open up App.js to start working on your app!</Text> */}
+    // </View>
   );  
 }
 
