@@ -17,16 +17,16 @@ export default function Notifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        // Fetch the user document
+        //Fetch the user document
         const userDocRef = doc(db, 'users', 'KV9qEliUXBccf63FLFaTA6lOdMH2');
         const userSnapshot = await getDoc(userDocRef);
   
         if (userSnapshot.exists()) {
-          // Get the notifications IDs from the user document
+          //Get the IDs from the user 
           const { notifications } = userSnapshot.data();
   
           if (notifications && notifications.length > 0) {
-            // Fetch each notification document
+            //Fetch each notification document
             const notificationsData = await Promise.all(
               notifications.map(async notificationId => {
                 const notificationDocRef = doc(db, 'notifications', notificationId);
@@ -52,7 +52,7 @@ export default function Notifications() {
               })
             );
   
-            // Filter out null values (notifications not found)
+            //Filter out null values (notifs not found)
             const filteredNotificationsData = notificationsData.filter(notification => notification !== null);
             setNotifications(filteredNotificationsData);
           } else {
@@ -69,18 +69,8 @@ export default function Notifications() {
     fetchNotifications();
   }, []);
   
-  // useEffect(() => {
-  //   const fetchNotifications = async () => {
-  //     try {
-  //       const userDocRef = doc(db, 'users', 'KV9qEliUXBccf63FLFaTA6lOdMH2');
-  //       const userSnapshot = await getDocs(userDocRef);
-
-  //       //updated: not work, showed everything else but notifs 
-  //         const notificationsQuerySnapshot = await getDocs(collection(userDocRef, 'notifications'));
-  //         const notificationsData = notificationsQuerySnapshot.docs.map(doc => {
-  //         const data = doc.data();
         
-  //       //old: worked, fetch directly from notif clt. 
+  //       //old: fetch directly from notif clt. 
 
   //       // const snapshot = await getDocs(collection(db,'notifications'));
   //       // const notificationsData = snapshot.docs.map(doc => {
@@ -103,24 +93,6 @@ export default function Notifications() {
 
   //   fetchNotifications();
   // }, []);
-
-
-
-  //format notif data to readable
-  // const formatNotifications = (notifications) =>{
-  //   return notifications.map(notification => ({
-  //     id: notification.id,
-  //     description: notification.description,
-  //     dateTime: new Date(notification.date).toLocaleString([], {
-  //           month: '2-digit',
-  //           day: '2-digit',
-  //           year: '2-digit',
-  //           hour: '2-digit',
-  //           minute: '2-digit',
-  //           hour12: true
-  //     })
-  //   }));
-  // };
 
 
   const renderNotificationItem = ({ item }) => (
