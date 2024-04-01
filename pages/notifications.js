@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import Navbar from '../components/NavBar';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, getDocs , getDoc} from 'firebase/firestore';
 import { firebaseConfig } from '../firebaseConfig';
 import { db } from '../firebaseConfig';
 
@@ -17,29 +17,111 @@ export default function Notifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const snapshot = await getDocs(collection(db,'notifications'));
-        const notificationsData = snapshot.docs.map(doc => {
-          const data = doc.data();
-          // Convert timestamp to readable 
-          // const dateTime = new Date(data.date).toLocaleString();
-          
-          return { id: doc.id, description: data.description, dateTime: new Date(data.date).toLocaleString([], {
-            month: '2-digit',
-            day: '2-digit',
-            year: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-          }) }; 
-        });
-        setNotifications(notificationsData);
+        // Fetch the user document
+        const userDocRef = doc(db, 'users', 'KV9qEliUXBccf63FLFaTA6lOdMH2');
+        const userSnapshot = await getDoc(userDocRef);
+  
+        if (userSnapshot.exists()) {
+          // Get the notifications IDs from the user document
+          const { notifications } = userSnapshot.data();
+  
+          if (notifications && notifications.length > 0) {
+            // Fetch each notification document
+            const notificationsData = await Promise.all(
+              notifications.map(async notificationId => {
+                const notificationDocRef = doc(db, 'notifications', notificationId);
+                const notificationSnapshot = await getDoc(notificationDocRef);
+                if (notificationSnapshot.exists()) {
+                  const notificationData = notificationSnapshot.data();
+                  return {
+                    id: notificationSnapshot.id,
+                    description: notificationData.description,
+                    dateTime: new Date(notificationData.date).toLocaleString([], {
+                      month: '2-digit',
+                      day: '2-digit',
+                      year: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true
+                    })
+                  };
+                } else {
+                  console.warn(`Notification with ID ${notificationId} not found`);
+                  return null;
+                }
+              })
+            );
+  
+            // Filter out null values (notifications not found)
+            const filteredNotificationsData = notificationsData.filter(notification => notification !== null);
+            setNotifications(filteredNotificationsData);
+          } else {
+            console.log('No notifications found for this user');
+          }
+        } else {
+          console.log('User document not found');
+        }
       } catch (error) {
         console.error('Error fetching notifications:', error);
       }
     };
-
+  
     fetchNotifications();
   }, []);
+  
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const userDocRef = doc(db, 'users', 'KV9qEliUXBccf63FLFaTA6lOdMH2');
+  //       const userSnapshot = await getDocs(userDocRef);
+
+  //       //updated: not work, showed everything else but notifs 
+  //         const notificationsQuerySnapshot = await getDocs(collection(userDocRef, 'notifications'));
+  //         const notificationsData = notificationsQuerySnapshot.docs.map(doc => {
+  //         const data = doc.data();
+        
+  //       //old: worked, fetch directly from notif clt. 
+
+  //       // const snapshot = await getDocs(collection(db,'notifications'));
+  //       // const notificationsData = snapshot.docs.map(doc => {
+  //       //   const data = doc.data();
+  //         //Convert timestamp to readable 
+  //       return { id: doc.id, description: data.description, dateTime: new Date(data.date).toLocaleString([], {
+  //           month: '2-digit',
+  //           day: '2-digit',
+  //           year: '2-digit',
+  //           hour: '2-digit',
+  //           minute: '2-digit',
+  //           hour12: true
+  //         }) }; 
+  //       });
+  //       setNotifications(notificationsData);
+  //     } catch (error) {
+  //       console.error('Error fetching notifications:', error);
+  //     }
+  //   }
+
+  //   fetchNotifications();
+  // }, []);
+
+
+
+  //format notif data to readable
+  // const formatNotifications = (notifications) =>{
+  //   return notifications.map(notification => ({
+  //     id: notification.id,
+  //     description: notification.description,
+  //     dateTime: new Date(notification.date).toLocaleString([], {
+  //           month: '2-digit',
+  //           day: '2-digit',
+  //           year: '2-digit',
+  //           hour: '2-digit',
+  //           minute: '2-digit',
+  //           hour12: true
+  //     })
+  //   }));
+  // };
+
 
   const renderNotificationItem = ({ item }) => (
     <View style={styles.notification}>
