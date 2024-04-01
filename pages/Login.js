@@ -72,7 +72,7 @@ export default function Login() {
         <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={() => {
+              onPress={async () => {
                 await login(email,pword, "hello");
                 router.push('/events')
               }}
