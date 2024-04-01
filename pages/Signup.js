@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import {signup} from "./api/users.js"
 import { useState } from 'react';
 
-export default function Signup() {
+export default function Signup({navigation}) {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
@@ -54,7 +54,7 @@ export default function Signup() {
       style={styles.continueButton}
               onPress={async () =>  {
                 await signup(email,pword, fname, lname, phone);
-                router.push('/events')
+                navigation.navigate("Events")
               }}
       >
         <Text style = {{color:"white", fontSize:'20px'}}>Continue</Text>

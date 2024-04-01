@@ -19,7 +19,7 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Events'>
+      <Stack.Navigator initialRouteName='Signup'>
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
@@ -31,7 +31,6 @@ export default function App() {
         <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPassword2" component={ForgotPassword2} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPassword3" component={ForgotPassword3} options={{ headerShown: false }} />
-        {/* <Stack.Screen name="Navbar" component={Navbar} options={{ headerShown: false }} /> */}
         {/* Add more Stack.Screen components for each page */}
       </Stack.Navigator>
     </NavigationContainer>
