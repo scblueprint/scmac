@@ -1,6 +1,30 @@
+import React, { useState, useEffect } from 'react';
+
 import { StyleSheet, Text, View } from 'react-native';
 // import Navbar from './components.js/NavBar.js'
+import {getCurrentUserData} from '../pages/api/users'
 export default function Profile() {
+  // Do the rest of the fields
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [gender, setGender] = useState("");
+  const [birthday, setBirthday] = useState("");
+  // Do the rest of the fields
+  useEffect( () => {
+    async function fetchData() {
+      data = await getCurrentUserData("KV9qEliUXBccf63FLFaTA6lOdMH2");
+      console.log(data);
+      setFirstName(data.fname);
+      setLastName(data.lname);
+      setEmail(data.email);
+      setPhoneNumber(data.phone);
+      setGender(data.gender);
+      setBirthday(data.birthday);
+    }
+    fetchData();
+ }, [])
   return (
     <View style={styles.container}>
     <View style={styles.header}>
@@ -10,18 +34,18 @@ export default function Profile() {
   <Text>PFP</Text>
 </View>
     <View style={styles.name}>
-      <Text style={{fontSize:20}}>Firstname Lastname</Text>
+      <Text style={{fontSize:20}}>{firstName + " " + lastName}</Text>
         </View>
     <View style={styles.email}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Email</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Email: {"    " + email}</Text>
     <View style={styles.number}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Phone number</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Phone number: {"    " + phoneNumber}</Text>
         </View>
     <View style={styles.gender}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Gender</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Gender: {"    " + gender}</Text>
         </View>
     <View style={styles.birthday}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Birthday</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Birthday: {"    " + birthday}</Text>
         </View>
       </View>
     {/* <Navbar/> */}
