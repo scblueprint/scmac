@@ -25,11 +25,11 @@ export default function Profile() {
     }
     fetchData();
  }, [])
+import NavBar from '../components/NavBar.js'
+export default function Profile({navigation}) {
   return (
     <View style={styles.container}>
-    <View style={styles.header}>
-      <Text style={{fontSize:20, color: 'white'}}>Profile</Text>
-    </View>
+      <Text style={styles.header}>Profile</Text>
     <View style={styles.pfpCircle}>
   <Text>PFP</Text>
 </View>
@@ -47,27 +47,23 @@ export default function Profile() {
     <View style={styles.birthday}>
       <Text style={{fontSize:15, marginLeft:30 }}>Birthday: {"    " + birthday}</Text>
         </View>
-      </View>
-    {/* <Navbar/> */}
+    <NavBar navigation={navigation}/>
     </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    flex: .1,
+    // flex: 1,
     backgroundColor: 'white',
-    alignItems: 'center',
-    //justifyContent: 'center',
   },
   header: {
-    flex: .1,
+    fontSize: 24,
+    fontWeight: 'bold',
     color: 'white',
     backgroundColor: '#6A466C',
-    justifyContent: 'center',
-    alignItems: 'center',
+    textAlign: 'center',
     padding: 80,
     paddingBottom: 10,
-    width: 393,
   },
   pfpCircle: {
     width: 100,
@@ -86,30 +82,30 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   email: {
-    marginTop:10,
-    fontSize: 15,
-    width: 393,
-    height: 18,
+    // marginTop:10,
+    // fontSize: 15,
+    // width: 393,
+    // height: 18,
     //backgroundColor: 'yellow',
   },
   number: {
-    marginTop:10,
-    paddingBottom: 4,
-    width: 393,
-    height: 18,
+    // marginTop:10,
+    // paddingBottom: 4,
+    // width: 393,
+    // height: 18,
     //backgroundColor: 'red',
   },
   gender: {
-    marginTop:10,
-    paddingBottom: 4,
-    width: 393,
-    height: 18,
+    // marginTop:10,
+    // paddingBottom: 4,
+    // width: 393,
+    // height: 18,
     //backgroundColor: 'blue',
   },
   birthday: {
-    marginTop:10,
-    width: 393,
-    height: 18,
+    // marginTop:10,
+    // width: 393,
+    // height: 18,
     //backgroundColor: 'cyan',
   },
 });

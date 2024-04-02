@@ -31,7 +31,14 @@ const signup = async (email, password, fname, lname, phoneNumber) => {
       fname: fname,
       lname: lname,
       email: email,
-      phone: phoneNumber
+      phone: phoneNumber,
+      admin: false,
+      birthday: 0,
+      devToken: 0,
+      downloadURL: "",
+      notifications: [],
+      gender: "",
+      
     };
     await setDoc(doc(db, "users", user.uid), data);
 

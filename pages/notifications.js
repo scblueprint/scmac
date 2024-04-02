@@ -90,6 +90,14 @@ export default function Notifications() {
   //       console.error('Error fetching notifications:', error);
   //     }
   //   }
+import NavBar from '../components/NavBar.js'
+
+export default function Notifications({navigation}) {
+  const sampleNotification = [
+    {id: 1},
+    {id: 2},
+    {id: 3},
+  ];
 
   //   fetchNotifications();
   // }, []);
@@ -125,7 +133,7 @@ export default function Notifications() {
           />
         </View>
       </View>
-      <Navbar />
+      <NavBar navigation={navigation}/>
     </View>
   );
 } 
