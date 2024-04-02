@@ -22,7 +22,7 @@ const EventItem = ({ date, eventName, location }) => (
 
 );
 
-export default function Events() {
+export default function Events({navigation}) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Events</Text>
@@ -33,7 +33,8 @@ export default function Events() {
         )}
         keyExtractor={item => item.id}
       />
-    <NavBar />
+      <TouchableOpacity onPress={console.log(navigation)}></TouchableOpacity>
+    <NavBar navigation={navigation}/>
     </View>
   );
 }

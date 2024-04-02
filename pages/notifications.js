@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import Navbar from '../components/NavBar';
+import NavBar from '../components/NavBar.js'
 
-
-export default function Notifications() {
+export default function Notifications({navigation}) {
   const sampleNotification = [
     {id: 1},
     {id: 2},
@@ -40,7 +39,7 @@ export default function Notifications() {
         />
         </View>
       </View>
-      <Navbar />
+      <NavBar navigation={navigation}/>
     </View>
   );
 }

@@ -1,4 +1,4 @@
-import { auth, db } from '../../../firebaseConfig';
+import { auth, db } from '../../firebaseConfig';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -30,7 +30,14 @@ const signup = async (email, password, fname, lname, phoneNumber) => {
       fname: fname,
       lname: lname,
       email: email,
-      phone: phoneNumber
+      phone: phoneNumber,
+      admin: false,
+      birthday: 0,
+      devToken: 0,
+      downloadURL: "",
+      notifications: [],
+      gender: "",
+      
     };
     await setDoc(doc(db, "users", user.uid), data);
 
