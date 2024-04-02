@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar.js';
 import { StyleSheet, Text, View } from 'react-native';
 import {getCurrentUserData} from '../pages/api/users'
-export default function Profile() {
+export default function Profile({navigation}) {
   // Do the rest of the fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
