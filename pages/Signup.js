@@ -12,7 +12,7 @@ export default function Signup({navigation}) {
 
   return (
     <View style={styles.container}>
-     <TouchableOpacity style={styles.backButton}>
+     <TouchableOpacity style={styles.backButton} onPress={()=>navigation.navigate("Login")}>
         <Text style =
          {{fontSize: 40, color:'#A3A3A3'}}>
             {'<'}

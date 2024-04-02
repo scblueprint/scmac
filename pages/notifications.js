@@ -11,7 +11,7 @@ import NavBar from '../components/NavBar.js'
 
 const notificationsCollection = collection(db, 'notifications');
 
-export default function Notifications() {
+export default function Notifications({navigation}) {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {

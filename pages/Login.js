@@ -7,10 +7,11 @@ import { EvilIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import {login} from "./api/users.js"
+import { SafeAreaView } from 'react-native-safe-area-context';
 const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
 
-export default function Login() {
+export default function Login({navigation}) {
     // console.log(windowHeight);
     // console.log(windowWidth);
   const [isChecked, setIsChecked] = useState(false);
@@ -19,7 +20,7 @@ export default function Login() {
   const [pword, setPword] = useState("");
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
         <Image
             style={styles.image}
             source={require('../assets/scmac-logo.png')}
@@ -51,7 +52,7 @@ export default function Login() {
         <Text style={styles.passwordText}>Password</Text>
         <TouchableOpacity
           onPress={() => {
-            // Handle forgot password logic here
+            navigation.navigate("Signup");
           }}
           style={styles.noAccountButton}
         >
@@ -110,7 +111,7 @@ export default function Login() {
         </TouchableOpacity>
       </View>
         <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -123,6 +124,7 @@ const styles = StyleSheet.create({
   },
   image: {
     position: 'absolute',
+    // width: "100%",
     width: windowWidth * 0.93, // 350
     height: windowHeight * 0.1819, // 121.33
     left: (windowWidth * 0.5 - 350 / 2 + 0.5),
