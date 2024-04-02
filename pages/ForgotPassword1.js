@@ -1,17 +1,40 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, TextInput} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { auth } from '../firebaseConfig';
+import { sendPasswordResetEmail } from "firebase/auth";
+import { Link } from "expo-router";
+import {Dimensions} from 'react-native';
+import {router} from 'expo-router';
+
+const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get('window').width;
+
 const ForgotPassword1 = () => {
+    // const auth = getAuth();
     const [text, setText] = useState('');
-    const handleButtonPress = () => {
-        alert('Button Pressed');
+    
+    const handleButtonPress = async () => {
+        // console.log("hello");
+
+        await sendPasswordResetEmail(auth, text)
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+        });
+        router.back();
+
     };
     const handleTextChange = (inputText) => {
         setText(inputText);
     }
+    const handleBackButton = async () => {
+        router.back();
+    }
     return (
-         <View style = {styles.container}>
-            <TouchableOpacity style = {styles.backButton} onPress = {handleButtonPress}>
+        <SafeAreaView style = {styles.container}>
+            <TouchableOpacity style = {styles.backButton} onPress = {handleBackButton}>
                 <AntDesign name="leftcircleo" size={50} color="#A3A3A3" />
             </TouchableOpacity>
             <Text style = {styles.forgotPasswordText} >Forgot Password</Text>
@@ -22,24 +45,26 @@ const ForgotPassword1 = () => {
                 value = {text}
                 autoCapitalize='none'
             />
-            <TouchableOpacity style = {styles.resetButton} onPress = {handleButtonPress}> 
-                <Text style ={styles.buttonText}> Request Reset Code </Text>
-            </TouchableOpacity>
-        </View>
+            <Link href="/Login">
+                <TouchableOpacity style = {styles.resetButton} onPress = {handleButtonPress}> 
+                    <Text style ={styles.buttonText}> Request Reset Code </Text>
+                </TouchableOpacity>
+            </Link>
+        </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
         justifyContent: 'flex-start',
-        paddingLeft: 10,
-        paddingRight: 10,
-        paddingTop: 200,
+        marginLeft: '5%',
+        marginRight: '5%'
+        // backgroundColor: 'red'
     },
     forgotPasswordText: {
         fontSize: 30,
         textAlign: 'left',
-        margin: 5,
+        marginTop: '30%',
         paddingBottom: 10,
         color: '#6A466C',
         fontWeight: 'bold',
@@ -47,7 +72,6 @@ const styles = StyleSheet.create({
     text1: {
         fontSize: 15,
         textAlign: 'left',
-        margin: 5,
     },
     text2: {
         fontSize: 15,
@@ -60,15 +84,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
-        margin: 10,
+        // position: 'absolute',
+        // marginTop: '50%', 
+        // left: screenWidth * 0.5 - (screenWidth * 0.4), 
+        height: "30%", 
+        width: "180%",
     },
     buttonText: {
         fontSize: 20,
         color: 'white',
-        textAlign: 'center',
-        justifyContent: 'center',
         alignItems: 'center',
-        padding: 15,
     }, 
     textInput: {
         height: 40,
@@ -77,12 +102,12 @@ const styles = StyleSheet.create({
         borderLeftColor: 'white',
         borderRightColor: 'white',
         borderWidth: 1,
-        margin: 3,
+        marginBottom: '5%',
     },
     backButton: {
-        position: 'relative',
-        top: -80,
-        left: 0,
+        // position: 'absolute',
+        // top: screenHeight * 0.056, // 91 / 2556
+        // left: screenWidth * 0.0254, // 30 / 1179
     },
 });
 export default ForgotPassword1;
