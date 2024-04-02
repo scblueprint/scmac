@@ -1,6 +1,7 @@
 import { auth, db } from '../../firebaseConfig';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
+
 
 // Login function
 const login = async (email, password, notifToken) => {
@@ -60,5 +61,15 @@ const getCurrentUser = () => {
   });
 };
 
+const getCurrentUserData = async (uid) => {
+  console.log(uid);
+  const userRef = await getDoc(doc(db, "users", uid));
+  console.log(userRef.data());
+  // userRef.forEach((doc) => {
+  //   console.log(doc.data());
+  // })
+  return userRef.data();
+}
 
-export { login, signup , getCurrentUser};
+
+export { login, signup , getCurrentUser, getCurrentUserData};
