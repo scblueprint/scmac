@@ -4,7 +4,7 @@ import Navbar from '../components/NavBar';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, setDoc, getDocs , getDoc} from 'firebase/firestore';
 import { firebaseConfig } from '../firebaseConfig';
-import { db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 import NavBar from '../components/NavBar.js'
 
 //Initialize Firebase app
@@ -18,7 +18,7 @@ export default function Notifications({navigation}) {
     const fetchNotifications = async () => {
       try {
         //Fetch the user document
-        const userDocRef = doc(db, 'users', 'KV9qEliUXBccf63FLFaTA6lOdMH2');
+        const userDocRef = doc(db, 'users', auth.currentUser.uid);
         const userSnapshot = await getDoc(userDocRef);
   
         if (userSnapshot.exists()) {

@@ -61,9 +61,9 @@ const getCurrentUser = () => {
   });
 };
 
-const getCurrentUserData = async (uid) => {
-  console.log(uid);
-  const userRef = await getDoc(doc(db, "users", uid));
+const getCurrentUserData = async () => {
+  console.log(auth.currentUser);
+  const userRef = await getDoc(doc(db, "users", auth.currentUser.uid));
   console.log(userRef.data());
   // userRef.forEach((doc) => {
   //   console.log(doc.data());

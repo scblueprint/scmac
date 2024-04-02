@@ -1,14 +1,11 @@
 
 import React, { useState } from 'react';
+import Checkbox from 'expo-checkbox';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function Waiver() {
 
     const [isChecked, setIsChecked] = useState(false);
-
-    const handleCheckBoxToggle = () => {
-      setIsChecked(!isChecked);
-    };
 
     return (
         <View style = {styles.container}>
@@ -21,9 +18,9 @@ export default function Waiver() {
       <Text style={styles.Waiver}>Waiver</Text>
       <View style = {styles.rectangle}></View>
       <View style = {{ flexDirection: 'row', alignItems: 'center', width: '70%'}}>
-        <CheckBox
-            checked={isChecked}
-            onPress={handleCheckBoxToggle}
+        <Checkbox
+            value={isChecked}
+            onValueChange={setIsChecked}
             />
             <Text style={{fontSize: 17, fontWeight: 400, lineHeight: 20.57}}>
                 I have read and agree to the terms and conditions of the waiver.

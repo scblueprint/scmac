@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar.js';
 import { StyleSheet, Text, View } from 'react-native';
-import {getCurrentUserData} from '../pages/api/users'
+import {getCurrentUserData} from '../pages/api/users';
+import { auth } from '../firebaseConfig';
+
 export default function Profile({navigation}) {
   // Do the rest of the fields
   const [firstName, setFirstName] = useState("");
@@ -13,7 +15,7 @@ export default function Profile({navigation}) {
   // Do the rest of the fields
   useEffect( () => {
     async function fetchData() {
-      data = await getCurrentUserData("KV9qEliUXBccf63FLFaTA6lOdMH2");
+      data = await getCurrentUserData();
       console.log(data);
       setFirstName(data.fname);
       setLastName(data.lname);
@@ -51,7 +53,7 @@ export default function Profile({navigation}) {
 }
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     backgroundColor: 'white',
   },
   header: {
@@ -71,6 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     marginBottom: 20,
     marginTop: 30,
+    marginLeft: "37%",
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -101,7 +104,7 @@ const styles = StyleSheet.create({
     //backgroundColor: 'blue',
   },
   birthday: {
-    // marginTop:10,
+    marginBottom:"90%",
     // width: 393,
     // height: 18,
     //backgroundColor: 'cyan',

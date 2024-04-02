@@ -1,7 +1,6 @@
 // import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
-import { Link, router } from 'expo-router';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 

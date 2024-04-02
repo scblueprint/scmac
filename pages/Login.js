@@ -41,7 +41,6 @@ export default function Login({navigation}) {
             placeholder="johndoe@gmail.com"
             placeholderTextColor="#808080"
             onChangeText={text => setEmail(text)}
-
           />
         </View>
         <Text style={styles.passwordText}>Password</Text>
@@ -49,12 +48,12 @@ export default function Login({navigation}) {
         <View style={styles.lockIcon}>
           <EvilIcons name="lock" size={24} color="black" />
         </View>
-          <TextInput
+          <TextInput autoCapitalize='none' 
+            secureTextEntry={isEyeOpen} 
             style={styles.passwordInput}
             placeholder="●●●●●●●"
             placeholderTextColor="#808080"
-            onChangeText={text => setPword(text)}
-          />
+            onChangeText={text => setPword(text)}></TextInput>
           <View style={styles.eyeIcon}>
           <TouchableOpacity
             onPress={() => setIsEyeOpen(!isEyeOpen)}
