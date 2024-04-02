@@ -1,75 +1,94 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import CheckBox from 'expo-checkbox';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import Navbar from '../components/NavBar';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore';
+import { firebaseConfig } from '../firebaseConfig';
+import { db } from '../firebaseConfig';
 
 export default function EventDetailScreen() {
     const [selectedValueShift, setSelectedValueShift] = useState("");
-    const [isMaterialSelected, setIsMaterialSelected] = useState(false)
+    const [events, setEvents] = useState([]);
+    const [isMaterialSelected, setIsMaterialSelected] = useState(false);
+    const [materials, setMaterials] = useState([]);
+    
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const eventsCollection = await getDocs(collection(db,'events'));
+      const querySnapshot = await eventsCollection.docs.map(doc => {
+        const data = doc.data();
+  
+      const fetchedEvents = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          date: data.date,
+          description: data.description,
+          location: data.location,
+          materials: data.materials,
+          shifts: data.shifts,
+        };
+      });
+  
+      setEvents(fetchedEvents);
+    });
+  
+    fetchEvents();
+    [];
+    
+  }
+
+  const toggleMaterial = (index) => {
+    const updatedMaterials = [...materials];
+    updatedMaterials[index].isSelected = !updatedMaterials[index].isSelected;
+    setMaterials(updatedMaterials);
+  };
+
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Event</Text>
-      <Text style={styles.title}>Event Name</Text>
-      <Text style={styles.subtitle}>Date</Text>
-      <Text style={styles.subtitle}>Location</Text>
-      <Text style={styles.sectionTitle}>Event Description</Text>
-      <Text style={styles.description}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...</Text>
-      <Text style={styles.sectionTitle}>Select a Work Shift</Text>
-       <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={selectedValueShift}
-          onValueChange={(itemValue, itemIndex) => setSelectedValueShift(itemValue)}
-          style={styles.picker}
-          dropdownIconColor={"#000000"}
-          mode={"dropdown"}
-          prompt={"select"}
-        >
-          <Picker.Item label="Morning Shift" value="morning" />
-          <Picker.Item label="Afternoon Shift" value="afternoon" />
-          <Picker.Item label="Night Shift" value="night" />
-        </Picker>
-      </View>
-      <Text style={styles.sectionTitle}>Materials Checklist</Text>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 1</Text>
-      </View>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 2</Text>
-      </View>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 3</Text>
-      </View>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 4</Text>
-      </View>
-      <Text style={styles.sectionTitle}>Comments</Text>
-      <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Confirm</Text>
-      </TouchableOpacity>
+      {events.map(event => (
+        <View key={event.id}>
+          <Text style={styles.title}>{event.title}</Text>
+          <Text style={styles.subtitle}>{new Date(event.date.seconds * 1000).toLocaleDateString()}</Text>
+          <Text style={styles.subtitle}>{event.location}</Text>
+          <Text style={styles.sectionTitle}>Event Description</Text>
+          <Text style={styles.description}>{event.description}</Text>
+          <Text style={styles.sectionTitle}>Select a Work Shift</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedValueShift}
+             onValueChange={(itemValue, itemIndex) => setSelectedValueShift(itemValue)}
+              style={styles.picker}
+              dropdownIconColor={"#000000"}
+              mode={"dropdown"}
+              prompt={"select"}
+            >
+              <Picker.Item label="Morning Shift" value="morning" />
+              <Picker.Item label="Afternoon Shift" value="afternoon" />
+              <Picker.Item label="Night Shift" value="night" />
+            </Picker>
+          </View>
+          <Text style={styles.sectionTitle}>Materials Checklist</Text>
+          {event.materials.map((material, index) => (
+            <View key={index} style={styles.checkboxContainer}>
+              <CheckBox
+                value={material.isSelected || false}
+                onValueChange={() => toggleMaterial(index)}
+                style={styles.checkbox}
+              />
+              <Text style={styles.label}>{material.item}</Text>
+            </View>
+          ))}
+          <Text style={styles.sectionTitle}>Comments</Text>
+          <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Confirm</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -162,5 +181,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-
+  
 });
