@@ -7,7 +7,7 @@ import Profile from './pages/Profile';
 import Waiver from './pages/Waiver';
 import Events from './pages/events';
 import IndividualEvent from './pages/individualEvent';
-import Notifications from './pages/Notifications';
+import Notifications from './pages/notifications';
 import Test from './pages/Test';
 import ForgotPassword1 from './pages/ForgotPassword1';
 import ForgotPassword2 from './pages/forgotPassword2';

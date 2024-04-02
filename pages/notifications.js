@@ -5,7 +5,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, setDoc, getDocs , getDoc} from 'firebase/firestore';
 import { firebaseConfig } from '../firebaseConfig';
 import { db } from '../firebaseConfig';
-
+import NavBar from '../components/NavBar.js'
 
 //Initialize Firebase app
 
@@ -90,14 +90,13 @@ export default function Notifications() {
   //       console.error('Error fetching notifications:', error);
   //     }
   //   }
-import NavBar from '../components/NavBar.js'
 
-export default function Notifications({navigation}) {
-  const sampleNotification = [
-    {id: 1},
-    {id: 2},
-    {id: 3},
-  ];
+// export default function Notifications({navigation}) {
+//   const sampleNotification = [
+//     {id: 1},
+//     {id: 2},
+//     {id: 3},
+//   ];
 
   //   fetchNotifications();
   // }, []);

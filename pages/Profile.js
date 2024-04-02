@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
+import NavBar from '../components/NavBar.js';
 import { StyleSheet, Text, View } from 'react-native';
-// import Navbar from './components.js/NavBar.js'
 import {getCurrentUserData} from '../pages/api/users'
 export default function Profile() {
   // Do the rest of the fields
@@ -25,8 +24,6 @@ export default function Profile() {
     }
     fetchData();
  }, [])
-import NavBar from '../components/NavBar.js'
-export default function Profile({navigation}) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Profile</Text>
@@ -38,6 +35,7 @@ export default function Profile({navigation}) {
         </View>
     <View style={styles.email}>
       <Text style={{fontSize:15, marginLeft:30 }}>Email: {"    " + email}</Text>
+    </View>
     <View style={styles.number}>
       <Text style={{fontSize:15, marginLeft:30 }}>Phone number: {"    " + phoneNumber}</Text>
         </View>
