@@ -1,31 +1,39 @@
 // import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
+import { Link, router } from 'expo-router';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const Navbar = () => {
+const Navbar = ({navigation}) => {
   return (
     <View style={styles.navbarContainer}>
       <TouchableOpacity
         style={styles.navItem}
+        onPress={() => navigation.navigate("Events")}
       >
         <Icon name="calendar-outline" size={25} color="#4F4F4F" />
         <Text style={styles.navText}>Events</Text>
+        
       </TouchableOpacity>
 
-      <TouchableOpacity
+        <TouchableOpacity
         style={styles.navItem}
+        onPress={() => navigation.navigate("Notifications")}
       >
         <Icon name="notifications-outline" size={25} color="#4F4F4F" />
         <Text style={styles.navText}>Notifications</Text>
+        
       </TouchableOpacity>
+      
 
       <TouchableOpacity
         style={styles.navItem}
+        onPress={() => navigation.navigate("Profile")}
       >
         <Icon name="person-outline" size={25} color="#4F4F4F" />
         <Text style={styles.navText}>Profile</Text>
+        
       </TouchableOpacity>
     </View>
   );

@@ -1,21 +1,38 @@
-import { StyleSheet, Text, View } from 'react-native';
-import Test from './pages/Test.js'
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Profile from './pages/Profile';
+import Waiver from './pages/Waiver';
+import Events from './pages/events';
+import IndividualEvent from './pages/individualEvent';
+import Notifications from './pages/Notifications';
+import Test from './pages/Test';
+import ForgotPassword1 from './pages/ForgotPassword1';
+import ForgotPassword2 from './pages/forgotPassword2';
+import ForgotPassword3 from './pages/forgotPassword3';
+import Navbar from './components/NavBar';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );  
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Signup'>
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+        <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+        <Stack.Screen name="Notifications" component={Notifications} options={{ headerShown: false }} />
+        <Stack.Screen name="Waiver" component={Waiver} options={{ headerShown: false }} />
+        <Stack.Screen name="Events" component={Events} options={{ headerShown: false }} />
+        <Stack.Screen name="IndividualEvent" component={IndividualEvent} options={{ headerShown: false }} />
+        <Stack.Screen name="Test" component={Test} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPassword2" component={ForgotPassword2} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPassword3" component={ForgotPassword3} options={{ headerShown: false }} />
+        {/* Add more Stack.Screen components for each page */}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
-
