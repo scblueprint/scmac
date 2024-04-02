@@ -15,7 +15,7 @@ const ForgotPassword1 = () => {
     const [text, setText] = useState('');
     
     const handleButtonPress = async () => {
-        console.log("hello");
+        // console.log("hello");
 
         await sendPasswordResetEmail(auth, text)
         .catch((error) => {
