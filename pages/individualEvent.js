@@ -1,42 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
-import Navbar from '../components/NavBar';
+import { View, Text, StyleSheet, ScrollView, Picker, CheckBox, TextInput, TouchableOpacity } from 'react-native'; // Added missing imports
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, setDoc, getDocs } from 'firebase/firestore';
 import { firebaseConfig } from '../firebaseConfig';
 import { db } from '../firebaseConfig';
 
 export default function EventDetailScreen() {
-    const [selectedValueShift, setSelectedValueShift] = useState("");
-    const [events, setEvents] = useState([]);
-    const [isMaterialSelected, setIsMaterialSelected] = useState(false);
-    const [materials, setMaterials] = useState([]);
-    
+  const [selectedValueShift, setSelectedValueShift] = useState("");
+  const [events, setEvents] = useState([]);
+  const [isMaterialSelected, setIsMaterialSelected] = useState(false);
+  const [materials, setMaterials] = useState([]);
+  
   useEffect(() => {
     const fetchEvents = async () => {
-      const eventsCollection = await getDocs(collection(db,'events'));
+      const eventsCollection = await getDocs(collection(db, 'events'));
       const querySnapshot = await eventsCollection.docs.map(doc => {
         const data = doc.data();
   
-      const fetchedEvents = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          date: data.date,
-          description: data.description,
-          location: data.location,
-          materials: data.materials,
-          shifts: data.shifts,
-        };
-      });
+        const fetchedEvents = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            date: data.date,
+            description: data.description,
+            location: data.location,
+            materials: data.materials,
+            shifts: data.shifts,
+          };
+        });
   
-      setEvents(fetchedEvents);
-    });
+        setEvents(fetchedEvents);
+      });
+    };
   
     fetchEvents();
-    [];
-    
-  }
+  }, []); // Moved the [] inside the useEffect hook
 
   const toggleMaterial = (index) => {
     const updatedMaterials = [...materials];
@@ -57,7 +55,7 @@ export default function EventDetailScreen() {
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={selectedValueShift}
-             onValueChange={(itemValue, itemIndex) => setSelectedValueShift(itemValue)}
+              onValueChange={(itemValue, itemIndex) => setSelectedValueShift(itemValue)}
               style={styles.picker}
               dropdownIconColor={"#000000"}
               mode={"dropdown"}
@@ -105,12 +103,11 @@ const styles = StyleSheet.create({
     padding: 80,
     paddingBottom: 10, // Add padding at the bottom if needed for visual appeal
   },
-    title: {
+  title: {
     fontSize: 24,
     fontWeight: '500',
     marginVertical: 10,
     textAlign: 'center',
-
   },
   subtitle: {
     fontSize: 18,
@@ -130,7 +127,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     fontWeight: '400',
-
   },
   label: {
     fontSize: 16,
@@ -174,12 +170,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     borderRadius: 10,
-
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  
+  }, 
 });
