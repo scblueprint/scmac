@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
 import Checkbox from 'expo-checkbox';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView} from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 
 export default function Waiver() {
 
@@ -16,7 +18,27 @@ export default function Waiver() {
         </Text>
       </TouchableOpacity>
       <Text style={styles.Waiver}>Waiver</Text>
-      <View style = {styles.rectangle}></View>
+
+      <View style={styles.imageContainer}>
+                <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                    <Image
+                        source={require('../assets/SCMAC-Waiver.png')}
+                        style={styles.image}
+                        resizeMode="contain"
+                    />
+                </ScrollView>
+      </View>
+      {/* <View style = {styles.rectangle}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+          <Image
+            source={require('../assets/SCMAC-Waiver.png')}
+            style={styles.image}
+            resizeMode="contain"
+          />
+         </ScrollView>
+      </View> */}
+
+
       <View style = {{ flexDirection: 'row', alignItems: 'center', width: '70%'}}>
         <Checkbox
             value={isChecked}
@@ -59,7 +81,15 @@ const styles = StyleSheet.create({
         width: 329,
         height: 370,
         backgroundColor: '#E9E9E9',
-        borderRadius: 8
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      image: {
+        // flex: 1,
+        width: '100%',
+        height: undefined,
+        aspectRatio: 329 / 370,
       },
       continueButton: {
         marginTop: 35,
