@@ -9,7 +9,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 let nextId = 0;
 let nextShiftsId = 0;
-
+//anirudh and karti
 export default function CreateEventScreen() {
     const [selectedValueShift, setSelectedValueShift] = useState("");
     const [isMaterialSelected, setIsMaterialSelected] = useState(false);
