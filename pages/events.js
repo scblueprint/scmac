@@ -1,21 +1,17 @@
-import React from 'react';
+import React,  { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import NavBar from '../components/NavBar.js'
+import { collection, getDocs, query } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { useFocusEffect } from '@react-navigation/native';
 
-const eventsData = [
-  // Replace with your actual events data
-  { id: '1', date: 'Date', eventName: 'Event Name', location: 'Location' },
-  { id: '2', date: 'Date', eventName: 'Event Name', location: 'Location' },
-  { id: '3', date: 'Date', eventName: 'Event Name', location: 'Location' },
-];
-
-const EventItem = ({ date, eventName, location }) => (
-  <TouchableOpacity style={styles.itemContainer}>
+const EventItem = ({ item, nav }) => (
+  <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("IndividualEvent", {item: item})}>
     <View style={styles.eventInfo}>
-      <Text style={styles.date}>{date}</Text>
-      <Text style={styles.eventName}>{eventName}</Text>
-      <Text style={styles.location}>{location}</Text>
+      <Text style={styles.date}>{new Date(item.data().date).toDateString().split(' ').slice(1).join(' ')}</Text>
+      <Text style={styles.eventName}>{item.data().title}</Text>
+      <Text style={styles.location}>{item.data().location}</Text>
     </View>
 	<SimpleLineIcons name="arrow-right" size={24} color="black" />
   </TouchableOpacity>
@@ -23,18 +19,31 @@ const EventItem = ({ date, eventName, location }) => (
 );
 
 export default function Events({navigation}) {
+  const [events, setEvents] = useState([]);
+  useFocusEffect(useCallback( () => {
+    async function fetchData() {
+      const arr = [];
+      const eventsData = await getDocs(collection(db, 'events'));
+      eventsData.forEach(doc => {
+        // console.log(doc.data());
+        arr.push(doc);
+      })
+      setEvents(arr);
+    }
+    fetchData();
+  }, []))
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Events</Text>
       <FlatList
-        data={eventsData}
+        data={events}
         renderItem={({ item }) => (
-          <EventItem date={item.date} eventName={item.eventName} location={item.location} />
+          <EventItem key={item.id} item={item} nav={navigation} />
         )}
-        keyExtractor={item => item.id}
+        // keyExtractor={item => item.id}
       />
-      <TouchableOpacity onPress={console.log(navigation)}></TouchableOpacity>
-    <NavBar navigation={navigation}/>
+       <NavBar navigation={navigation}/>
     </View>
   );
 }
@@ -50,15 +59,15 @@ const styles = StyleSheet.create({
     color: 'white',
     backgroundColor: '#6A466C',
     textAlign: 'center',
-    justifyContent: 'flex-end', // Align vertically to bottom
+    justifyContent: 'flex-end',
     padding: 80,
-    paddingBottom: 10, // Add padding at the bottom if needed for visual appeal
+    paddingBottom: 10,
 
   },
   itemContainer: {
-    flexDirection: 'row', // Align items in a row
-    justifyContent: 'space-between', // Distribute space between the text and the icon
-    alignItems: 'center', // Center items vertically
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
