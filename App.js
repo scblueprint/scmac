@@ -21,8 +21,8 @@ export default function App() {
       <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen name="Notifications" component={Notifications} options={{ headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="Profile" component={Profile} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="Notifications" component={Notifications} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Waiver" component={Waiver} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Events" component={Events} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="IndividualEvent" component={IndividualEvent} options={

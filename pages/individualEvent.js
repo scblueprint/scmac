@@ -51,7 +51,7 @@ export default function EventDetailScreen({route,navigation}) {
                     isSelected: false};
         if(!element.user) arr2.push(el);
       });
-      console.log(materials);
+      // console.log(materials);
       setMaterials(arr2);
       
       const fetchedEvents = {
@@ -65,7 +65,7 @@ export default function EventDetailScreen({route,navigation}) {
         }
 
       setEvent(fetchedEvents);
-      console.log(event.data())
+      // console.log(event.data())
     }
     fetchData();
  }, [])
@@ -131,7 +131,7 @@ export default function EventDetailScreen({route,navigation}) {
             }
             arr.push(m);
           })
-          console.log(arr)
+          // console.log(arr)
           await updateDoc(eventDoc, {
             materials: arr
           });
