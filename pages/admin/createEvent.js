@@ -6,7 +6,7 @@ import { Entypo } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import {createEvent} from "./api/event.js"
+import {createEvent} from "../api/event.js"
 let nextId = 0;
 let nextShiftsId = 0;
 //anirudh and karti

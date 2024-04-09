@@ -10,8 +10,8 @@ import IndividualEvent from './pages/individualEvent';
 import Notifications from './pages/notifications';
 import ForgotPassword1 from './pages/ForgotPassword1';
 import Navbar from './components/NavBar';
-import CreateEvent from './pages/createEvent';
-import EditEvent from './pages/editEvent';
+import CreateEvent from './pages/admin/createEvent';
+import EditEvent from './pages/admin/editEvent';
 
 const Stack = createStackNavigator();
 
