@@ -13,6 +13,8 @@ import ForgotPassword1 from './pages/ForgotPassword1';
 import ForgotPassword2 from './pages/forgotPassword2';
 import ForgotPassword3 from './pages/forgotPassword3';
 import Navbar from './components/NavBar';
+import CreateEvent from './pages/createEvent';
+import EditEvent from './pages/editEvent';
 
 const Stack = createStackNavigator();
 
@@ -31,7 +33,7 @@ export default function App() {
         <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPassword2" component={ForgotPassword2} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPassword3" component={ForgotPassword3} options={{ headerShown: false }} />
-        {/* Add more Stack.Screen components for each page */}
+        <Stack.Screen name="CreateEvent" component={CreateEvent} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
