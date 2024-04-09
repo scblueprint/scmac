@@ -43,7 +43,9 @@ export default function Events({navigation}) {
         )}
         // keyExtractor={item => item.id}
       />
-       <NavBar navigation={navigation}/>
+      <View style={{position: "absolute", bottom:0, width:"100%"}}>
+        <NavBar navigation={navigation}/>
+      </View>
     </View>
   );
 }

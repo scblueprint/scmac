@@ -166,7 +166,9 @@ export default function Profile({navigation}) {
       <TouchableOpacity style = {styles.signOutButton} onPress={signOutFunc}> 
         <Text style ={styles.buttonText}> Sign Out </Text>
       </TouchableOpacity>
-    <NavBar navigation={navigation}/>
+      <View style={{position: "absolute", bottom:0, width:"100%"}}>
+        <NavBar navigation={navigation}/>
+      </View>
     </View>
   );
 }
@@ -245,7 +247,6 @@ const styles = StyleSheet.create({
     height: "5.5%", 
     width: "80%",
     marginLeft: "10%",
-    marginBottom:"62%",
     marginTop: "10%"
 },
 buttonText: {
