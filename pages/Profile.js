@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import NavBar from '../components/NavBar.js';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity} from 'react-native';
 import {getCurrentUserData} from '../pages/api/users'
 export default function Profile({navigation}) {
   // Do the rest of the fields
@@ -10,6 +10,7 @@ export default function Profile({navigation}) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [isEditable, setIsEditable] = useState(false);
   // Do the rest of the fields
   useEffect( () => {
     async function fetchData() {
@@ -27,6 +28,10 @@ export default function Profile({navigation}) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Profile</Text>
+      <TouchableOpacity style = {styles.editButton}
+      onPress ={() => setIsEditable(!isEditable)}>
+        <Text style={styles.editText}>Edit</Text>
+      </TouchableOpacity>
     <View style={styles.pfpCircle}>
   <Text>PFP</Text>
 </View>
@@ -34,16 +39,16 @@ export default function Profile({navigation}) {
       <Text style={{fontSize:20}}>{firstName + " " + lastName}</Text>
         </View>
     <View style={styles.email}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Email: {"    " + email}</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Email: </Text><TextInput editable ={isEditable}>{"    " + email}</TextInput> 
     </View>
     <View style={styles.number}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Phone number: {"    " + phoneNumber}</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Phone number: </Text><TextInput editable = {isEditable}>{"    " + phoneNumber} </TextInput> 
         </View>
     <View style={styles.gender}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Gender: {"    " + gender}</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Gender: </Text><TextInput editable = {isEditable}>{"    " + gender}</TextInput> 
         </View>
     <View style={styles.birthday}>
-      <Text style={{fontSize:15, marginLeft:30 }}>Birthday: {"    " + birthday}</Text>
+      <Text style={{fontSize:15, marginLeft:30 }}>Birthday: </Text><TextInput editable = {isEditable}>{"    " + birthday}</TextInput>
         </View>
     <NavBar navigation={navigation}/>
     </View>
@@ -51,7 +56,7 @@ export default function Profile({navigation}) {
 }
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     backgroundColor: 'white',
   },
   header: {
@@ -62,6 +67,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 80,
     paddingBottom: 10,
+  },
+  editButton: {
+    fontSize: 20, 
+    fontWeight: 'bold',
+    color: 'blue',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   pfpCircle: {
     width: 100,
