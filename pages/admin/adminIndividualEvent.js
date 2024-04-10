@@ -6,8 +6,12 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { NavigationContainer } from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
-
-export default function AdminEventDetailScreen() {
+var nav = null;
+var item = null
+export default function AdminEventDetailScreen({route, navigation}) {
+item  = route.params;
+  console.log(item)
+  nav = navigation;
   return (
     // <ScrollView style={styles.container}>
     // <Text style={styles.header}>Event</Text>
@@ -18,7 +22,7 @@ export default function AdminEventDetailScreen() {
 
 function MyTabs() {
   return (
-    <NavigationContainer>
+    <NavigationContainer independent={true}>
       <Tab.Navigator style={{marginTop: "10%"}}>
       <Tab.Screen name="Details" component={Details} />
       <Tab.Screen name="Availability" component={Availability} />
@@ -34,7 +38,10 @@ function Details() {
   return (
     <ScrollView style={styles.container}>
     <Text style={styles.header}>Event</Text>
-    <Text style={styles.title}>Event Name</Text>
+    <TouchableOpacity onPress = {()=>{nav.navigate("EditEvent",{item: item});}} style={styles.saveButton}><Text style={styles.saveButtonText}>Edit</Text></TouchableOpacity>
+
+    <Text onChangeText={text => setEventName(text)} style={styles.title}>Event Name</Text>
+
       <Text style={styles.subtitle}>Date</Text>
       <Text style={styles.subtitle}>Location</Text>
       <Text style={styles.sectionTitle}>Event Description</Text>
@@ -88,7 +95,7 @@ function Details() {
         <Text style={styles.label}>Item 4</Text>
       </View>
       <Text style={styles.sectionTitle}>Comments</Text>
-      <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
+      <TextInput onChangeText={text => setDesc(text)} style={styles.textInput} multiline placeholder="Additional comments" />
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Confirm</Text>
       </TouchableOpacity>
@@ -204,5 +211,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#b9b9bd",
     height: "20%",
     padding: "2%"
+  },
+  saveButton: {
+    alignItems: 'flex-end',
+    marginTop: '3%',
+    marginRight: '3%'
+  },
+  saveButtonText: {
+    fontSize: "18%",
+    color: "#6A466C"
   }
 });
