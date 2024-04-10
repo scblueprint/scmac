@@ -23,7 +23,7 @@ item  = route.params;
 function MyTabs() {
   return (
     <NavigationContainer independent={true}>
-      <Tab.Navigator style={{marginTop: "10%"}}>
+      <Tab.Navigator>
       <Tab.Screen name="Details" component={Details} />
       <Tab.Screen name="Availability" component={Availability} />
       </Tab.Navigator>
@@ -37,7 +37,7 @@ function Details() {
     const [toggleValue, setToggleValue] = useState(false);
   return (
     <ScrollView style={styles.container}>
-    <Text style={styles.header}>Event</Text>
+    {/* <Text style={styles.header}>Event</Text> */}
     <TouchableOpacity onPress = {()=>{nav.navigate("EditEvent",{item: item});}} style={styles.saveButton}><Text style={styles.saveButtonText}>Edit</Text></TouchableOpacity>
 
     <Text onChangeText={text => setEventName(text)} style={styles.title}>Event Name</Text>
@@ -109,7 +109,7 @@ function Availability() {
     const [toggleValue, setToggleValue] = useState(false);
   return (
     <ScrollView style={styles.container}>
-    <Text style={styles.header}>Event</Text>
+    {/* <Text style={styles.header}>Event</Text> */}
     <Text style={styles.timeSlot}>Time Slot 1 (00:00 - 00:00)</Text>
     <Text style={styles.timeSlotBody}>Person 1</Text>
       </ScrollView>
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
   timeSlot: {
     backgroundColor: "#b9b9bd",
-    height: "20%",
+    height: "80%",
     padding: "2%"
   },
   saveButton: {
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     marginRight: '3%'
   },
   saveButtonText: {
-    fontSize: "18%",
+    fontSize: 18,
     color: "#6A466C"
   }
 });

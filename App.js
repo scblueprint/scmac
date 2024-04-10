@@ -38,9 +38,30 @@ export default function App() {
         <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
 
         <Stack.Screen name="AdminEvents" component={AdminEvents} options={{ headerShown: false }} />
-        <Stack.Screen name="CreateEvent" component={CreateEventScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="EditEvent" component={EditEventScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="AdminIndividualEvent" component={AdminEventDetailScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="CreateEvent" component={CreateEventScreen} options={
+          { headerShown: true, 
+            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
+            headerBackTitle: " ", 
+            headerTitleStyle: {color: "#fff", fontSize: 20, fontWeight: "bold"}, 
+            headerTitle: "Create Event",
+            headerTintColor: "white"
+          }}/>
+        <Stack.Screen name="EditEvent" component={EditEventScreen} options={
+          { headerShown: true, 
+            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
+            headerBackTitle: " ", 
+            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+            headerTitle: "Edit Event",
+            headerTintColor: "white"
+          }}/>
+        <Stack.Screen name="AdminIndividualEvent" component={AdminEventDetailScreen} options={
+          { headerShown: true, 
+            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
+            headerBackTitle: " ", 
+            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+            headerTitle: "Event",
+            headerTintColor: "white"
+          }}/>
 
       </Stack.Navigator>
     </NavigationContainer>

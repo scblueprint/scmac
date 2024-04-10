@@ -80,7 +80,7 @@ export default function EditEventScreen({route, navigation}) {
         onConfirm={handleTimeConfirm}
         onCancel={hideTimePicker}
       />
-      <Text style={styles.header}>Edit Event</Text>
+      {/* <Text style={styles.header}>Edit Event</Text> */}
 
       <TouchableOpacity style={styles.saveButton}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
       

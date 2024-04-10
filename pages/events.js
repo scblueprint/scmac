@@ -41,7 +41,7 @@ export default function Events({navigation}) {
         renderItem={({ item }) => (
           <EventItem key={item.id} item={item} nav={navigation} />
         )}
-        // keyExtractor={item => item.id}
+        keyExtractor={item => item.id}
       />
       <View style={{position: "absolute", bottom:0, width:"100%"}}>
         <NavBar navigation={navigation}/>

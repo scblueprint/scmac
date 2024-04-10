@@ -80,7 +80,7 @@ export default function CreateEventScreen({navigation}) {
         onConfirm={handleTimeConfirm}
         onCancel={hideTimePicker}
       />
-      <Text style={styles.header}>Create Event</Text>
+      {/* <Text style={styles.header}>Create Event</Text> */}
 
       <TouchableOpacity style={styles.saveButton}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
       

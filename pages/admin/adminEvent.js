@@ -9,7 +9,7 @@ import { AntDesign } from '@expo/vector-icons';
 const EventItem = ({ item, nav }) => (
   <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("AdminIndividualEvent", {item: item})}>
     <View style={styles.eventInfo}>
-      <Text style={styles.date}>{new Date(item.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Text>
+      <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text>
       <Text style={styles.eventName}>{item.title}</Text>
       <Text style={styles.location}>{item.location}</Text>
     </View>
@@ -29,7 +29,7 @@ export default function AdminEvents({navigation}) {
         arr.push(doc.data());
       })
       setEvents(arr);
-      console.log(events);
+      // console.log(events);
     }
     fetchData();
   }, [])
@@ -43,7 +43,7 @@ export default function AdminEvents({navigation}) {
       <FlatList
         data={events}
         renderItem={({ item }) => (
-          <EventItem item={item} nav={navigation} />
+          <EventItem key={item.id} item={item} nav={navigation} />
         )}
         keyExtractor={item => item.id}
       />
