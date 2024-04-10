@@ -10,14 +10,16 @@ import IndividualEvent from './pages/individualEvent';
 import Notifications from './pages/notifications';
 import ForgotPassword1 from './pages/ForgotPassword1';
 import Navbar from './components/NavBar';
-import CreateEvent from './pages/admin/createEvent';
-import EditEvent from './pages/admin/editEvent';
+import CreateEventScreen from './pages/admin/createEvent';
+import EditEventScreen from './pages/admin/editEvent';
+import AdminEvents from './pages/admin/adminEvent';
+import AdminEventDetailScreen from './pages/admin/adminIndividualEvent';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
+    <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false, gestureEnabled: false }} />
@@ -34,7 +36,12 @@ export default function App() {
             headerTintColor: "white"
           }}/>
         <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
-        <Stack.Screen name="CreateEvent" component={CreateEvent} options={{ headerShown: false }} />
+
+        <Stack.Screen name="AdminEvents" component={AdminEvents} options={{ headerShown: false }} />
+        <Stack.Screen name="CreateEvent" component={CreateEventScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="EditEvent" component={EditEventScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="AdminIndividualEvent" component={AdminEventDetailScreen} options={{ headerShown: false }} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

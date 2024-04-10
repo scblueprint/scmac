@@ -80,10 +80,16 @@ export default function Login({navigation}) {
             <TouchableOpacity
               style={styles.loginButton}
               onPress={async () => {
-                await login(email,pword, "hello");
+                var user = await login(email,pword, "hello");
                 setEmail("");
                 setPword("");
-                navigation.navigate("Events");
+                if(user.admin){
+                  navigation.navigate("AdminEvents");
+
+                }
+                else{
+                  navigation.navigate("Events");
+                }
               }}
             >
             <Text style={styles.loginButtonText}>Log In</Text>

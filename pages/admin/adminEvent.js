@@ -1,13 +1,13 @@
 import React,  { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
-import NavBar from '../components/NavBar.js'
+import NavBar from '../../components/NavBar.js'
 import { collection, getDocs, query } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 import { AntDesign } from '@expo/vector-icons';
 
 const EventItem = ({ item, nav }) => (
-  <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("IndividualEvent", {item: item})}>
+  <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("AdminIndividualEvent", {item: item})}>
     <View style={styles.eventInfo}>
       <Text style={styles.date}>{new Date(item.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Text>
       <Text style={styles.eventName}>{item.title}</Text>
@@ -18,7 +18,7 @@ const EventItem = ({ item, nav }) => (
 
 );
 
-export default function Events({navigation}) {
+export default function AdminEvents({navigation}) {
   const [events, setEvents] = useState([]);
 
   useEffect( () => {
@@ -38,7 +38,7 @@ export default function Events({navigation}) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Events</Text>
-        <AntDesign style={{marginLeft:"25%"}} name="plus" size={24} color="white" />
+        <AntDesign onPress={() => { navigation.navigate("CreateEvent");}} style={{marginLeft:"25%"}} name="plus" size={24} color="white" />
       </View>
       <FlatList
         data={events}

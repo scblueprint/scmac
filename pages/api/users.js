@@ -15,7 +15,9 @@ const login = async (email, password, notifToken) => {
     await setDoc(doc(db, "users", user.uid), { notifToken: notifToken }, { merge: true });
     
     // Return the user object on successful login and Firestore update
-    return user;
+    const userData = await getDoc(doc(db, "users", user.uid));
+    console.log(userData.data());
+    return userData.data();
   } catch (error) {
     // Handle or return the error appropriately
     console.error("Login error:", error);
