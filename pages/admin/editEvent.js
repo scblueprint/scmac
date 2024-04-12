@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   dash: {
-    fontSize: "25%"
+    fontSize: 25,
   },
   checkbox: {
     marginRight: 8, // Add some space between the checkbox and the label
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
     margin: "5%",
-    fontSize: "20%",
+    fontSize: 20,
     padding: 10, 
     borderWidth: 1,
   },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
-    fontSize: "15%",
+    fontSize: 15,
     paddingLeft: "2%", 
     borderWidth: 1,
     marginLeft: "3%"
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     marginRight: '3%'
   },
   saveButtonText: {
-    fontSize: "18%",
+    fontSize: 18,
     color: "#6A466C"
   }
 });

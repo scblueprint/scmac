@@ -1,21 +1,24 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native'; 
 import { Picker } from '@react-native-picker/picker';
-import CheckBox from 'expo-checkbox';
+import Checkbox from 'expo-checkbox';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
+import { Dropdown } from 'react-native-element-dropdown';
+import { AntDesign } from '@expo/vector-icons';
+import { auth, db } from '../../firebaseConfig';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 var nav = null;
-var item = null
+var item = null;
 export default function AdminEventDetailScreen({route, navigation}) {
-item  = route.params;
-  console.log(item)
+  useFocusEffect(useCallback( () => {
+  }, []))
+  item  = route.params;
+  // console.log(item)
   nav = navigation;
   return (
-    // <ScrollView style={styles.container}>
-    // <Text style={styles.header}>Event</Text>
-    // </ScrollView>
     <MyTabs/>
   );
 };
@@ -24,8 +27,14 @@ function MyTabs() {
   return (
     <NavigationContainer independent={true}>
       <Tab.Navigator>
-      <Tab.Screen name="Details" component={Details} />
-      <Tab.Screen name="Availability" component={Availability} />
+      <Tab.Screen options={{
+        tabBarStyle:{backgroundColor:"#6A466C", borderTopColor:"black"},
+        tabBarLabelStyle:{color:"white"},
+        }} name="Details" component={Details} />
+      <Tab.Screen options={{
+        tabBarStyle:{backgroundColor:"#6A466C", borderTopColor:"black"},
+        tabBarLabelStyle:{color:"white"},
+        }} name="Availability" component={Availability} />
       </Tab.Navigator>
     </NavigationContainer>
   )
@@ -33,67 +42,117 @@ function MyTabs() {
 
 function Details() {
   const [selectedValueShift, setSelectedValueShift] = useState("");
-    const [isMaterialSelected, setIsMaterialSelected] = useState(false);
-    const [toggleValue, setToggleValue] = useState(false);
+  const [isMaterialSelected, setIsMaterialSelected] = useState(false);
+  const [value, setValue] = useState(null);
+  const [event, setEvent] = useState({});
+  const [materials, setMaterials] = useState([]);
+  const [shiftsData, setShiftsData] = useState([]);
+
+  const renderItem = item => {
+    return (
+      <View style={styles.item}>
+        <Text style={styles.textItem}>{item.label}</Text>
+        {item.value === value && (
+          <AntDesign
+            style={styles.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          />
+        )}
+      </View>
+    );
+  };
+
+  useFocusEffect(useCallback( () => {
+    async function fetchData() {
+      const arr = [];
+      const arr2 = [];
+      // const { item } = route.params;
+      // console.log(item);
+      // const event = item;
+      const eventData = item.item;
+      eventData.shifts.forEach(async element => {
+        const shiftDoc = doc(db, 'shifts', element);
+        const shift = await getDoc(doc(db, 'shifts', element));
+        // console.log(shift.data())
+        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date(shift.data().endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
+        // console.log(arr);
+      });
+      setShiftsData(arr);
+
+      eventData.materials.forEach(async element => {
+        const el = {...element,
+                    isSelected: false};
+        if(!element.user) arr2.push(el);
+      });
+      // console.log(materials);
+      setMaterials(arr2);
+      
+      const fetchedEvents = {
+          // id: event.id,
+          title: eventData.title,
+          date: eventData.date,
+          description: eventData.description,
+          location: eventData.location,
+          materials: eventData.materials,
+          shifts: eventData.shifts,
+        }
+
+      setEvent(fetchedEvents);
+      // console.log(event.data())
+    }
+    fetchData();
+ }, []))
+
+ const toggleMaterial = (index) => {
+  const updatedMaterials = [...materials];
+  updatedMaterials[index].isSelected = !updatedMaterials[index].isSelected;
+  setMaterials(updatedMaterials);
+};
+
   return (
     <ScrollView style={styles.container}>
     {/* <Text style={styles.header}>Event</Text> */}
-    <TouchableOpacity onPress = {()=>{nav.navigate("EditEvent",{item: item});}} style={styles.saveButton}><Text style={styles.saveButtonText}>Edit</Text></TouchableOpacity>
-
-    <Text onChangeText={text => setEventName(text)} style={styles.title}>Event Name</Text>
-
-      <Text style={styles.subtitle}>Date</Text>
-      <Text style={styles.subtitle}>Location</Text>
-      <Text style={styles.sectionTitle}>Event Description</Text>
-      <Text style={styles.description}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...</Text>
+    <View style={{flex: 1, flexDirection:'row', marginTop: "4%", alignItems: "center", justifyContent: "center", marginBottom: "3%"}}>
+      <Text style={styles.title}>{event.title}</Text>
+      <TouchableOpacity onPress = {()=>{nav.navigate("EditEvent",{item: item});}} style={styles.saveButton}><Text style={styles.saveButtonText}>Edit</Text></TouchableOpacity>
+    </View>
+    
+      <Text style={styles.subtitle}>Date: {new Date(event.date).toLocaleDateString()}</Text>
+      <Text style={styles.subtitle}>Location: {event.location}</Text>
+      <Text style={styles.sectionTitle}>Event Description: </Text>
+      <Text style={styles.description}>{event.description}</Text>
       <Text style={styles.sectionTitle}>Select a Work Shift</Text>
-       <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={selectedValueShift}
-          onValueChange={(itemValue, itemIndex) => setSelectedValueShift(itemValue)}
-          style={styles.picker}
-          dropdownIconColor={"#000000"}
-          mode={"dropdown"}
-          prompt={"select"}
-        >
-          <Picker.Item label="Morning Shift" value="morning" />
-          <Picker.Item label="Afternoon Shift" value="afternoon" />
-          <Picker.Item label="Night Shift" value="night" />
-        </Picker>
-      </View>
+      <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={shiftsData}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Select item"
+              searchPlaceholder="Search..."
+              value={value}
+              onChange={item => {
+                setValue(item);
+              }}
+              renderItem={renderItem}
+            />
       <Text style={styles.sectionTitle}>Materials Checklist</Text>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 1</Text>
-      </View>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 2</Text>
-      </View>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 3</Text>
-      </View>
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <Text style={styles.label}>Item 4</Text>
-      </View>
+      {materials ? materials.map((material,index) => (
+            <View key={index} style={styles.checkboxContainer}>
+              <Checkbox
+                value={materials[index].isSelected || false}
+                onValueChange={() => toggleMaterial(index)}
+                style={styles.checkbox}
+              />
+              <Text style={styles.label}>{material ? material.item : ""}</Text>
+            </View>
+          )):null}
       <Text style={styles.sectionTitle}>Comments</Text>
       <TextInput onChangeText={text => setDesc(text)} style={styles.textInput} multiline placeholder="Additional comments" />
       <TouchableOpacity style={styles.button}>
@@ -105,8 +164,9 @@ function Details() {
 
 function Availability() {
   const [selectedValueShift, setSelectedValueShift] = useState("");
-    const [isMaterialSelected, setIsMaterialSelected] = useState(false);
-    const [toggleValue, setToggleValue] = useState(false);
+  const [isMaterialSelected, setIsMaterialSelected] = useState(false);
+  const [toggleValue, setToggleValue] = useState(false);
+  
   return (
     <ScrollView style={styles.container}>
     {/* <Text style={styles.header}>Event</Text> */}
@@ -131,36 +191,33 @@ const styles = StyleSheet.create({
     padding: 80,
     paddingBottom: 10, // Add padding at the bottom if needed for visual appeal
   },
-    title: {
+  title: {
     fontSize: 24,
     fontWeight: '500',
-    marginVertical: 10,
+    // marginLeft: "30%",
     textAlign: 'center',
-
   },
   subtitle: {
     fontSize: 18,
     fontWeight: '500',
-    marginVertical: 5,
-    marginLeft: 10,
+    marginVertical: "2%",
+    marginLeft: "5%",
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: '500',
-    marginTop: 20,
-    marginBottom: 10,
-    marginLeft: 10,
+    marginVertical: "2%",
+    marginLeft: "5%",
   },
   description: {
     fontSize: 16,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: "5%",
+    marginBottom: "2%",
     fontWeight: '400',
-
   },
   label: {
     fontSize: 16,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   checkboxContainer: {
     flexDirection: 'row', // Align items in a row
@@ -200,7 +257,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     borderRadius: 10,
-
   },
   buttonText: {
     color: 'white',
@@ -213,12 +269,57 @@ const styles = StyleSheet.create({
     padding: "2%"
   },
   saveButton: {
+    position: 'absolute',
     alignItems: 'flex-end',
-    marginTop: '3%',
-    marginRight: '3%'
+    // marginLeft: '20%',
+    right: "5%",
   },
   saveButtonText: {
     fontSize: 18,
     color: "#6A466C"
-  }
+  },
+  dropdown: {
+    marginLeft: "4%",
+    marginBottom:"2%",
+    height: "7%",
+    width: "90%",
+    backgroundColor: 'F1F1F2',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor:"8E8E93",
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  item: {
+    padding: 17,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textItem: {
+    flex: 1,
+    fontSize: 16,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', 
+    paddingLeft: 20, 
+    marginBottom: 3, 
+  },
+  checkbox: {
+    marginRight: 8,
+  },
 });

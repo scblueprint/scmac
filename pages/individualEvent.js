@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, CheckBox, TextInput, TouchableOpacity, Alert } from 'react-native'; // Added missing imports
-import { initializeApp } from 'firebase/app';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native'; 
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
-import { firebaseConfig } from '../firebaseConfig';
 import { Dropdown } from 'react-native-element-dropdown';
 import { AntDesign } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';

@@ -37,7 +37,7 @@ export default function App() {
           }}/>
         <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
 
-        <Stack.Screen name="AdminEvents" component={AdminEvents} options={{ headerShown: false }} />
+        <Stack.Screen name="AdminEvents" component={AdminEvents} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false}} />
         <Stack.Screen name="CreateEvent" component={CreateEventScreen} options={
           { headerShown: true, 
             headerStyle: {backgroundColor: "#6A466C", height: 100}, 

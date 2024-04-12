@@ -1,5 +1,5 @@
 import React, { useState, setState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
 import { Entypo } from '@expo/vector-icons';
@@ -66,6 +66,10 @@ export default function CreateEventScreen({navigation}) {
     hideTimePicker();
   };
 
+  function isEmpty(value) {
+    return (value == null || (typeof value === "string" && value.trim().length === 0));
+  }
+
   return (
     <ScrollView style={styles.container}>
       <DateTimePickerModal
@@ -124,7 +128,7 @@ export default function CreateEventScreen({navigation}) {
 
 
       <Text style={styles.sectionTitle}>Materials Checklist</Text>
-      <ScrollView>
+      <View>
       {materials.map((material, index) => (
           <View style={styles.checkboxContainer} key={index}>
             <CheckBox
@@ -151,15 +155,16 @@ export default function CreateEventScreen({navigation}) {
         />
         <Text style={styles.addLabel}>Add Material</Text>
       </TouchableOpacity>
-      </ScrollView>
+      </View>
       <View style={styles.checkboxContainer}>
       </View>
       <Text style={styles.sectionTitle}>Event Description</Text>
       <TextInput onChangeText={text => setDesc(text)} style={styles.textInput} multiline placeholder="Add Event Description" />
       <TouchableOpacity 
           onPress={async () => {
+            if (isEmpty(name)) {Alert.alert("Event Name Required"); return;}
             await createEvent(dateDay, desc, materials, shifts, name, location);
-            navigation.navigate("Events");
+            navigation.navigate("AdminEvents");
           }}
       style={styles.button}>
         <Text style={styles.buttonText}>Confirm</Text>
@@ -239,7 +244,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   dash: {
-    fontSize: "25%"
+    fontSize: 25
   },
   checkbox: {
     marginRight: 8, // Add some space between the checkbox and the label
@@ -255,14 +260,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   eventTextInput: {
-    height: '5%',
+    height: '6%',
     textAlign: 'center',
     borderColor: '#ccc',
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
     margin: "5%",
-    fontSize: "20%",
-    padding: 10, 
+    fontSize: 20,
+    // padding: 10, 
     borderWidth: 1,
   },
   locationInput: {
@@ -271,7 +276,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
-    fontSize: "15%",
+    fontSize: 15,
     paddingLeft: "2%", 
     borderWidth: 1,
     marginLeft: "3%"
@@ -319,7 +324,7 @@ const styles = StyleSheet.create({
     marginRight: '3%'
   },
   saveButtonText: {
-    fontSize: "18%",
+    fontSize: 18,
     color: "#6A466C"
   }
 });

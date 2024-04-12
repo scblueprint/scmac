@@ -1,10 +1,11 @@
-import React,  { useState, useEffect } from 'react';
+import React,  { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import NavBar from '../../components/NavBar.js'
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { AntDesign } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const EventItem = ({ item, nav }) => (
   <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("AdminIndividualEvent", {item: item})}>
@@ -21,7 +22,7 @@ const EventItem = ({ item, nav }) => (
 export default function AdminEvents({navigation}) {
   const [events, setEvents] = useState([]);
 
-  useEffect( () => {
+  useFocusEffect(useCallback( () => {
     async function fetchData() {
       const arr = [];
       const eventsData = await getDocs(collection(db, 'events'));
@@ -32,7 +33,9 @@ export default function AdminEvents({navigation}) {
       // console.log(events);
     }
     fetchData();
-  }, [])
+  }, []))
+
+  let i = 0;
 
   return (
     <View style={styles.container}>
@@ -43,9 +46,9 @@ export default function AdminEvents({navigation}) {
       <FlatList
         data={events}
         renderItem={({ item }) => (
-          <EventItem key={item.id} item={item} nav={navigation} />
+          <EventItem key={i++} item={item} nav={navigation} />
         )}
-        keyExtractor={item => item.id}
+        // keyExtractor={item => item.title}
       />
        <NavBar navigation={navigation}/>
     </View>

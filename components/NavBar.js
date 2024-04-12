@@ -1,7 +1,7 @@
 // import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
-
+import {auth} from "../firebaseConfig"
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const Navbar = ({navigation}) => {
@@ -9,7 +9,9 @@ const Navbar = ({navigation}) => {
     <View style={styles.navbarContainer}>
       <TouchableOpacity
         style={styles.navItem}
+        
         onPress={() => navigation.navigate("Events")}
+        //if admin go to admin events
       >
         <Icon name="calendar-outline" size={25} color="#4F4F4F" />
         <Text style={styles.navText}>Events</Text>
