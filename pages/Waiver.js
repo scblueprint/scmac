@@ -29,7 +29,7 @@ export default function Waiver() {
   const [parentGuardianSignature, setParentGuardianSignature] = useState('');
 
   const handleSubmit = () => {
-    // Handle form submission
+    // Firebase
   };
   const [isChecked, setIsChecked] = useState(false);
   return (
