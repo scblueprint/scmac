@@ -6,7 +6,7 @@ import { Entypo } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
+import {editEvent} from '../api/event'
 let nextId = 0;
 let nextShiftsId = 0;
 
@@ -55,10 +55,13 @@ export default function EditEventScreen({route, navigation}) {
     // console.warn("A time has been picked: ", time);
     const updatedShifts = shifts.map((s, i) => {
       if (i === editingTimeShiftID) {
-        if (editingType === "start")
-          s.start = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        else
-          s.end = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", });
+        const toTimestamp = date => Math.floor(date.getTime() / 1000);
+        if (editingType === "start"){
+          s.start = toTimestamp(time).toString();
+        }
+        else{
+          s.end = toTimestamp(time).toString();
+        }
         return s;
       } else return s;
     });
@@ -155,7 +158,11 @@ export default function EditEventScreen({route, navigation}) {
       </View>
       <Text style={styles.sectionTitle}>Event Description</Text>
       <TextInput style={styles.textInput} multiline placeholder={desc} />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity 
+                onPress={async () => {
+                  await editEvent(dateDay, desc, materials, shifts, eventName, location)
+                }}
+      style={styles.button}>
         <Text style={styles.buttonText}>Confirm</Text>
       </TouchableOpacity>
     </ScrollView>
