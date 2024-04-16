@@ -10,7 +10,7 @@ import IndividualEvent from './pages/individualEvent';
 import Notifications from './pages/notifications';
 import ForgotPassword1 from './pages/ForgotPassword1';
 import Navbar from './components/NavBar';
-import AdminVolunteers from './pages/AdminVolunteers';
+// import AdminVolunteers from './pages/AdminVolunteers';
 import CreateEventScreen from './pages/admin/createEvent';
 import EditEventScreen from './pages/admin/editEvent';
 import AdminEvents from './pages/admin/adminEvent';
@@ -19,7 +19,7 @@ import AdminEventDetailScreen from './pages/admin/adminIndividualEvent';
 const Stack = createStackNavigator();
 
 export default function App() {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page
+  // persistence: getReactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName='Login'>
