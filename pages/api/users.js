@@ -1,6 +1,7 @@
 import { auth, db } from '../../firebaseConfig';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
+import { Alert } from 'react-native';
 
 
 // Login function
@@ -14,15 +15,18 @@ const login = async (email, password, notifToken) => {
     await setDoc(doc(db, "users", user.uid), { notifToken: notifToken }, { merge: true });
     
     // Return the user object on successful login and Firestore update
-    return user;
+    const userData = await getDoc(doc(db, "users", user.uid));
+    console.log(userData.data());
+    return userData.data();
   } catch (error) {
     // Handle or return the error appropriately
     console.error("Login error:", error);
+    if (error.code == "auth/invalid-email") Alert.alert("Invalid Email");
     throw error; // Or return a specific message or object
   }
 };
 
-const signup = async (email, password, fname, lname, phoneNumber) => {
+const signup = async (email, password, fname, lname, phoneNumber, interests) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -38,7 +42,7 @@ const signup = async (email, password, fname, lname, phoneNumber) => {
       downloadURL: "",
       notifications: [],
       gender: "",
-      
+      interests: interests
     };
     await setDoc(doc(db, "users", user.uid), data);
 
@@ -62,9 +66,9 @@ const getCurrentUser = () => {
 };
 
 const getCurrentUserData = async () => {
-  console.log(auth.currentUser);
+  // console.log(auth.currentUser);
   const userRef = await getDoc(doc(db, "users", auth.currentUser.uid));
-  console.log(userRef.data());
+  // console.log(userRef.data());
   // userRef.forEach((doc) => {
   //   console.log(doc.data());
   // })

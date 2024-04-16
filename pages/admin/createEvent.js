@@ -1,16 +1,16 @@
 import React, { useState, setState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
 import { Entypo } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
+import {createEvent} from "../api/event.js"
 let nextId = 0;
 let nextShiftsId = 0;
-
-export default function EditEventScreen() {
+//anirudh and karti
+export default function CreateEventScreen({navigation}) {
     const [selectedValueShift, setSelectedValueShift] = useState("");
     const [isMaterialSelected, setIsMaterialSelected] = useState(false);
     const [materials, setMaterials] = useState([]);
@@ -20,6 +20,11 @@ export default function EditEventScreen() {
     const [dateDay, setDateDay] = useState("Day, Date");
     const [editingTimeShiftID, setEditingTimeShiftID] = useState("");
     const [editingType, setEditingType] = useState("");
+    const [desc, setDesc] = useState("");
+    const [location, setLocation] = useState("");
+    const [name, setName] = useState("");
+
+
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -47,16 +52,23 @@ export default function EditEventScreen() {
     // console.warn("A time has been picked: ", time);
     const updatedShifts = shifts.map((s, i) => {
       if (i === editingTimeShiftID) {
-        if (editingType === "start")
-          s.start = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        else
-          s.end = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", });
+        const toTimestamp = date => Math.floor(date.getTime() / 1000);
+        if (editingType === "start"){
+          s.start = toTimestamp(time).toString();
+        }
+        else{
+          s.end = toTimestamp(time).toString();
+        }
         return s;
       } else return s;
     });
     setShifts(updatedShifts);
     hideTimePicker();
   };
+
+  function isEmpty(value) {
+    return (value == null || (typeof value === "string" && value.trim().length === 0));
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -72,11 +84,11 @@ export default function EditEventScreen() {
         onConfirm={handleTimeConfirm}
         onCancel={hideTimePicker}
       />
-      <Text style={styles.header}>Create Event</Text>
+      {/* <Text style={styles.header}>Create Event</Text> */}
 
       <TouchableOpacity style={styles.saveButton}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
       
-      <TextInput style={styles.eventTextInput} placeholder="Event Name"></TextInput>
+      <TextInput style={styles.eventTextInput} onChangeText={text => setName(text)} placeholder="Event Name"></TextInput>
       
       <TouchableOpacity style={styles.date} onPress={showDatePicker}>
         <Entypo name="calendar" size={"30%"} color="black" />
@@ -85,18 +97,19 @@ export default function EditEventScreen() {
 
       <View style={styles.location}>
         <SimpleLineIcons name="location-pin" size={"30%"} color="black" />
-        <TextInput style={styles.locationInput} placeholder="Add Location"></TextInput>
+        <TextInput onChangeText={text => setLocation(text)} style={styles.locationInput} placeholder="Add Location"></TextInput>
       </View>
 
       <Text style={styles.sectionTitle}>Work Shifts</Text>
       {shifts.map((shift, index) => (
           <View style={styles.checkboxContainer} key={index}>
             <TouchableOpacity style={styles.shift} onPress={() => {showTimePicker(); setEditingTimeShiftID(index); setEditingType("start")}}>
-          <Text>{shift.start}</Text>
+            <Text> {shift.start ? new Date(parseInt(shift.start)*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :  "Choose Time"} </Text>
         </TouchableOpacity>
         <Text style={styles.dash}> - </Text>
         <TouchableOpacity style={styles.shift} onPress={() => {showTimePicker(); setEditingTimeShiftID(index); setEditingType("end")}}>
-          <Text>{shift.end}</Text>
+          <Text> {shift.end ? new Date(parseInt(shift.end)*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :  "Choose Time"} </Text>
+
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {setShifts(
           shifts.slice(0,index).concat(shifts.slice(index+1))
@@ -108,14 +121,14 @@ export default function EditEventScreen() {
 
       <TouchableOpacity style={styles.checkboxContainer} onPress={() => {setShifts([
           ...shifts,
-          { id: nextShiftsId++, name: "", start: "Choose Time", end: "Choose Time" }
+          { id: nextShiftsId++, name: "", start: null, end: null }
         ]);}}>
         <Text style={styles.addShiftLabel}>Add Shift</Text>
       </TouchableOpacity>
 
 
       <Text style={styles.sectionTitle}>Materials Checklist</Text>
-      <ScrollView>
+      <View>
       {materials.map((material, index) => (
           <View style={styles.checkboxContainer} key={index}>
             <CheckBox
@@ -142,12 +155,18 @@ export default function EditEventScreen() {
         />
         <Text style={styles.addLabel}>Add Material</Text>
       </TouchableOpacity>
-      </ScrollView>
+      </View>
       <View style={styles.checkboxContainer}>
       </View>
       <Text style={styles.sectionTitle}>Event Description</Text>
-      <TextInput style={styles.textInput} multiline placeholder="Add Event Description" />
-      <TouchableOpacity style={styles.button}>
+      <TextInput onChangeText={text => setDesc(text)} style={styles.textInput} multiline placeholder="Add Event Description" />
+      <TouchableOpacity 
+          onPress={async () => {
+            if (isEmpty(name)) {Alert.alert("Event Name Required"); return;}
+            await createEvent(dateDay, desc, materials, shifts, name, location);
+            navigation.navigate("AdminEvents");
+          }}
+      style={styles.button}>
         <Text style={styles.buttonText}>Confirm</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -225,7 +244,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   dash: {
-    fontSize: "25%"
+    fontSize: 25
   },
   checkbox: {
     marginRight: 8, // Add some space between the checkbox and the label
@@ -241,14 +260,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   eventTextInput: {
-    height: '5%',
+    height: '6%',
     textAlign: 'center',
     borderColor: '#ccc',
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
     margin: "5%",
-    fontSize: "20%",
-    padding: 10, 
+    fontSize: 20,
+    // padding: 10, 
     borderWidth: 1,
   },
   locationInput: {
@@ -257,7 +276,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
-    fontSize: "15%",
+    fontSize: 15,
     paddingLeft: "2%", 
     borderWidth: 1,
     marginLeft: "3%"
@@ -305,7 +324,7 @@ const styles = StyleSheet.create({
     marginRight: '3%'
   },
   saveButtonText: {
-    fontSize: "18%",
+    fontSize: 18,
     color: "#6A466C"
   }
 });

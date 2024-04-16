@@ -10,16 +10,24 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 let nextId = 0;
 let nextShiftsId = 0;
 
-export default function CreateEventScreen() {
+export default function EditEventScreen({route, navigation}) {
+    const { item } = route.params;
+    console.log("WELKFJWELKJFELWJFLKEWJFELKWJFLKj")
+    console.log(item.item.materials)
     const [selectedValueShift, setSelectedValueShift] = useState("");
     const [isMaterialSelected, setIsMaterialSelected] = useState(false);
-    const [materials, setMaterials] = useState([]);
+    const [materials, setMaterials] = useState(item.item.materials.filter(item => item.user=="").map((item, index) => ({ id: nextId++, name: item.item, selected: false })));
     const [shifts, setShifts] = useState([]);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
     const [dateDay, setDateDay] = useState("Day, Date");
     const [editingTimeShiftID, setEditingTimeShiftID] = useState("");
     const [editingType, setEditingType] = useState("");
+    const [desc, setDesc] = useState(item.item.description);
+    const [location, setLocation] = useState(item.item.location);
+    const [eventName, setEventName] = useState(item.item.title);
+
+
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -72,11 +80,11 @@ export default function CreateEventScreen() {
         onConfirm={handleTimeConfirm}
         onCancel={hideTimePicker}
       />
-      <Text style={styles.header}>Create Event</Text>
+      {/* <Text style={styles.header}>Edit Event</Text> */}
 
       <TouchableOpacity style={styles.saveButton}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
       
-      <TextInput style={styles.eventTextInput} placeholder="Event Name"></TextInput>
+      <TextInput style={styles.eventTextInput} placeholder={eventName}></TextInput>
       
       <TouchableOpacity style={styles.date} onPress={showDatePicker}>
         <Entypo name="calendar" size={"30%"} color="black" />
@@ -85,7 +93,7 @@ export default function CreateEventScreen() {
 
       <View style={styles.location}>
         <SimpleLineIcons name="location-pin" size={"30%"} color="black" />
-        <TextInput style={styles.locationInput} placeholder="Add Location"></TextInput>
+        <TextInput  onChangeText={text => setLocation(text)} style={styles.locationInput} placeholder={location}></TextInput>
       </View>
 
       <Text style={styles.sectionTitle}>Work Shifts</Text>
@@ -146,7 +154,7 @@ export default function CreateEventScreen() {
       <View style={styles.checkboxContainer}>
       </View>
       <Text style={styles.sectionTitle}>Event Description</Text>
-      <TextInput style={styles.textInput} multiline placeholder="Add Event Description" />
+      <TextInput style={styles.textInput} multiline placeholder={desc} />
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Confirm</Text>
       </TouchableOpacity>
@@ -225,7 +233,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   dash: {
-    fontSize: "25%"
+    fontSize: 25,
   },
   checkbox: {
     marginRight: 8, // Add some space between the checkbox and the label
@@ -247,7 +255,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
     margin: "5%",
-    fontSize: "20%",
+    fontSize: 20,
     padding: 10, 
     borderWidth: 1,
   },
@@ -257,7 +265,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
-    fontSize: "15%",
+    fontSize: 15,
     paddingLeft: "2%", 
     borderWidth: 1,
     marginLeft: "3%"
@@ -305,7 +313,7 @@ const styles = StyleSheet.create({
     marginRight: '3%'
   },
   saveButtonText: {
-    fontSize: "18%",
+    fontSize: 18,
     color: "#6A466C"
   }
 });

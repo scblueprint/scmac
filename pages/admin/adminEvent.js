@@ -1,51 +1,56 @@
 import React,  { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
-import NavBar from '../components/NavBar.js'
+import NavBar from '../../components/NavBar.js'
 import { collection, getDocs, query } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
+import { AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 
 const EventItem = ({ item, nav }) => (
-  <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("IndividualEvent", {item: item})}>
+  <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("AdminIndividualEvent", {item: item})}>
     <View style={styles.eventInfo}>
-      <Text style={styles.date}>{new Date(item.data().date).toDateString().split(' ').slice(1).join(' ')}</Text>
-      <Text style={styles.eventName}>{item.data().title}</Text>
-      <Text style={styles.location}>{item.data().location}</Text>
+      <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text>
+      <Text style={styles.eventName}>{item.title}</Text>
+      <Text style={styles.location}>{item.location}</Text>
     </View>
 	<SimpleLineIcons name="arrow-right" size={24} color="black" />
   </TouchableOpacity>
 
 );
 
-export default function Events({navigation}) {
+export default function AdminEvents({navigation}) {
   const [events, setEvents] = useState([]);
+
   useFocusEffect(useCallback( () => {
     async function fetchData() {
       const arr = [];
       const eventsData = await getDocs(collection(db, 'events'));
       eventsData.forEach(doc => {
-        // console.log(doc.data());
-        arr.push(doc);
+        arr.push(doc.data());
       })
       setEvents(arr);
+      // console.log(events);
     }
     fetchData();
   }, []))
 
+  let i = 0;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Events</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Events</Text>
+        <AntDesign onPress={() => { navigation.navigate("CreateEvent");}} style={{marginLeft:"25%"}} name="plus" size={24} color="white" />
+      </View>
       <FlatList
         data={events}
         renderItem={({ item }) => (
-          <EventItem key={item.id} item={item} nav={navigation} />
+          <EventItem key={i++} item={item} nav={navigation} />
         )}
-        keyExtractor={item => item.id}
+        // keyExtractor={item => item.title}
       />
-      <View style={{position: "absolute", bottom:0, width:"100%"}}>
-        <NavBar navigation={navigation}/>
-      </View>
+       <NavBar navigation={navigation}/>
     </View>
   );
 }
@@ -56,15 +61,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
   },
   header: {
+    flexDirection: "row",
+    backgroundColor: '#6A466C',
+    textAlign: 'center',
+    justifyContent: 'center',
+    paddingTop: 80,
+    paddingBottom: 10,
+  },
+  headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    backgroundColor: '#6A466C',
-    textAlign: 'center',
-    justifyContent: 'flex-end',
-    padding: 80,
-    paddingBottom: 10,
-
+    marginLeft: "35%"
   },
   itemContainer: {
     flexDirection: 'row',

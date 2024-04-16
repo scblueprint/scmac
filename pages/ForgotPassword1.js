@@ -1,36 +1,42 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, SafeAreaView, TextInput, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { auth } from '../firebaseConfig';
 import { sendPasswordResetEmail } from "firebase/auth";
-import { Link } from "expo-router";
 import {Dimensions} from 'react-native';
-import {router} from 'expo-router';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const ForgotPassword1 = () => {
-    // const auth = getAuth();
+export default function ForgotPassword1({navigation}) {
     const [text, setText] = useState('');
     
     const handleButtonPress = async () => {
-        // console.log("hello");
 
-        await sendPasswordResetEmail(auth, text)
+        await sendPasswordResetEmail(auth, text).then(() => {
+            Alert.alert("Password Reset Link sent to email!", "", [
+                {
+                  text: 'OK',
+                  onPress: () => navigation.navigate("Login"),
+                }
+              ])
+            })
         .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            // ..
+            if (errorCode == "auth/invalid-email") Alert.alert("Invalid email");
+            if (errorCode == "auth/missing-email") Alert.alert("Missing email");
+            console.log(error.message)
         });
-        router.back();
+        
+        
 
     };
     const handleTextChange = (inputText) => {
         setText(inputText);
     }
     const handleBackButton = async () => {
-        router.back();
+        navigation.navigate("Login");
     }
     return (
         <SafeAreaView style = {styles.container}>
@@ -45,11 +51,9 @@ const ForgotPassword1 = () => {
                 value = {text}
                 autoCapitalize='none'
             />
-            <Link href="/Login">
                 <TouchableOpacity style = {styles.resetButton} onPress = {handleButtonPress}> 
-                    <Text style ={styles.buttonText}> Request Reset Code </Text>
+                    <Text style ={styles.buttonText}> Request Reset Email </Text>
                 </TouchableOpacity>
-            </Link>
         </SafeAreaView>
     );
 };
@@ -84,30 +88,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
-        // position: 'absolute',
-        // marginTop: '50%', 
-        // left: screenWidth * 0.5 - (screenWidth * 0.4), 
-        height: "30%", 
-        width: "180%",
+        height: "7%", 
+        width: "100%",
+        marginTop: "3%"
     },
     buttonText: {
         fontSize: 20,
+        fontWeight: "500",
         color: 'white',
         alignItems: 'center',
     }, 
     textInput: {
         height: 40,
         borderBottomColor: 'black',
-        borderTopColor: 'white',
-        borderLeftColor: 'white',
-        borderRightColor: 'white',
-        borderWidth: 1,
+        borderBottomWidth: 1,
         marginBottom: '5%',
     },
     backButton: {
-        // position: 'absolute',
-        // top: screenHeight * 0.056, // 91 / 2556
-        // left: screenWidth * 0.0254, // 30 / 1179
+        marginTop: "5%",
     },
 });
-export default ForgotPassword1;
