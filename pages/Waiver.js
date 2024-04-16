@@ -1,6 +1,7 @@
 import Checkbox from 'expo-checkbox';
 import React, { useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox } from 'react-native';
+import { addWaiver } from "./api/waivers.js"
 
 export default function Waiver() {
   const [lastName, setLastName] = useState('');
@@ -28,8 +29,14 @@ export default function Waiver() {
   const [volunteerDate, setVolunteerDate] = useState('');
   const [parentGuardianSignature, setParentGuardianSignature] = useState('');
 
+  // await and async?
   const handleSubmit = () => {
     // Firebase
+    addWaiver(emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
+      emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
+      mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
+      parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
+      volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
   };
   const [isChecked, setIsChecked] = useState(false);
   return (
