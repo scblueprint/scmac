@@ -120,8 +120,8 @@ export default function Signup({navigation}) {
                 if (gallery) arr.push("Gallery");
                 if (events) arr.push("Events");
                 if (facilities) arr.push("Facilities");
-                await signup(email,pword, fname, lname, phone, arr);
-                navigation.navigate("Events")
+                const item = await signup(email, pword, fname, lname, phone);
+                navigation.navigate("Waiver", {item: item})
               }}
       >
         <Text style = {{color:"white", fontSize:20}}>Continue</Text>

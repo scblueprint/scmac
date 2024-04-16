@@ -19,6 +19,7 @@ import AdminEventDetailScreen from './pages/admin/adminIndividualEvent';
 const Stack = createStackNavigator();
 
 export default function App() {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName='Login'>
