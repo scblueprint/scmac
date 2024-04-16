@@ -27,7 +27,9 @@ export default function AdminEvents({navigation}) {
       const arr = [];
       const eventsData = await getDocs(collection(db, 'events'));
       eventsData.forEach(doc => {
-        arr.push(doc.data());
+        var temp = doc.data();
+        temp.id = doc.id
+        arr.push(temp);
       })
       setEvents(arr);
       // console.log(events);

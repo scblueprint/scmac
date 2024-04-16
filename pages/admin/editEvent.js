@@ -1,4 +1,4 @@
-import React, { useState, setState } from 'react';
+import React, { useState, setState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
@@ -6,14 +6,14 @@ import { Entypo } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
+import {editEvent, getShiftData} from '../api/event'
 let nextId = 0;
 let nextShiftsId = 0;
 
 export default function EditEventScreen({route, navigation}) {
     const { item } = route.params;
     console.log("WELKFJWELKJFELWJFLKEWJFELKWJFLKj")
-    console.log(item.item.materials)
+    console.log(item.item)
     const [selectedValueShift, setSelectedValueShift] = useState("");
     const [isMaterialSelected, setIsMaterialSelected] = useState(false);
     const [materials, setMaterials] = useState(item.item.materials.filter(item => item.user=="").map((item, index) => ({ id: nextId++, name: item.item, selected: false })));
@@ -55,10 +55,13 @@ export default function EditEventScreen({route, navigation}) {
     // console.warn("A time has been picked: ", time);
     const updatedShifts = shifts.map((s, i) => {
       if (i === editingTimeShiftID) {
-        if (editingType === "start")
-          s.start = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        else
-          s.end = time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", });
+        const toTimestamp = date => Math.floor(date.getTime() / 1000);
+        if (editingType === "start"){
+          s.startTime = toTimestamp(time).toString();
+        }
+        else{
+          s.endTime = toTimestamp(time).toString();
+        }
         return s;
       } else return s;
     });
@@ -66,6 +69,19 @@ export default function EditEventScreen({route, navigation}) {
     hideTimePicker();
   };
 
+
+
+  useEffect(() => {
+    async function fetchData() {
+      // You can await here
+      console.log("KJWEHFKJEWHFJEHWKF")
+      var shiftData = await getShiftData(item.item.shifts);
+      console.log(shiftData)
+      setShifts(shiftData)
+      // ...
+    }
+    fetchData();
+  }, []);
   return (
     <ScrollView style={styles.container}>
       <DateTimePickerModal
@@ -100,11 +116,11 @@ export default function EditEventScreen({route, navigation}) {
       {shifts.map((shift, index) => (
           <View style={styles.checkboxContainer} key={index}>
             <TouchableOpacity style={styles.shift} onPress={() => {showTimePicker(); setEditingTimeShiftID(index); setEditingType("start")}}>
-          <Text>{shift.start}</Text>
+            <Text> {shift.startTime ? new Date(parseInt(shift.startTime)*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :  "Choose Time"} </Text>
         </TouchableOpacity>
         <Text style={styles.dash}> - </Text>
         <TouchableOpacity style={styles.shift} onPress={() => {showTimePicker(); setEditingTimeShiftID(index); setEditingType("end")}}>
-          <Text>{shift.end}</Text>
+        <Text> {shift.endTime ? new Date(parseInt(shift.endTime)*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :  "Choose Time"} </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {setShifts(
           shifts.slice(0,index).concat(shifts.slice(index+1))
@@ -116,7 +132,7 @@ export default function EditEventScreen({route, navigation}) {
 
       <TouchableOpacity style={styles.checkboxContainer} onPress={() => {setShifts([
           ...shifts,
-          { id: nextShiftsId++, name: "", start: "Choose Time", end: "Choose Time" }
+          { id: nextShiftsId++, name: "", startTime: null, endTime: null }
         ]);}}>
         <Text style={styles.addShiftLabel}>Add Shift</Text>
       </TouchableOpacity>
@@ -155,7 +171,11 @@ export default function EditEventScreen({route, navigation}) {
       </View>
       <Text style={styles.sectionTitle}>Event Description</Text>
       <TextInput style={styles.textInput} multiline placeholder={desc} />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity 
+                onPress={async () => {
+                  await editEvent(item.item.id, dateDay, desc, materials, shifts, eventName, location)
+                }}
+      style={styles.button}>
         <Text style={styles.buttonText}>Confirm</Text>
       </TouchableOpacity>
     </ScrollView>
