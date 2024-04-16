@@ -10,6 +10,7 @@ import IndividualEvent from './pages/individualEvent';
 import Notifications from './pages/notifications';
 import ForgotPassword1 from './pages/ForgotPassword1';
 import Navbar from './components/NavBar';
+import AdminVolunteers from './pages/AdminVolunteers';
 import CreateEventScreen from './pages/admin/createEvent';
 import EditEventScreen from './pages/admin/editEvent';
 import AdminEvents from './pages/admin/adminEvent';
@@ -36,7 +37,6 @@ export default function App() {
             headerTintColor: "white"
           }}/>
         <Stack.Screen name="ForgotPassword1" component={ForgotPassword1} options={{ headerShown: false }} />
-
         <Stack.Screen name="AdminEvents" component={AdminEvents} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false}} />
         <Stack.Screen name="CreateEvent" component={CreateEventScreen} options={
           { headerShown: true, 
@@ -62,8 +62,7 @@ export default function App() {
             headerTitle: "Event",
             headerTintColor: "white"
           }}/>
-
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  ); 
 }
