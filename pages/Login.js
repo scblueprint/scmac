@@ -12,9 +12,6 @@ const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
 
 export default function Login({navigation}) {
-    // console.log(windowHeight);
-    // console.log(windowWidth);
-  const [isChecked, setIsChecked] = useState(false);
   const [isEyeOpen, setIsEyeOpen] = useState(true);
   const [email, setEmail] = useState("");
   const [pword, setPword] = useState("");
@@ -29,32 +26,32 @@ export default function Login({navigation}) {
             Log In 
         </Text>
 
-        
-
         <Text style={styles.emailText}>Email</Text>
         <View style={styles.emailContainer}>
         <View style={styles.envelopeIcon}>
           <EvilIcons name="envelope" size={24} color="black" />
         </View>
-          <TextInput
-            style={styles.emailInput}
-            placeholder="johndoe@gmail.com"
-            placeholderTextColor="#808080"
-            onChangeText={text => setEmail(text)}
-
-          />
+          <TextInput  
+          style={styles.emailInput} 
+          autoCapitalize='none'
+          value={email} 
+          placeholder="johndoe@gmail.com"
+          placeholderTextColor="#808080"
+          onChangeText={text => setEmail(text)}
+          ></TextInput>
         </View>
         <Text style={styles.passwordText}>Password</Text>
         <View style={styles.passwordContainer}>
         <View style={styles.lockIcon}>
           <EvilIcons name="lock" size={24} color="black" />
         </View>
-          <TextInput
+          <TextInput autoCapitalize='none' 
+            secureTextEntry={isEyeOpen} 
+            value={pword}
             style={styles.passwordInput}
             placeholder="●●●●●●●"
             placeholderTextColor="#808080"
-            onChangeText={text => setPword(text)}
-          />
+            onChangeText={text => setPword(text)}></TextInput>
           <View style={styles.eyeIcon}>
           <TouchableOpacity
             onPress={() => setIsEyeOpen(!isEyeOpen)}
@@ -68,22 +65,10 @@ export default function Login({navigation}) {
         </View>
         </View>
 
-        {/* <View style={styles.checkboxIcon}>
-        <TouchableOpacity
-          onPress={() => setIsChecked(!isChecked)}
-        >
-          <Fontisto
-            name={isChecked ? 'checkbox-active' : 'checkbox-passive'}
-            size={14}
-            color="black"
-          />
-        </TouchableOpacity>
-      </View> */}
-
       <View>
       <TouchableOpacity
           onPress={() => {
-            // Handle forgot password logic here
+            navigation.navigate("ForgotPassword1")
           }}
           style={styles.forgotPasswordButton}
         >
@@ -95,8 +80,16 @@ export default function Login({navigation}) {
             <TouchableOpacity
               style={styles.loginButton}
               onPress={async () => {
-                await login(email,pword, "hello");
-                navigation.navigate("Events");
+                var user = await login(email,pword, "hello");
+                setEmail("");
+                setPword("");
+                if(user.admin){
+                  navigation.navigate("AdminEvents");
+
+                }
+                else{
+                  navigation.navigate("Events");
+                }
               }}
             >
             <Text style={styles.loginButtonText}>Log In</Text>
@@ -108,7 +101,7 @@ export default function Login({navigation}) {
           }}
           style={styles.noAccountButton}
         >
-          <Text style={styles.noAccountText}>Don't have an account? Sign Up</Text>
+          <Text style={styles.noAccountText}>Don't have an account? <Text style={styles.signUpText}>Sign Up</Text></Text>
         </TouchableOpacity>
     </SafeAreaView>
   );
@@ -165,9 +158,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#232323',
   },
+  signUpText: {
+    fontSize: 16,
+    lineHeight: 19,
+    textAlign: 'center',
+    color: '#542656',
+    fontWeight: "500"
+  },
   noAccountButton: {
-    // position: 'absolute',
-    marginBottom: "10%"
   },
   forgotPasswordText: {
     /* Forgot password? */
@@ -182,8 +180,8 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     // left: windowWidth * 0.68, // 255
     // top: windowHeight * 0.7436, // 496
-    margin: "3%",
-    marginLeft: "50%",
+    margin: "3.5%",
+    marginLeft: "54%",
   },
   rememberMeText: {
     /* Remember me */
@@ -203,14 +201,11 @@ const styles = StyleSheet.create({
     color: '#232323',
   },
   lockIcon: {
-    /* Lock_light */
-    // position: 'absolute',
-    // width: windowWidth * 0.056, // 21
-    // height: windowHeight * 0.031, // 21
-    // left: windowWidth * 0.08, // 30
-    // top: windowHeight * 0.6912, // 461
+    marginLeft: "-2%",
   },
   envelopeIcon: {
+    marginLeft: "-2%",
+    marginTop: "4%"
     /* Message_light */
     // position: 'absolute',
     // width: windowWidth * 0.056, // 21
@@ -219,12 +214,9 @@ const styles = StyleSheet.create({
     // top: windowHeight * 0.5787, // 386
   },
   eyeIcon: {
-    /* Message_light */
-    // position: 'absolute',
-    // width: windowWidth * 0.056, // 21
-    // height: windowHeight * 0.031, // 21
-    // left: windowWidth * 0.912, // 342
-    // top: windowHeight * 0.6912, // 461
+    // marginLeft: "2%",
+    borderBottomColor: "black",
+    borderBottomWidth: 2
   },
   checkboxIcon: {
     /* Done */
@@ -244,39 +236,32 @@ const styles = StyleSheet.create({
     // top: windowHeight * 0.5787, // 386
   },
   emailInput: {
-    // marginLeft: 30, // Add some spacing between the icon and input
-    width: windowWidth * 0.6,
+    marginLeft: "2%",
+    marginTop: "4%",
+    width: "70%",
     borderBottomWidth: 2, // Add underline
     borderColor: '#000000', // Color of the underline
   },
   passwordContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    // position: 'absolute',
-    // width: windowWidth * 0.2, // Adjust the width accordingly
-    // height: windowHeight * 0.031, // 21
-    // left: windowWidth * 0.08, // 30
-    // top: windowHeight * 0.6912, // 386
+    marginTop: "4%",
   },
   passwordInput: {
-    marginLeft: 30, // Add some spacing between the icon and input
-    width: windowWidth * 0.6,
-    borderBottomWidth: 2, // Add underline
-    borderColor: '#000000', // Color of the underline
+    marginLeft: "2%",
+    width: "66%",
+    borderBottomWidth: 2,
+    borderColor: '#000000',
   },
   // Button styles
   buttonContainer: {
-    // marginTop: 50, 
     width: "80%",
     alignItems: 'center',
   },
   loginButton: {
     // position: 'absolute',
     width: "100%", // 333
-    // height: windowHeight * 0.067, // 44
-    // left: windowWidth * 0.02,
-    // top: windowHeight * 0.299, // 541
-
+    marginTop: "5%",
+    marginBottom: "3%",
     backgroundColor: '#6A466C',
     padding: 10,
     borderRadius: 8,

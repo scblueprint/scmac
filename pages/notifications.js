@@ -4,7 +4,7 @@ import Navbar from '../components/NavBar';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, setDoc, getDocs , getDoc} from 'firebase/firestore';
 import { firebaseConfig } from '../firebaseConfig';
-import { db } from '../firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 import NavBar from '../components/NavBar.js'
 
 //Initialize Firebase app
@@ -18,7 +18,7 @@ export default function Notifications({navigation}) {
     const fetchNotifications = async () => {
       try {
         //Fetch the user document
-        const userDocRef = doc(db, 'users', 'KV9qEliUXBccf63FLFaTA6lOdMH2');
+        const userDocRef = doc(db, 'users', auth.currentUser.uid);
         const userSnapshot = await getDoc(userDocRef);
   
         if (userSnapshot.exists()) {
@@ -68,39 +68,6 @@ export default function Notifications({navigation}) {
   
     fetchNotifications();
   }, []);
-  
-        
-  //       //old: fetch directly from notif clt. 
-
-  //       // const snapshot = await getDocs(collection(db,'notifications'));
-  //       // const notificationsData = snapshot.docs.map(doc => {
-  //       //   const data = doc.data();
-  //         //Convert timestamp to readable 
-  //       return { id: doc.id, description: data.description, dateTime: new Date(data.date).toLocaleString([], {
-  //           month: '2-digit',
-  //           day: '2-digit',
-  //           year: '2-digit',
-  //           hour: '2-digit',
-  //           minute: '2-digit',
-  //           hour12: true
-  //         }) }; 
-  //       });
-  //       setNotifications(notificationsData);
-  //     } catch (error) {
-  //       console.error('Error fetching notifications:', error);
-  //     }
-  //   }
-
-// export default function Notifications({navigation}) {
-//   const sampleNotification = [
-//     {id: 1},
-//     {id: 2},
-//     {id: 3},
-//   ];
-
-  //   fetchNotifications();
-  // }, []);
-
 
   const renderNotificationItem = ({ item }) => (
     <View style={styles.notification}>
@@ -132,7 +99,9 @@ export default function Notifications({navigation}) {
           />
         </View>
       </View>
-      <NavBar navigation={navigation}/>
+      <View style={{position: "absolute", bottom:0, width:"100%"}}>
+        <NavBar navigation={navigation}/>
+      </View>
     </View>
   );
 } 
