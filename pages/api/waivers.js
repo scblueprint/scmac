@@ -2,15 +2,16 @@ import { auth, db } from '../../firebaseConfig';
 import { collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 
 // code to add waiver
-const addWaiver = async (emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
+const addWaiver = async (uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
   emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
   mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
   parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
   volunteerPhoneCell, volunteerPhoneHome, volunteerSignature) => {
   try {
-    const user = userCredential.user;
+    // const user = auth.currentUser;
+    // console.log(user);
     const data = {
-      uid: user.uid,
+      uid: uid,
       emergencyContactName: emergencyContactName,
       emergencyContactPhoneCell: emergencyContactPhoneCell, 
       emergencyContactPhoneHome: emergencyContactPhoneHome,
@@ -34,8 +35,8 @@ const addWaiver = async (emergencyContactName, emergencyContactPhoneCell, emerge
       volunteerPhoneHome: volunteerPhoneHome,
       volunteerSignature: volunteerSignature
     };
-    await setDoc(doc(db, "waivers", user.uid), data);
-    return user;
+    await setDoc(doc(db, "waivers", uid), data);
+    return uid;
     
   } catch (error) {
     console.error("Waiver submit error:", error);

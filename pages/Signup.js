@@ -53,8 +53,8 @@ export default function Signup({navigation}) {
       <TouchableOpacity 
       style={styles.continueButton}
               onPress={async () =>  {
-                await signup(email,pword, fname, lname, phone);
-                navigation.navigate("Events")
+                const item = await signup(email, pword, fname, lname, phone);
+                navigation.navigate("Waiver", {item: item})
               }}
       >
         <Text style = {{color:"white", fontSize:'20px'}}>Continue</Text>

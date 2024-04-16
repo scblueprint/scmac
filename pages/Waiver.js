@@ -1,9 +1,9 @@
 import Checkbox from 'expo-checkbox';
-import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox, Alert } from 'react-native';
 import { addWaiver } from "./api/waivers.js"
 
-export default function Waiver() {
+export default function Waiver({route, navigation}) {
   const [lastName, setLastName] = useState('');
   const [firstInitial, setFirstInitial] = useState('');
   const [volunteerName, setVolunteerName] = useState('');
@@ -29,16 +29,36 @@ export default function Waiver() {
   const [volunteerDate, setVolunteerDate] = useState('');
   const [parentGuardianSignature, setParentGuardianSignature] = useState('');
 
+  const [isChecked, setIsChecked] = useState(false);
+  const [uid, setUid] = useState('');
+
   // await and async?
   const handleSubmit = () => {
     // Firebase
-    addWaiver(emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
-      emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
-      mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
-      parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
-      volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
+    if (isChecked) {
+      addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
+        emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
+        mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
+        parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
+        volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
+      navigation.navigate("Events");
+    }
+    else {
+      Alert.alert("Please agree to the Terms and Conditions");
+    }
   };
-  const [isChecked, setIsChecked] = useState(false);
+
+  useEffect( () => {
+    async function fetchData() {
+      const { item } = route.params;
+      setUid(item.uid);
+      console.log(item.uid);
+      // const event = item;
+      // const eventData = event.data();
+    }
+    fetchData();
+ }, [])
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
