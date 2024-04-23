@@ -36,12 +36,16 @@ export default function Waiver({route, navigation}) {
   const handleSubmit = () => {
     // Firebase
     if (isChecked) {
-      addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
-        emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
-        mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
-        parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
-        volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
-      navigation.navigate("Events");
+      if (lastName || firstInitial || volunteerName || volunteerEmail || volunteerPhoneCell || volunteerPhoneHome
+        || homeAddress || homeCity || homeZip || mailingAddress || mailingCity || mailingZip || emergencyContactName
+        || emergencyContactRelationship || emergencyContactPhoneCell || emergencyContactPhoneHome || ...) {
+        addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
+          emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
+          mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
+          parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
+          volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
+        navigation.navigate("Events");
+      }
     }
     else {
       Alert.alert("Please agree to the Terms and Conditions");

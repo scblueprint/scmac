@@ -36,6 +36,8 @@ export default function Signup({navigation}) {
   const [gallery, setGallery] = useState(false);
   const [events, setEvents] = useState(false);
   const [facilities, setFacilities] = useState(false);
+  const [birthday, setBirthday] = useState("");
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   onSelectedItemsChange = selectedItems => {
     this.setState({ selectedItems });
@@ -77,6 +79,12 @@ export default function Signup({navigation}) {
                onChangeText={text => setPword(text)}
               autoCapitalize='none'
       />
+
+      <View style={styles.birthday}>
+        <Text style={{fontSize:15, marginLeft:30 }}>Birthday:     </Text>
+        
+        <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={false} onPressIn={()=> {if(isEditable)showDatePicker()}}>{new Date(birthday * 1000).toDateString().split(' ').slice(1).join(' ')}</TextInput>
+      </View>
       
       <Text style = {{fontSize:15, fontWeight:500, paddingTop: 20}}>Select Interests</Text>
       <View style={styles.checkboxContainer}>
@@ -120,7 +128,8 @@ export default function Signup({navigation}) {
                 if (gallery) arr.push("Gallery");
                 if (events) arr.push("Events");
                 if (facilities) arr.push("Facilities");
-                const item = await signup(email, pword, fname, lname, phone);
+                const item = await signup(email, pword, fname, lname, phone, 0, 
+                  birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000));
                 navigation.navigate("Waiver", {item: item})
               }}
       >
@@ -181,5 +190,9 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     marginRight: 8,
+  },
+  birthday: {
+    marginBottom: "1%",
+    flexDirection:'row'
   },
 });
