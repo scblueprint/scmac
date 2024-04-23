@@ -3,7 +3,6 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { ReactNativeAsyncStorage } from '@react-native-async-storage/async-storage';
 import { getStorage } from "firebase/storage";
-import messaging from '@react-native-firebase/messaging';
 
 
 const firebaseConfig = {
@@ -24,28 +23,11 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
   })
 console.log("Firebase Auth Initialized: ", auth);
-const firebaseMessaging = messaging();
 
 // Optionally, you may want to request user permission for notifications
 // This is typically done at the time of app launch or during the appropriate user flow
-async function requestUserPermission() {
-  const authorizationStatus = await firebaseMessaging.requestPermission({
-    provisional: false,
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: true,
-    criticalAlert: false,
-    sound: true,
-  });
-
-  if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED || authorizationStatus === messaging.AuthorizationStatus.PROVISIONAL) {
-    console.log('Authorization status:', authorizationStatus);
-  }
-}
 
 // You may want to call this function in your app's component lifecycle
-requestUserPermission();
 const storage = getStorage(app);
 
-module.exports = { app, db, auth, storage, firebaseMessaging };
+module.exports = { app, db, auth, storage };
