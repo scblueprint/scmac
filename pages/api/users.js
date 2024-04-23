@@ -37,7 +37,7 @@ const signup = async (email, password, fname, lname, phoneNumber, interests, bir
       email: email,
       phone: phoneNumber,
       admin: false,
-      birthday: birthday,
+      birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
       devToken: 0,
       downloadURL: "",
       notifications: [],

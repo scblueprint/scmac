@@ -38,13 +38,14 @@ export default function Waiver({route, navigation}) {
     if (isChecked) {
       if (lastName || firstInitial || volunteerName || volunteerEmail || volunteerPhoneCell || volunteerPhoneHome
         || homeAddress || homeCity || homeZip || mailingAddress || mailingCity || mailingZip || emergencyContactName
-        || emergencyContactRelationship || emergencyContactPhoneCell || emergencyContactPhoneHome || ...) {
-        addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
-          emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
-          mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
-          parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
-          volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
-        navigation.navigate("Events");
+        || emergencyContactRelationship || emergencyContactPhoneCell || emergencyContactPhoneHome || volunteerAgreement
+        || volunteerDate) {
+          addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
+            emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
+            mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
+            parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
+            volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
+          navigation.navigate("Events");
       }
     }
     else {
@@ -57,6 +58,8 @@ export default function Waiver({route, navigation}) {
       const { item } = route.params;
       setUid(item.uid);
       console.log(item.uid);
+      setEmail(item.email);
+      // cpontinue doing all the fields from signup!!! slay
       // const event = item;
       // const eventData = event.data();
     }
