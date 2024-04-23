@@ -85,7 +85,6 @@ export default function Login({navigation}) {
                 setPword("");
                 if(user.admin){
                   navigation.navigate("AdminEvents");
-
                 }
                 else{
                   navigation.navigate("Events");

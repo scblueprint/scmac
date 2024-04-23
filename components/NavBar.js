@@ -1,16 +1,35 @@
 // import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {auth} from "../firebaseConfig"
+import {getCurrentUserData} from '../pages/api/users';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const Navbar = ({navigation}) => {
+  const [admin, setAdmin] = useState();
+
+  useEffect( () => {
+    async function fetchData() {
+      data = await getCurrentUserData();
+      setAdmin(data.admin);
+      console.log(data.admin);
+    }
+    fetchData();
+  }, []);
+
   return (
     <View style={styles.navbarContainer}>
       <TouchableOpacity
         style={styles.navItem}
         
-        onPress={() => navigation.navigate("Events")}
+        onPress={() => {
+          if (admin) {
+            navigation.navigate("AdminEvents");
+          }
+          else {
+            navigation.navigate("Events");
+          }
+        }}
         //if admin go to admin events
       >
         <Icon name="calendar-outline" size={25} color="#4F4F4F" />
