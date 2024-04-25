@@ -20,7 +20,7 @@ export default function EditEventScreen({route, navigation}) {
     const [shifts, setShifts] = useState([]);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
-    const [dateDay, setDateDay] = useState("Day, Date");
+    const [dateDay, setDateDay] = useState(item.item.date);
     const [editingTimeShiftID, setEditingTimeShiftID] = useState("");
     const [editingType, setEditingType] = useState("");
     const [desc, setDesc] = useState(item.item.description);
@@ -74,7 +74,7 @@ export default function EditEventScreen({route, navigation}) {
   useEffect(() => {
     async function fetchData() {
       // You can await here
-      console.log("KJWEHFKJEWHFJEHWKF")
+      // console.log("KJWEHFKJEWHFJEHWKF")
       var shiftData = await getShiftData(item.item.shifts);
       console.log(shiftData)
       setShifts(shiftData)
@@ -82,6 +82,7 @@ export default function EditEventScreen({route, navigation}) {
     }
     fetchData();
   }, []);
+
   return (
     <ScrollView style={styles.container}>
       <DateTimePickerModal
@@ -96,11 +97,14 @@ export default function EditEventScreen({route, navigation}) {
         onConfirm={handleTimeConfirm}
         onCancel={hideTimePicker}
       />
-      {/* <Text style={styles.header}>Edit Event</Text> */}
 
-      <TouchableOpacity style={styles.saveButton}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.saveButton} onPress={async () => {
+                  await editEvent(item.item.id, dateDay, desc, materials, shifts, eventName, location);
+                  navigation.goBack();
+                  navigation.goBack();
+                }}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
       
-      <TextInput style={styles.eventTextInput} placeholder={eventName}></TextInput>
+      <TextInput style={styles.eventTextInput} onChangeText={text => setEventName(text)}>{eventName}</TextInput>
       
       <TouchableOpacity style={styles.date} onPress={showDatePicker}>
         <Entypo name="calendar" size={"30%"} color="black" />
@@ -109,7 +113,7 @@ export default function EditEventScreen({route, navigation}) {
 
       <View style={styles.location}>
         <SimpleLineIcons name="location-pin" size={"30%"} color="black" />
-        <TextInput  onChangeText={text => setLocation(text)} style={styles.locationInput} placeholder={location}></TextInput>
+        <TextInput  onChangeText={text => setLocation(text)} style={styles.locationInput} >{location}</TextInput>
       </View>
 
       <Text style={styles.sectionTitle}>Work Shifts</Text>
@@ -125,7 +129,7 @@ export default function EditEventScreen({route, navigation}) {
         <TouchableOpacity onPress={() => {setShifts(
           shifts.slice(0,index).concat(shifts.slice(index+1))
               );}}>
-            <AntDesign name="delete" size={"25%"} color="black" style={{marginLeft: "15%", marginTop: "5%"}} />
+            <AntDesign name="delete" size={25} color="black" style={{marginLeft: "15%", marginTop: "5%"}} />
         </TouchableOpacity>
           </View>
         ))}
@@ -139,7 +143,7 @@ export default function EditEventScreen({route, navigation}) {
 
 
       <Text style={styles.sectionTitle}>Materials Checklist</Text>
-      <ScrollView>
+      <View>
       {materials.map((material, index) => (
           <View style={styles.checkboxContainer} key={index}>
             <CheckBox
@@ -166,18 +170,11 @@ export default function EditEventScreen({route, navigation}) {
         />
         <Text style={styles.addLabel}>Add Material</Text>
       </TouchableOpacity>
-      </ScrollView>
+      </View>
       <View style={styles.checkboxContainer}>
       </View>
       <Text style={styles.sectionTitle}>Event Description</Text>
       <TextInput style={styles.textInput} multiline placeholder={desc} />
-      <TouchableOpacity 
-                onPress={async () => {
-                  await editEvent(item.item.id, dateDay, desc, materials, shifts, eventName, location)
-                }}
-      style={styles.button}>
-        <Text style={styles.buttonText}>Confirm</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -269,14 +266,15 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   eventTextInput: {
-    height: '5%',
+    paddingTop: 5,
+    paddingBottom: 5,
     textAlign: 'center',
     borderColor: '#ccc',
     borderRadius: 3,
     backgroundColor: "#F1F1F2",
     margin: "5%",
     fontSize: 20,
-    padding: 10, 
+    // padding: 10, 
     borderWidth: 1,
   },
   locationInput: {
