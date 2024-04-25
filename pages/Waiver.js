@@ -2,6 +2,8 @@ import Checkbox from 'expo-checkbox';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox, Alert } from 'react-native';
 import { addWaiver } from "./api/waivers.js"
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebaseConfig';
 
 export default function Waiver({route, navigation}) {
   const [lastName, setLastName] = useState('');
@@ -58,7 +60,15 @@ export default function Waiver({route, navigation}) {
       const { item } = route.params;
       setUid(item.uid);
       console.log(item.uid);
-      setEmail(item.email);
+
+      const userRef = await getDoc(doc(db, "users", item.uid));
+
+      setLastName(userRef.data().lname);
+      setFirstInitial(userRef.data().fname[0]);
+      setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
+      setVolunteerEmail(userRef.data().email);
+      setVolunteerPhoneCell(userRef.data().phone);
+
       // cpontinue doing all the fields from signup!!! slay
       // const event = item;
       // const eventData = event.data();
