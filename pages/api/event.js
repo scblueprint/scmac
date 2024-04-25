@@ -51,7 +51,7 @@ const editEvent = async (eventId, date, eventDesc, materials, shifts, title, loc
       if (shift["endTime"] && shift["startTime"]) {
         const docRef = await addDoc(collection(db, "shifts"), {
           endTime: parseInt(shift["endTime"]),
-          startTime: parseInt(shift["endTime"]),
+          startTime: parseInt(shift["startTime"]),
           user: []
         });
         console.log(docRef.id);

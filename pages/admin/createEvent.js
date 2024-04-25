@@ -91,12 +91,12 @@ export default function CreateEventScreen({navigation}) {
       <TextInput style={styles.eventTextInput} onChangeText={text => setName(text)} placeholder="Event Name"></TextInput>
       
       <TouchableOpacity style={styles.date} onPress={showDatePicker}>
-        <Entypo name="calendar" size={"30%"} color="black" />
+        <Entypo name="calendar" size={30} color="black" />
         <Text style={styles.subtitle}>{dateDay}</Text>
       </TouchableOpacity>
 
       <View style={styles.location}>
-        <SimpleLineIcons name="location-pin" size={"30%"} color="black" />
+        <SimpleLineIcons name="location-pin" size={30} color="black" />
         <TextInput onChangeText={text => setLocation(text)} style={styles.locationInput} placeholder="Add Location"></TextInput>
       </View>
 
@@ -114,7 +114,7 @@ export default function CreateEventScreen({navigation}) {
         <TouchableOpacity onPress={() => {setShifts(
           shifts.slice(0,index).concat(shifts.slice(index+1))
               );}}>
-            <AntDesign name="delete" size={"25%"} color="black" style={{marginLeft: "15%", marginTop: "5%"}} />
+            <AntDesign name="delete" size={25} color="black" style={{marginLeft: "15%", marginTop: "5%"}} />
         </TouchableOpacity>
           </View>
         ))}
@@ -141,7 +141,7 @@ export default function CreateEventScreen({navigation}) {
         <TouchableOpacity onPress={() => {setMaterials(
           materials.slice(0,index).concat(materials.slice(index+1))
               );}}>
-            <AntDesign name="delete" size={"20%"} color="black" style={{marginLeft: "15%"}} />
+            <AntDesign name="delete" size={20} color="black" style={{marginLeft: "15%"}} />
         </TouchableOpacity>
           </View>
         ))}

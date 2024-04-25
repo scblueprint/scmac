@@ -12,8 +12,8 @@ let nextShiftsId = 0;
 
 export default function EditEventScreen({route, navigation}) {
     const { item } = route.params;
-    console.log("WELKFJWELKJFELWJFLKEWJFELKWJFLKj")
-    console.log(item.item)
+    // console.log("WELKFJWELKJFELWJFLKEWJFELKWJFLKj")
+    // console.log(item.item)
     const [selectedValueShift, setSelectedValueShift] = useState("");
     const [isMaterialSelected, setIsMaterialSelected] = useState(false);
     const [materials, setMaterials] = useState(item.item.materials.filter(item => item.user=="").map((item, index) => ({ id: nextId++, name: item.item, selected: false })));

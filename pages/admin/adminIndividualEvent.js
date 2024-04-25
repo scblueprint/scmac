@@ -76,7 +76,7 @@ function Details() {
         const shiftDoc = doc(db, 'shifts', element);
         const shift = await getDoc(doc(db, 'shifts', element));
         // console.log(shift.data())
-        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date(shift.data().endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
+        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
         // console.log(arr);
       });
       setShiftsData(arr);
