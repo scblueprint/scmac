@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import {signup} from "./api/users.js";
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from 'react';
 import Checkbox from 'expo-checkbox';
 import { faL } from '@fortawesome/free-solid-svg-icons';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const items = [{
   id: '0',
@@ -36,13 +37,29 @@ export default function Signup({navigation}) {
   const [gallery, setGallery] = useState(false);
   const [events, setEvents] = useState(false);
   const [facilities, setFacilities] = useState(false);
+  const [birthday, setBirthday] = useState("");
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   onSelectedItemsChange = selectedItems => {
     this.setState({ selectedItems });
   };
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleDateConfirm = (date) => {
+    // console.warn("A date has been picked: ", date);
+    setBirthday(date);
+    hideDatePicker();
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
      <TouchableOpacity style={{marginTop: "20%"}} onPress={()=>navigation.navigate("Login")}>
                 <AntDesign name="leftcircleo" size={50} color="#A3A3A3" />
             </TouchableOpacity>
@@ -77,6 +94,17 @@ export default function Signup({navigation}) {
                onChangeText={text => setPword(text)}
               autoCapitalize='none'
       />
+<DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleDateConfirm}
+        onCancel={hideDatePicker}
+      />
+      <View style={styles.birthday}>
+        <Text style={{fontSize:15, marginLeft:30 }}>Birthday:     </Text>
+        
+        <TextInput style={{}} editable={false} onPressIn={()=> showDatePicker()}>{new Date(birthday).toDateString().split(' ').slice(1).join(' ')}</TextInput>
+      </View>
       
       <Text style = {{fontSize:15, fontWeight:500, paddingTop: 20}}>Select Interests</Text>
       <View style={styles.checkboxContainer}>
@@ -120,23 +148,23 @@ export default function Signup({navigation}) {
                 if (gallery) arr.push("Gallery");
                 if (events) arr.push("Events");
                 if (facilities) arr.push("Facilities");
-                const item = await signup(email, pword, fname, lname, phone);
+                const item = await signup(email, pword, fname, lname, phone, 0, birthday);
                 navigation.navigate("Waiver", {item: item})
               }}
       >
         <Text style = {{color:"white", fontSize:20}}>Continue</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: -300,
+    // flex: -300,
     alignItems: 'flex-start',
     paddingLeft: 25,
     paddingRight: 25,
-    marginBottom: '80%'
+    // marginBottom: '80%'
   },
   backButton: {
     marginTop: 80,
@@ -181,5 +209,10 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     marginRight: 8,
+  },
+  birthday: {
+    marginTop: "3%",
+    marginBottom: "1%",
+    flexDirection:'row'
   },
 });
