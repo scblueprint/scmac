@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar.js';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import {getCurrentUserData} from '../pages/api/users';
 import { auth, db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, snapshotEqual, updateDoc } from 'firebase/firestore';
+import * as ImagePicker from 'expo-image-picker'; 
+// import * as FileSystem from 'expo-file-system';
+import { Alert } from 'react-native';
+import { storage } from '../firebaseConfig.js';
+import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
+
 
 export default function Profile({navigation}) {
+  const [uid, setUid] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,7 +29,11 @@ export default function Profile({navigation}) {
   const [events, setEvents] = useState(false);
   const [facilities, setFacilities] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  // const [image, setImage] = useState(null); //added
+  const [uploading, setUploading] = useState(false);
+  const [downloadURL, setImageURL] = useState("");
   
+
   const signOutFunc = async () => {
     signOut(auth).then(() => {
       navigation.navigate("Login");
@@ -44,7 +55,38 @@ export default function Profile({navigation}) {
     setBirthday(date);
     hideDatePicker();
   };
+    
+  const pickImage = async () =>{
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All, //all:img, videos
+        aspect: [4,3],
+        quality: 1,
+      });
+      if (!result.canceled){
+        setImageURL(result.assets[0].uri);
+        await uploadMedia(result.assets[0].uri);
+        // console.log(image)
+      }
+  };
 
+  //upload media files
+  const uploadMedia = async (img) => {
+    setUploading(true);
+    const response = await fetch(img);
+    const blob = await response.blob();
+
+    const storageRef = ref(storage, uid);
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+      getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
+        console.log(downloadURL);
+        setImageURL(downloadURL);
+        // setImage(downloadURL);
+      })
+    
+
+    Alert.alert('Photo Uploaded!');
+};
   useEffect( () => {
     async function fetchData() {
       data = await getCurrentUserData();
@@ -56,9 +98,12 @@ export default function Profile({navigation}) {
       setGender(data.gender);
       setBirthday(data.birthday);
       setInterests(data.interests);
+      setUid(data.uid);
+      setImageURL(data.pfp);
     }
     fetchData();
  }, [])
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -80,6 +125,7 @@ export default function Profile({navigation}) {
                 lname: lastName,
                 email: email,
                 phone: phoneNumber,
+                pfp: downloadURL,
                 gender: gender,
                 birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
                 interests: interests
@@ -89,9 +135,11 @@ export default function Profile({navigation}) {
           <Text style={styles.editText}>{isEditable?"Save":"Edit"}</Text>
         </TouchableOpacity>
       </View>
-    <View style={styles.pfpCircle}>
-  <Text>PFP</Text>
-</View>
+          <TouchableOpacity style={styles.selectButton} onPress={() => {if(isEditable) pickImage()}}>
+            <View style={styles.imageContainer}>
+              {downloadURL && <Image source={{ uri: downloadURL}} style={styles.image}/>}
+            </View>
+          </TouchableOpacity>
     <View style={styles.name}>
       <View style={{flexDirection:'row'}}>
         <TextInput style={{fontSize: 20, fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={isEditable} onChangeText={setFirstName}>{firstName}</TextInput>
@@ -172,6 +220,7 @@ export default function Profile({navigation}) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -199,7 +248,7 @@ const styles = StyleSheet.create({
     marginLeft:"45%",
     marginTop: "2%"
   },
-  pfpCircle: {
+  imageContainer:{
     width: 100,
     height: 100,
     borderRadius: 50,
@@ -210,6 +259,13 @@ const styles = StyleSheet.create({
     marginLeft: "37%",
     justifyContent: 'center',
     alignItems: 'center',
+    // position: 'relative'
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    // position: 'absolute',
   },
   name: {
     alignItems: 'center',
@@ -247,19 +303,21 @@ const styles = StyleSheet.create({
     height: "5.5%", 
     width: "80%",
     marginLeft: "10%",
-    marginTop: "10%"
-},
-buttonText: {
-    fontSize: 20,
-    color: '#8C8C8C',
+    marginTop: "10%",
+    marginBottom: "90%",
+  },
+  buttonText: {
+      fontSize: 20,
+      color: '#8C8C8C',
+      alignItems: 'center',
+  }, 
+  checkboxContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-}, 
-checkboxContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginTop: "3%",
-},
-checkbox: {
-  marginRight: 8,
-},
+    marginTop: "3%",
+  },
+  checkbox: {
+    marginRight: 8,
+  }
+
 });
