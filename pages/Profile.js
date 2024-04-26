@@ -8,7 +8,7 @@ import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { doc, snapshotEqual, updateDoc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker'; 
-import * as FileSystem from 'expo-file-system';
+// import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import { storage } from '../firebaseConfig.js';
 import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
@@ -29,7 +29,7 @@ export default function Profile({navigation}) {
   const [events, setEvents] = useState(false);
   const [facilities, setFacilities] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [image, setImage] = useState(null); //added
+  // const [image, setImage] = useState(null); //added
   const [uploading, setUploading] = useState(false);
   const [downloadURL, setImageURL] = useState("");
   
@@ -63,7 +63,7 @@ export default function Profile({navigation}) {
         quality: 1,
       });
       if (!result.canceled){
-        setImage(result.assets[0].uri);
+        setImageURL(result.assets[0].uri);
         await uploadMedia(result.assets[0].uri);
         // console.log(image)
       }
@@ -80,6 +80,7 @@ export default function Profile({navigation}) {
 
       getDownloadURL(uploadTask.snapshot.ref).then(async(downloadURL) => {
         console.log(downloadURL);
+        setImageURL(downloadURL);
         // setImage(downloadURL);
       })
     
@@ -98,9 +99,6 @@ export default function Profile({navigation}) {
       setBirthday(data.birthday);
       setInterests(data.interests);
       setUid(data.uid);
-      // getDownloadURL(ref(storage, uid)).then((url)=>{
-      //   setImage(url);
-      // })
       setImageURL(data.pfp);
     }
     fetchData();
@@ -127,7 +125,7 @@ export default function Profile({navigation}) {
                 lname: lastName,
                 email: email,
                 phone: phoneNumber,
-                pfp: image,
+                pfp: downloadURL,
                 gender: gender,
                 birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
                 interests: interests
@@ -137,14 +135,11 @@ export default function Profile({navigation}) {
           <Text style={styles.editText}>{isEditable?"Save":"Edit"}</Text>
         </TouchableOpacity>
       </View>
-    <View style={styles.container}>
-          <TouchableOpacity style={styles.selectButton} onPress={pickImage}>
+          <TouchableOpacity style={styles.selectButton} onPress={() => {if(isEditable) pickImage()}}>
             <View style={styles.imageContainer}>
-              {image && <Image source={{ uri: image}} style={styles.image}/>}
-              
+              {downloadURL && <Image source={{ uri: downloadURL}} style={styles.image}/>}
             </View>
           </TouchableOpacity>
-    </View>
     <View style={styles.name}>
       <View style={{flexDirection:'row'}}>
         <TextInput style={{fontSize: 20, fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={isEditable} onChangeText={setFirstName}>{firstName}</TextInput>
@@ -253,18 +248,6 @@ const styles = StyleSheet.create({
     marginLeft:"45%",
     marginTop: "2%"
   },
-  // pfpCircle: {
-  //   width: 100,
-  //   height: 100,
-  //   borderRadius: 50,
-  //   fontSize:30,
-  //   backgroundColor: '#D9D9D9',
-  //   marginBottom: 20,
-  //   marginTop: 30,
-  //   marginLeft: "37%",
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
   imageContainer:{
     width: 100,
     height: 100,
@@ -282,7 +265,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    position: 'absolute',
+    // position: 'absolute',
   },
   name: {
     alignItems: 'center',
