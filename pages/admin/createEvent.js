@@ -1,178 +1,217 @@
-import React, { useState, setState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import CheckBox from 'expo-checkbox';
-import { Entypo } from '@expo/vector-icons';
-import { SimpleLineIcons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import {createEvent} from "../api/event.js"
+import { AntDesign, Entypo, SimpleLineIcons } from '@expo/vector-icons';
+import CheckBox from 'expo-checkbox';
+import { createEvent } from "../api/event.js"
+
 let nextId = 0;
 let nextShiftsId = 0;
-//anirudh and karti
-export default function CreateEventScreen({navigation}) {
-    const [selectedValueShift, setSelectedValueShift] = useState("");
-    const [isMaterialSelected, setIsMaterialSelected] = useState(false);
-    const [materials, setMaterials] = useState([]);
-    const [shifts, setShifts] = useState([]);
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
-    const [dateDay, setDateDay] = useState("Day, Date");
-    const [editingTimeShiftID, setEditingTimeShiftID] = useState("");
-    const [editingType, setEditingType] = useState("");
-    const [desc, setDesc] = useState("");
-    const [location, setLocation] = useState("");
-    const [name, setName] = useState("");
 
+export default function CreateEventScreen({ navigation }) {
+  const [selectedValueShift, setSelectedValueShift] = useState("");
+  const [isMaterialSelected, setIsMaterialSelected] = useState(false);
+  const [materials, setMaterials] = useState([]);
+  const [shifts, setShifts] = useState([]);
+  const [isEventStartPickerVisible, setEventStartPickerVisibility] = useState(false);
+  const [isEventEndPickerVisible, setEventEndPickerVisibility] = useState(false);
+  const [eventStart, setEventStart] = useState("Start Day, Date");
+  const [eventEnd, setEventEnd] = useState("End Day, Date");
+  const [isDateTimePickerVisible, setDateTimePickerVisibility] = useState(false);
+  const [editingTimeShiftID, setEditingTimeShiftID] = useState(null);
+  const [editingType, setEditingType] = useState(""); // "start" or "end"
+  const [desc, setDesc] = useState("");
+  const [location, setLocation] = useState("");
+  const [name, setName] = useState("");
 
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleDateConfirm = (date) => {
-    // console.warn("A date has been picked: ", date);
-    setDateDay(date.toDateString());
-    hideDatePicker();
-  };
-
-  const showTimePicker = () => {
-    setTimePickerVisibility(true);
-  };
-
-  const hideTimePicker = () => {
-    setTimePickerVisibility(false);
-  };
-
-  const handleTimeConfirm = (time) => {
-    // console.warn("A time has been picked: ", time);
-    const updatedShifts = shifts.map((s, i) => {
-      if (i === editingTimeShiftID) {
-        const toTimestamp = date => Math.floor(date.getTime() / 1000);
-        if (editingType === "start"){
-          s.start = toTimestamp(time).toString();
-        }
-        else{
-          s.end = toTimestamp(time).toString();
-        }
-        return s;
-      } else return s;
-    });
-    setShifts(updatedShifts);
-    hideTimePicker();
-  };
-
-  function isEmpty(value) {
-    return (value == null || (typeof value === "string" && value.trim().length === 0));
-  }
-
-  return (
-    <ScrollView style={styles.container}>
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleDateConfirm}
-        onCancel={hideDatePicker}
-      />
-      <DateTimePickerModal
-        isVisible={isTimePickerVisible}
-        mode="time"
-        onConfirm={handleTimeConfirm}
-        onCancel={hideTimePicker}
-      />
-      {/* <Text style={styles.header}>Create Event</Text> */}
-
-      <TouchableOpacity style={styles.saveButton}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
-      
-      <TextInput style={styles.eventTextInput} onChangeText={text => setName(text)} placeholder="Event Name"></TextInput>
-      
-      <TouchableOpacity style={styles.date} onPress={showDatePicker}>
-        <Entypo name="calendar" size={30} color="black" />
-        <Text style={styles.subtitle}>{dateDay}</Text>
-      </TouchableOpacity>
-
-      <View style={styles.location}>
-        <SimpleLineIcons name="location-pin" size={30} color="black" />
-        <TextInput onChangeText={text => setLocation(text)} style={styles.locationInput} placeholder="Add Location"></TextInput>
-      </View>
-
-      <Text style={styles.sectionTitle}>Work Shifts</Text>
-      {shifts.map((shift, index) => (
-          <View style={styles.checkboxContainer} key={index}>
-            <TouchableOpacity style={styles.shift} onPress={() => {showTimePicker(); setEditingTimeShiftID(index); setEditingType("start")}}>
-            <Text> {shift.start ? new Date(parseInt(shift.start)*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :  "Choose Time"} </Text>
-        </TouchableOpacity>
-        <Text style={styles.dash}> - </Text>
-        <TouchableOpacity style={styles.shift} onPress={() => {showTimePicker(); setEditingTimeShiftID(index); setEditingType("end")}}>
-          <Text> {shift.end ? new Date(parseInt(shift.end)*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) :  "Choose Time"} </Text>
-
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {setShifts(
-          shifts.slice(0,index).concat(shifts.slice(index+1))
-              );}}>
-            <AntDesign name="delete" size={25} color="black" style={{marginLeft: "15%", marginTop: "5%"}} />
-        </TouchableOpacity>
-          </View>
-        ))}
-
-      <TouchableOpacity style={styles.checkboxContainer} onPress={() => {setShifts([
-          ...shifts,
-          { id: nextShiftsId++, name: "", start: null, end: null }
-        ]);}}>
-        <Text style={styles.addShiftLabel}>Add Shift</Text>
-      </TouchableOpacity>
-
-
-      <Text style={styles.sectionTitle}>Materials Checklist</Text>
-      <View>
-      {materials.map((material, index) => (
-          <View style={styles.checkboxContainer} key={index}>
-            <CheckBox
-            disabled
-          value={isMaterialSelected}
-          onValueChange={setIsMaterialSelected}
-          style={styles.checkbox}
-        />
-        <TextInput style={styles.label} onChangeText={newText => material.name = newText} key={material.id} placeholder='Material'>{material.name}</TextInput>
-        <TouchableOpacity onPress={() => {setMaterials(
-          materials.slice(0,index).concat(materials.slice(index+1))
-              );}}>
-            <AntDesign name="delete" size={20} color="black" style={{marginLeft: "15%"}} />
-        </TouchableOpacity>
-          </View>
-        ))}
-
-        <TouchableOpacity style={styles.checkboxContainer} onPress={() => {setMaterials([
-          ...materials,
-          { id: nextId++, name: "", selected: false }
-        ]);}}>
-        <CheckBox
-          style={styles.checkbox}
-        />
-        <Text style={styles.addLabel}>Add Material</Text>
-      </TouchableOpacity>
-      </View>
-      <View style={styles.checkboxContainer}>
-      </View>
-      <Text style={styles.sectionTitle}>Event Description</Text>
-      <TextInput onChangeText={text => setDesc(text)} style={styles.textInput} multiline placeholder="Add Event Description" />
-      <TouchableOpacity 
-          onPress={async () => {
-            if (isEmpty(name)) {Alert.alert("Event Name Required"); return;}
-            await createEvent(dateDay, desc, materials, shifts, name, location);
-            navigation.navigate("AdminEvents");
-          }}
-      style={styles.button}>
-        <Text style={styles.buttonText}>Confirm</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  );
+  const showEventStartPicker = () => {
+    setEventStartPickerVisibility(true);
 };
 
+const hideEventStartPicker = () => {
+    setEventStartPickerVisibility(false);
+};
+
+const handleEventStartConfirm = (date) => {
+  setEventStart(`${date.toLocaleString('en-US', {
+    weekday: 'short', // 'Fri'
+    month: 'short',   // 'May'
+    day: 'numeric',   // '03'
+    hour: '2-digit',  // '02' or '14'
+    minute: '2-digit' // '30'
+})}`);};
+
+const showEventEndPicker = () => {
+    setEventEndPickerVisibility(true);
+};
+
+const hideEventEndPicker = () => {
+    setEventEndPickerVisibility(false);
+};
+
+const handleEventEndConfirm = (date) => {
+    setEventEnd(`${date.toLocaleString('en-US', {
+      weekday: 'short', // 'Fri'
+      month: 'short',   // 'May'
+      day: 'numeric',   // '03'
+      hour: '2-digit',  // '02' or '14'
+      minute: '2-digit' // '30'
+  })}`);
+    hideEventEndPicker();
+};
+
+const showDateTimePicker = (index, type) => {
+    setEditingTimeShiftID(index);
+    setEditingType(type);
+    setDateTimePickerVisibility(true);
+};
+
+const hideDateTimePicker = () => {
+    setDateTimePickerVisibility(false);
+};
+
+const handleDateTimeConfirm = (dateTime) => {
+    const timestamp = Math.floor(dateTime.getTime() / 1000);
+    setShifts(shifts.map((shift, index) => {
+        if (index === editingTimeShiftID) {
+            if (editingType === "start") {
+                shift.start = timestamp;
+            } else if (editingType === "end") {
+                shift.end = timestamp;
+            }
+        }
+        return shift;
+    }));
+    hideDateTimePicker();
+};
+
+const addShift = () => {
+    setShifts([...shifts, { id: nextShiftsId++, start: null, end: null }]);
+};
+
+const deleteShift = (index) => {
+    setShifts(shifts.filter((_, i) => i !== index));
+};
+
+const isEmpty = (value) => {
+    return (value == null || (typeof value === "string" && value.trim().length === 0));
+};
+
+
+    return (
+        <ScrollView style={styles.container}>
+           <DateTimePickerModal
+                isVisible={isEventStartPickerVisible}
+                mode="datetime"
+                onConfirm={handleEventStartConfirm}
+                onCancel={hideEventStartPicker}
+            />
+
+            <DateTimePickerModal
+                isVisible={isEventEndPickerVisible}
+                mode="datetime"
+                onConfirm={handleEventEndConfirm}
+                onCancel={hideEventEndPicker}
+            />
+
+            <DateTimePickerModal
+                isVisible={isDateTimePickerVisible}
+                mode="datetime"
+                onConfirm={handleDateTimeConfirm}
+                onCancel={hideDateTimePicker}
+            />
+
+            <TouchableOpacity style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
+
+            <TextInput style={styles.eventTextInput} onChangeText={text => setName(text)} placeholder="Event Name" />
+
+            <TouchableOpacity style={styles.date} onPress={showEventStartPicker}>
+                <Entypo name="calendar" size={30} color="black" />
+                <Text style={styles.subtitle}>{eventStart}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.date} onPress={showEventEndPicker}>
+                <Entypo name="calendar" size={30} color="black" />
+                <Text style={styles.subtitle}>{eventEnd}</Text>
+            </TouchableOpacity>
+
+            <View style={styles.location}>
+                <SimpleLineIcons name="location-pin" size={30} color="black" />
+                <TextInput onChangeText={text => setLocation(text)} style={styles.locationInput} placeholder="Add Location" />
+            </View>
+
+            <Text style={styles.sectionTitle}>Work Shifts</Text>
+            {shifts.map((shift, index) => (
+                <View style={styles.shiftContainer} key={index}>
+                    <TouchableOpacity onPress={() => showDateTimePicker(index, "start")}>
+                        <Text>{shift.start ? new Date(shift.start * 1000).toLocaleString() : "Set Start Time"}</Text>
+                    </TouchableOpacity>
+                    <Text> - </Text>
+                    <TouchableOpacity onPress={() => showDateTimePicker(index, "end")}>
+                        <Text>{shift.end ? new Date(shift.end * 1000).toLocaleString() : "Set End Time"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => deleteShift(index)}>
+                        <AntDesign name="delete" size={25} color="black" />
+                    </TouchableOpacity>
+                </View>
+            ))}
+
+            <TouchableOpacity onPress={addShift}>
+                <Text>Add Shift</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.sectionTitle}>Materials Checklist</Text>
+            <View>
+                {materials.map((material, index) => (
+                    <View style={styles.checkboxContainer} key={index}>
+                        <CheckBox
+                            disabled
+                            value={isMaterialSelected}
+                            onValueChange={setIsMaterialSelected}
+                            style={styles.checkbox}
+                        />
+                        <TextInput
+                            style={styles.label}
+                            onChangeText={newText => material.name = newText}
+                            key={material.id}
+                            placeholder='Material'
+                        >{material.name}</TextInput>
+                        <TouchableOpacity onPress={() => setMaterials(materials.filter((_, i) => i !== index))}>
+                            <AntDesign name="delete" size={20} color="black" />
+                        </TouchableOpacity>
+                    </View>
+                ))}
+                <TouchableOpacity onPress={() => setMaterials([...materials, { id: nextId++, name: "", selected: false }])}>
+                    <Text>Add Material</Text>
+                </TouchableOpacity>
+            </View>
+
+            <Text style={styles.sectionTitle}>Event Description</Text>
+            <TextInput
+                onChangeText={text => setDesc(text)}
+                style={styles.textInput}
+                multiline
+                placeholder="Add Event Description"
+            />
+
+            <TouchableOpacity
+                onPress={async () => {
+                    if (isEmpty(name)) {
+                        Alert.alert("Event Name Required");
+                        return;
+                    }
+                    await createEvent(eventStart, eventEnd, desc, materials, shifts, name, location);
+                    navigation.navigate("AdminEvents");
+                }}
+                style={styles.button}
+            >
+                <Text style={styles.buttonText}>Confirm</Text>
+            </TouchableOpacity>
+        </ScrollView>
+    );
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
