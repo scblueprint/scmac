@@ -21,3 +21,5 @@ const auth = initializeAuth(app, {
 });
 const storage = getStorage(app);
 module.exports = { db, auth, storage };
+
+export { db, auth, storage };
