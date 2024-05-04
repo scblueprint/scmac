@@ -2,7 +2,7 @@ import { auth, db } from '../../firebaseConfig';
 import { collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 
 
-const createEvent = async (date, eventDesc, materials, shifts, title, location ) => {
+const createEvent = async (date, endDate, eventDesc, materials, shifts, title, location ) => {
     try {
     var materialsObj = []
     var shiftIDS = []
@@ -24,6 +24,7 @@ const createEvent = async (date, eventDesc, materials, shifts, title, location )
     console.log(shiftIDS)
     const data = {
       date: date,
+      endDate: endDate == "End Day, Date" ? "null": endDate,
       description: eventDesc,
       location: location,
       materials: materialsObj,
@@ -39,7 +40,7 @@ const createEvent = async (date, eventDesc, materials, shifts, title, location )
 };
 
 
-const editEvent = async (eventId, date, eventDesc, materials, shifts, title, location) => {
+const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, shifts, title, location) => {
   try {
     var materialsObj = [];
     var shiftIDS = [];
@@ -59,7 +60,8 @@ const editEvent = async (eventId, date, eventDesc, materials, shifts, title, loc
       }
     }
     const data = {
-      date: date,
+      date: eventStart,
+      endDate: eventEnd,
       description: eventDesc,
       location: location,
       materials: materialsObj,
