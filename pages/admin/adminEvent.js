@@ -6,6 +6,7 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 const EventItem = ({ item, nav }) => (
   <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("AdminIndividualEvent", {item: item})}>
@@ -21,6 +22,10 @@ const EventItem = ({ item, nav }) => (
 
 export default function AdminEvents({navigation}) {
   const [events, setEvents] = useState([]);
+  const [filtercolor, setFiltercolor] = useState("#F1F1F2");
+  const [filtercolor1, setFiltercolor1] = useState("#F1F1F2");
+  const [filtercolor2, setFiltercolor2] = useState("#F1F1F2");
+  const [filtercolor3, setFiltercolor3] = useState("#F1F1F2");
 
   useFocusEffect(useCallback( () => {
     async function fetchData() {
@@ -44,6 +49,36 @@ export default function AdminEvents({navigation}) {
       <View style={styles.header}>
         <Text style={styles.headerText}>Events</Text>
         <AntDesign onPress={() => { navigation.navigate("CreateEvent");}} style={{marginLeft:"25%"}} name="plus" size={24} color="white" />
+      </View>
+      <View style={styles.filter}>
+      <Ionicons name="filter-outline" size={30} color="black"/>
+      <TouchableOpacity style={{backgroundColor:filtercolor,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={()=>{if (filtercolor=="#A16AA4") {setFiltercolor("#F1F1F2")} else { setFiltercolor("#A16AA4")}}}>
+        <Text>All</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{backgroundColor:filtercolor1,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={()=>{if (filtercolor1=="#A16AA4") {setFiltercolor1("#F1F1F2")} else { setFiltercolor1("#A16AA4")}}}>
+        <Text>Ceramics</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{backgroundColor:filtercolor2,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={()=>{if (filtercolor2=="#A16AA4") {setFiltercolor2("#F1F1F2")} else { setFiltercolor2("#A16AA4")}}}>
+        <Text>Shows</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={{backgroundColor:filtercolor3,
+    borderRadius: 10,
+    fontSize:15,
+    padding:10,}} onPress={()=>{if (filtercolor3=="#A16AA4") {setFiltercolor3("#F1F1F2")} else { setFiltercolor3("#A16AA4")}}}>
+        <Text>Art Gallery</Text>
+      </TouchableOpacity>
       </View>
       <FlatList
         data={events}
@@ -99,4 +134,19 @@ const styles = StyleSheet.create({
     fontSize: 21,
     color: '#000000',
   },
+  filter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginHorizontal: 3,
+    marginTop: 3,
+  },
+  filterButton: {
+    borderRadius: 10,
+    fontSize: 18,
+    padding: 15,
+  }
 });
