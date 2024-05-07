@@ -120,16 +120,21 @@ export default function Profile({navigation}) {
               //HANDLE ERROR HANDLING HERE (CHECK ONCE THEY EDIT IF THEY ARE VALID EMAIL, NUMBER, ETC)
               
               const userDoc = doc(db, "users", auth.currentUser.uid);
-              await updateDoc(userDoc, {
-                fname: firstName,
-                lname: lastName,
-                email: email,
-                phone: phoneNumber,
-                pfp: downloadURL,
-                gender: gender,
-                birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
-                interests: interests
-              });
+              if (!firstName || !lastName|| !email|| !phoneNumber) {
+                Alert.alert("Cannot leave field empty. Click edit again to learn more");
+              }
+              else {
+                await updateDoc(userDoc, {
+                  fname: firstName,
+                  lname: lastName,
+                  email: email,
+                  phone: phoneNumber,
+                  pfp: downloadURL,
+                  gender: gender,
+                  birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
+                  interests: interests
+                });
+            }
           } 
           setIsEditable(!isEditable)}}>
           <Text style={styles.editText}>{isEditable?"Save":"Edit"}</Text>
