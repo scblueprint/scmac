@@ -32,7 +32,8 @@ const createEvent = async (date, endDate, eventDesc, materials, shifts, title, l
       title: title,
       
     };
-    await addDoc(collection(db, "events"), data);
+    const doc = await addDoc(collection(db, "events"), data);
+    return doc;
   } catch (error) {
     console.error("Event Creation Error:", error);
     throw error;

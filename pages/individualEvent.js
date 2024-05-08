@@ -6,8 +6,9 @@ import { AntDesign } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { auth, db } from '../firebaseConfig';
 
+var item = null;
 export default function EventDetailScreen({route,navigation}) {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState("");
   const [event, setEvent] = useState({});
   const [materials, setMaterials] = useState([]);
   const [shiftsData, setShiftsData] = useState([]);
@@ -16,6 +17,8 @@ export default function EventDetailScreen({route,navigation}) {
     return (
       <View style={styles.item}>
         <Text style={styles.textItem}>{item.label}</Text>
+        {/* {console.log(item.value)}
+        {console.log(value)} */}
         {item.value === value && (
           <AntDesign
             style={styles.icon}
@@ -24,6 +27,12 @@ export default function EventDetailScreen({route,navigation}) {
             size={20}
           />
         )}
+        {/* <AntDesign
+            style={styles.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          /> */}
       </View>
     );
   };
@@ -32,15 +41,26 @@ export default function EventDetailScreen({route,navigation}) {
     async function fetchData() {
       const arr = [];
       const arr2 = [];
-      const { item } = route.params;
-      const event = item;
-      const eventData = event.data();
+      item = route.params;
+      // const event = item;
+      // console.log(item.item.id)
+      const eventData = item.item;
       eventData.shifts.forEach(async element => {
         const shiftDoc = doc(db, 'shifts', element);
         const shift = await getDoc(doc(db, 'shifts', element));
         // console.log(shift.data())
-        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date(shift.data().endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
-        // console.log(arr);
+        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime*1000).toLocaleString('en-US', {
+          weekday: 'short', // 'Fri'
+          month: 'short',   // 'May'
+          day: 'numeric',   // '03'
+          hour: '2-digit',  // '02' or '14'
+          minute: '2-digit' // '30'
+      }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})// console.log(arr);
+      });
+      arr.sort(function(a,b){
+        // Turn your strings into dates, and then subtract them
+        // to get a value that is either negative, positive, or zero.
+        return new Date(b.date) - new Date(a.date);
       });
       setShiftsData(arr);
 
@@ -53,9 +73,10 @@ export default function EventDetailScreen({route,navigation}) {
       setMaterials(arr2);
       
       const fetchedEvents = {
-          id: event.id,
+          id: eventData.id,
           title: eventData.title,
           date: eventData.date,
+          endDate: eventData.endDate,
           description: eventData.description,
           location: eventData.location,
           materials: eventData.materials,
@@ -78,7 +99,8 @@ export default function EventDetailScreen({route,navigation}) {
     <ScrollView style={styles.container}>
         <View key={event.id}>
           <Text style={styles.title}>{event.title}</Text>
-          <Text style={styles.subtitle}>Date: {new Date(event.date).toLocaleDateString()}</Text>
+          <Text style={styles.subtitle}>Start Date: {event.date}</Text>
+          <Text style={styles.subtitle}>End Date: {event.endDate}</Text>
           <Text style={styles.subtitle}>Location: {event.location}</Text>
           <Text style={styles.sectionTitle}>Event Description: </Text>
           <Text style={styles.description}>{event.description}</Text>
@@ -97,6 +119,7 @@ export default function EventDetailScreen({route,navigation}) {
               searchPlaceholder="Search..."
               value={value}
               onChange={item => {
+                // console.log(item)
                 setValue(item);
               }}
               renderItem={renderItem}
@@ -115,13 +138,16 @@ export default function EventDetailScreen({route,navigation}) {
           <Text style={styles.sectionTitle}>Comments</Text>
           <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
           <TouchableOpacity style={styles.button} onPress={async ()=> 
-            {await updateDoc(value.shift, {
+            {
+              // console.log(value.shift._key.path.segments[1]);
+              await updateDoc(value.shift, {
               user: arrayUnion(auth.currentUser.uid),
           });
           const eventDoc = doc(db, "events", event.id);
+          console.log(eventDoc);
           let index = 0;
           const arr = [];
-          event.materials.map(m => {
+          materials.map(m => {
             if (!m.user) {
               if (materials[index].isSelected)
                 m.user = auth.currentUser.uid;
@@ -132,6 +158,9 @@ export default function EventDetailScreen({route,navigation}) {
           // console.log(arr)
           await updateDoc(eventDoc, {
             materials: arr
+          });
+          await updateDoc(doc(db, "users", auth.currentUser.uid), {
+            events: arrayUnion(event.id)
           });
           Alert.alert("Successfully Signed Up for " + event.title + "!");
           navigation.navigate("Events");

@@ -221,7 +221,7 @@ export default function EditEventScreen({route, navigation}) {
       <View style={styles.checkboxContainer}>
       </View>
       <Text style={styles.sectionTitle}>Event Description</Text>
-      <TextInput style={styles.textInput} multiline placeholder={desc} />
+      <TextInput style={styles.textInput} onChangeText={text => setDesc(text)} multiline placeholder={desc} />
     </ScrollView>
   );
 };
