@@ -2,12 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native'; 
 import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, addDoc, deleteDoc } from 'firebase/firestore';
 import { Dropdown } from 'react-native-element-dropdown';
 import { AntDesign } from '@expo/vector-icons';
 import { auth, db } from '../../firebaseConfig';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+import { Octicons, Entypo } from '@expo/vector-icons';
+import OptionsMenu from "react-native-options-menu";
+import { createEvent } from '../api/event';
 
 const Tab = createMaterialTopTabNavigator();
 var nav = null;
@@ -72,12 +75,30 @@ function Details() {
       // console.log(item);
       // const event = item;
       const eventData = item.item;
+      // console.log(eventData.shifts)
       eventData.shifts.forEach(async element => {
         const shiftDoc = doc(db, 'shifts', element);
         const shift = await getDoc(doc(db, 'shifts', element));
-        // console.log(shift.data())
-        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
-        // console.log(arr);
+      //   console.log(new Date(shift.data().startTime*1000).toLocaleString('en-US', {
+      //     weekday: 'short', // 'Fri'
+      //     month: 'short',   // 'May'
+      //     day: 'numeric',   // '03'
+      //     hour: '2-digit',  // '02' or '14'
+      //     minute: '2-digit' // '30'
+      // }))
+        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime*1000).toLocaleString('en-US', {
+          weekday: 'short', // 'Fri'
+          month: 'short',   // 'May'
+          day: 'numeric',   // '03'
+          hour: '2-digit',  // '02' or '14'
+          minute: '2-digit' // '30'
+      }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
+        // console.log(arr.sort());
+      });
+      arr.sort(function(a,b){
+        // Turn your strings into dates, and then subtract them
+        // to get a value that is either negative, positive, or zero.
+        return new Date(b.date) - new Date(a.date);
       });
       setShiftsData(arr);
 
@@ -90,9 +111,10 @@ function Details() {
       setMaterials(arr2);
       
       const fetchedEvents = {
-          // id: event.id,
+          id: eventData.id,
           title: eventData.title,
           date: eventData.date,
+          endDate: eventData.endDate,
           description: eventData.description,
           location: eventData.location,
           materials: eventData.materials,
@@ -100,7 +122,7 @@ function Details() {
         }
 
       setEvent(fetchedEvents);
-      // console.log(event.data())
+      // console.log(event.date);
     }
     fetchData();
  }, []))
@@ -111,37 +133,80 @@ function Details() {
   setMaterials(updatedMaterials);
 };
 
+const myIcon = (<Entypo name="dots-three-vertical" size={24} color="black" />);
+
+const duplicateEvent = async () => {
+  // console.log("duplicate");
+  // console.log(event.date, event.endDate, event.description, event.materials, event.shifts, event.title, event.location);
+  const doc = await addDoc(collection(db, "events"), event);
+  // console.log(doc);
+  const eventData = await getDoc(doc);
+  // console.log(item);
+  // console.log(eventData.id);
+  const dataEvent = eventData.data();
+  dataEvent["id"] = eventData.id;
+  const data = {item: dataEvent}
+  // console.log(data);
+  nav.navigate("EditEvent",{item: data});
+}
+
+const deleteEvent = async () => {
+  Alert.alert('Are you sure you want to delete this event?', '', [
+    {
+      text: 'Cancel',
+      // onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+    {text: 'OK', onPress: async () => {
+      await deleteDoc(doc(db, "events", item.item.id));
+      // console.log(item.item.id);
+      nav.navigate("AdminEvents");}},
+  ]);
+}
+
   return (
     <ScrollView style={styles.container}>
     {/* <Text style={styles.header}>Event</Text> */}
-    <View style={{flex: 1, flexDirection:'row', marginTop: "4%", alignItems: "center", justifyContent: "center", marginBottom: "3%"}}>
-      <Text style={styles.title}>{event.title}</Text>
-      <TouchableOpacity onPress = {()=>{nav.navigate("EditEvent",{item: item});}} style={styles.saveButton}><Text style={styles.saveButtonText}>Edit</Text></TouchableOpacity>
-    </View>
     
-      <Text style={styles.subtitle}>Date: {new Date(event.date).toLocaleDateString()}</Text>
+    <View style={{flex: 1, flexDirection:'row', justifyContent: 'center', alignItems: 'center', marginVertical: "3%"}}>
+    <Text style={styles.title}>{event.title}</Text>
+    <Octicons name="pencil" size={24} color="black" style={{position: 'absolute',justifyContent: 'flex-end', right: '11%'}} onPress = {()=>{nav.navigate("EditEvent",{item: item});}} />
+    {/* <TouchableOpacity onPress = {()=>{nav.navigate("EditEvent",{item: item});}} style={styles.saveButton}><Text style={styles.saveButtonText}>Edit</Text></TouchableOpacity> */}
+    <View style={{position: 'absolute',justifyContent: 'flex-end', right: '2%'}}>
+      <OptionsMenu
+        customButton={myIcon}
+        buttonStyle={{ resizeMode: "contain" }}
+        destructiveIndex={1}
+        options={["Duplicate", "Delete", "Cancel"]}
+        actions={[duplicateEvent, deleteEvent, () => {}]}/>
+    </View>
+  </View>
+    
+      {/* <Text style={styles.subtitle}>Date: {new Date(event.date).toLocaleDateString()}</Text> */}
+      <Text style={styles.subtitle}>Start Date: {event.date}</Text>
+      <Text style={styles.subtitle}>End Date: {event.endDate}</Text>
       <Text style={styles.subtitle}>Location: {event.location}</Text>
       <Text style={styles.sectionTitle}>Event Description: </Text>
       <Text style={styles.description}>{event.description}</Text>
       <Text style={styles.sectionTitle}>Select a Work Shift</Text>
-      <Dropdown
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={shiftsData}
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder="Select item"
-              searchPlaceholder="Search..."
-              value={value}
-              onChange={item => {
-                setValue(item);
-              }}
-              renderItem={renderItem}
-            />
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={shiftsData}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="Select item"
+          searchPlaceholder="Search..."
+          value={value}
+          onChange={item => {
+            setValue(item);
+          }}
+          renderItem={renderItem}
+      />
       <Text style={styles.sectionTitle}>Materials Checklist</Text>
       {materials ? materials.map((material,index) => (
             <View key={index} style={styles.checkboxContainer}>
@@ -155,7 +220,35 @@ function Details() {
           )):null}
       <Text style={styles.sectionTitle}>Comments</Text>
       <TextInput onChangeText={text => setDesc(text)} style={styles.textInput} multiline placeholder="Additional comments" />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={async ()=> 
+            {
+              // console.log(value.shift);
+              await updateDoc(value.shift, {
+              user: arrayUnion(auth.currentUser.uid),
+          });
+          // console.log(event.id)
+          const eventDoc = doc(db, "events", event.id);
+          // console.log(eventDoc);
+          let index = 0;
+          const arr = [];
+          materials.map(m => {
+            if (!m.user) {
+              if (materials[index].isSelected)
+                m.user = auth.currentUser.uid;
+              index++;
+            }
+            arr.push(m);
+          })
+          // console.log(arr)
+          await updateDoc(eventDoc, {
+            materials: arr
+          });
+          await updateDoc(doc(db, "users", auth.currentUser.uid), {
+            events: arrayUnion(event.id)
+          });
+          Alert.alert("Successfully Signed Up for " + event.title + "!");
+          nav.navigate("AdminEvents");
+          }}>
         <Text style={styles.buttonText}>Confirm</Text>
       </TouchableOpacity>
       </ScrollView>
@@ -194,8 +287,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '500',
-    // marginLeft: "30%",
     textAlign: 'center',
+    // marginRight: '20%'
   },
   subtitle: {
     fontSize: 18,
