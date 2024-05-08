@@ -20,9 +20,11 @@ const login = async (email, password, notifToken) => {
     return userData.data();
   } catch (error) {
     // Handle or return the error appropriately
-    console.error("Login error:", error);
+    // console.error("Login error:", error);
     if (error.code == "auth/invalid-email") Alert.alert("Invalid Email");
-    throw error; // Or return a specific message or object
+    if (error.code == "auth/invalid-credential") Alert.alert("Incorrect Email or Password");
+    if (error.code == "auth/user-not-found") Alert.alert("User not found");
+    // throw error; // Or return a specific message or object
   }
 };
 
@@ -48,8 +50,12 @@ const signup = async (email, password, fname, lname, phoneNumber, interests, bir
 
     return user;
   } catch (error) {
-    console.error("Signup error:", error);
-    throw error;
+    // console.error("Signup error:", error);
+    if (error.code == "auth/email-already-exists") Alert.alert("Email already exists");
+    if (error.code == "auth/invalid-email") Alert.alert("Invalid Email");
+    if (error.code == "auth/invalid-password") Alert.alert("Invalid Password (Must be at least 6 characters)");
+    if (error.code == "auth/weak-password") Alert.alert("Password must be at least 6 characters");
+    // throw error;
   }
 };
 const getCurrentUser = () => {

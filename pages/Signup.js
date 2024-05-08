@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import {signup} from "./api/users.js";
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from 'react';
@@ -160,13 +160,17 @@ export default function Signup({navigation}) {
       <TouchableOpacity 
       style={styles.continueButton}
               onPress={async () =>  {
-                const arr = [];
-                if (pottery) arr.push("Pottery");
-                if (gallery) arr.push("Gallery");
-                if (events) arr.push("Events");
-                if (facilities) arr.push("Facilities");
-                const item = await signup(email, pword, fname, lname, phone, arr, birthday);
-                navigation.navigate("Waiver", {item: item})
+                if (fname && lname && email && pword && birthday && phone) {
+                  const arr = [];
+                  if (pottery) arr.push("Pottery");
+                  if (gallery) arr.push("Gallery");
+                  if (events) arr.push("Events");
+                  if (facilities) arr.push("Facilities");
+                  const item = await signup(email, pword, fname, lname, phone, arr, birthday);
+                  if (item) navigation.navigate("Waiver", {item: item})
+                } else {
+                  Alert.alert("Cannot leave field empty");
+                }
               }}
       >
         <Text style = {{color:"white", fontSize:20}}>Continue</Text>
