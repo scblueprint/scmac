@@ -21,7 +21,7 @@ const DATA = [
 const VolunteerProfileAdmin = () => {
   return (
     <View style={styles.container}>
-        <Text style={styles.header}>Volunteer Profile</Text>
+        {/* <Text style={styles.header}>Volunteer Profile</Text> */}
         <View style={styles.profileContainer}>
             <View style={styles.pfpCircle}>
                 <Text>PFP</Text>

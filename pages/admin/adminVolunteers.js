@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import Navbar from '../../components/NavBar';
 
 const DATA = [
   {
@@ -40,7 +41,7 @@ const renderItem = ({ item }) => (
   </View>
 );
 
-const AdminVolunteers = () => {
+const AdminVolunteers = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Volunteers</Text>
@@ -66,6 +67,7 @@ const AdminVolunteers = () => {
         <TouchableOpacity style={styles.button2}>
           <Text style={styles.exportButton}>Export as CSV</Text>
         </TouchableOpacity>
+        <Navbar navigation={navigation}/>
     </View>
   );
 };

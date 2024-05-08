@@ -5,15 +5,17 @@ import NavBar from '../components/NavBar.js'
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useFocusEffect } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
 
 const EventItem = ({ item, nav }) => (
   <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("IndividualEvent", {item: item})}>
     <View style={styles.eventInfo}>
-      <Text style={styles.date}>{new Date(item.data().date).toDateString().split(' ').slice(1).join(' ')}</Text>
-      <Text style={styles.eventName}>{item.data().title}</Text>
-      <Text style={styles.location}>{item.data().location}</Text>
+      <Text style={styles.date}>{item.date}</Text>
+      {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
+      <Text style={styles.eventName}>{item.title}</Text>
+      <Text style={styles.location}>{item.location}</Text>
     </View>
 	<SimpleLineIcons name="arrow-right" size={24} color="black" />
   </TouchableOpacity>
@@ -35,17 +37,23 @@ export default function Events({navigation}) {
       const arr = [];
       const eventsData = await getDocs(collection(db, 'events'));
       eventsData.forEach(doc => {
-        // console.log(doc.data());
-        arr.push(doc);
+        var temp = doc.data();
+        temp.id = doc.id
+        if (new Date() < new Date(temp.date)) arr.push(temp);
       })
       setEvents(arr);
     }
     fetchData();
   }, []))
 
+  let i = 0;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Events</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Events</Text>
+        <Feather name="inbox" size={24} color="white" onPress={() => { navigation.navigate("ArchivedEvents");}} style={{marginLeft:"25%"}} />
+      </View>
       <View style={styles.filter}>
       <Ionicons name="filter-outline" size={30} color="black"/>
       <TouchableOpacity style={{backgroundColor:filtercolor,
@@ -76,13 +84,12 @@ export default function Events({navigation}) {
         <Text>Art Gallery</Text>
       </TouchableOpacity>
       </View>
-
       <FlatList
         data={events}
         renderItem={({ item }) => (
-          <EventItem key={item.id} item={item} nav={navigation} />
+          <EventItem key={i++} item={item} nav={navigation} />
         )}
-        keyExtractor={item => item.id}
+        // keyExtractor={item => item.id}
       />
       <View style={{position: "absolute", bottom:0, width:"100%"}}>
         <NavBar navigation={navigation}/>
@@ -145,5 +152,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     fontSize: 18,
     padding: 15,
-  }
+  },
+  header: {
+    flexDirection: "row",
+    backgroundColor: '#6A466C',
+    textAlign: 'center',
+    justifyContent: 'center',
+    paddingTop: 70,
+    paddingBottom: 20,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+    marginLeft: "33%"
+  },
 });

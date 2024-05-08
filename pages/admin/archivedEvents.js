@@ -7,46 +7,53 @@ import { db } from '../../firebaseConfig';
 import { AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
+import { getCurrentUserData } from '../api/users.js';
 
-const EventItem = ({ item, nav }) => (
-  <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("AdminIndividualEvent", {item: item})}>
-    <View style={styles.eventInfo}>
-      {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
-      <Text style={styles.date}>{item.date}</Text>
-      <Text style={styles.eventName}>{item.title}</Text>
-      <Text style={styles.location}>{item.location}</Text>
-    </View>
-	<SimpleLineIcons name="arrow-right" size={24} color="black" />
-  </TouchableOpacity>
-);
-
-export default function AdminEvents({navigation}) {
+export default function ArchivedEvents({navigation}) {
+  const [admin, setAdmin] = useState(false);
   const [events, setEvents] = useState([]);
 
   useFocusEffect(useCallback( () => {
     async function fetchData() {
       const arr = [];
+      data = await getCurrentUserData();
+      setAdmin(data.admin);
       const eventsData = await getDocs(collection(db, 'events'));
       eventsData.forEach(doc => {
         var temp = doc.data();
         temp.id = doc.id;
-        if (new Date() < new Date(temp.date)) arr.push(temp);
+        if (!(new Date() < new Date(temp.date))) arr.push(temp);
+        // console.log(!(new Date() < new Date(temp.date)))
       })
       setEvents(arr);
-      // console.log(events);
+    //   console.log(events);
     }
     fetchData();
   }, []))
+
+  const EventItem = ({ item, nav }) => (
+    <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>{if (admin) {nav.navigate("AdminIndividualEvent", {item: item})}
+    else {nav.navigate("IndividualEvent", {item: item})}}}>
+      <View style={styles.eventInfo}>
+        {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
+        <Text style={styles.date}>{item.date}</Text>
+        <Text style={styles.eventName}>{item.title}</Text>
+        <Text style={styles.location}>{item.location}</Text>
+      </View>
+    <SimpleLineIcons name="arrow-right" size={24} color="black" />
+    </TouchableOpacity>
+  
+  );
 
   let i = 0;
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerText}>Events</Text>
-        <Feather name="inbox" size={24} color="white" onPress={() => { navigation.navigate("ArchivedEvents");}} style={{marginLeft:"18%"}} />
+        <Feather name="inbox" size={24} color="white" style={{marginLeft:"20%"}} />
         <AntDesign onPress={() => { navigation.navigate("CreateEvent");}} style={{marginLeft:"5%"}} name="plus" size={24} color="white" />
-      </View>
+      </View> */}
       <FlatList
         data={events}
         renderItem={({ item }) => (
@@ -54,7 +61,7 @@ export default function AdminEvents({navigation}) {
         )}
         // keyExtractor={item => item.id}
       />
-       <NavBar navigation={navigation}/>
+       {/* <NavBar navigation={navigation}/> */}
     </View>
   );
 }
@@ -76,7 +83,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    marginLeft: "37%"
+    marginLeft: "35%"
   },
   itemContainer: {
     flexDirection: 'row',
