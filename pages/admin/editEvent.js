@@ -69,7 +69,9 @@ export default function EditEventScreen({route, navigation}) {
     hideTimePicker();
   };
 
-
+  function isEmpty(value) {
+    return (value == null || (typeof value === "string" && value.trim().length === 0));
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -173,6 +175,8 @@ export default function EditEventScreen({route, navigation}) {
       <TextInput style={styles.textInput} multiline placeholder={desc} />
       <TouchableOpacity 
                 onPress={async () => {
+                  if (isEmpty(eventName)) {Alert.alert("Event Name Required"); return;}
+                  if (isEmpty(desc)) {Alert.alert("Description Required"); return;}
                   await editEvent(item.item.id, dateDay, desc, materials, shifts, eventName, location)
                 }}
       style={styles.button}>

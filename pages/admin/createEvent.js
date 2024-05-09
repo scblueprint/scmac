@@ -9,6 +9,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {createEvent} from "../api/event.js"
 let nextId = 0;
 let nextShiftsId = 0;
+let validDate = false;
 //anirudh and karti
 export default function CreateEventScreen({navigation}) {
     const [selectedValueShift, setSelectedValueShift] = useState("");
@@ -24,8 +25,6 @@ export default function CreateEventScreen({navigation}) {
     const [location, setLocation] = useState("");
     const [name, setName] = useState("");
 
-
-
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -37,6 +36,7 @@ export default function CreateEventScreen({navigation}) {
   const handleDateConfirm = (date) => {
     // console.warn("A date has been picked: ", date);
     setDateDay(date.toDateString());
+    validDate = true;
     hideDatePicker();
   };
 
@@ -163,6 +163,8 @@ export default function CreateEventScreen({navigation}) {
       <TouchableOpacity 
           onPress={async () => {
             if (isEmpty(name)) {Alert.alert("Event Name Required"); return;}
+            if (!validDate) {Alert.alert("Date Required"); return;}
+            if (isEmpty(desc)) {Alert.alert("Description Required"); return;}
             await createEvent(dateDay, desc, materials, shifts, name, location);
             navigation.navigate("AdminEvents");
           }}
