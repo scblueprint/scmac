@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, FlatList } from 'react-native'; 
 import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, addDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, addDoc, deleteDoc, query, where, documentId } from 'firebase/firestore';
 import { Dropdown } from 'react-native-element-dropdown';
 import { AntDesign } from '@expo/vector-icons';
 import { auth, db } from '../../firebaseConfig';
@@ -16,8 +16,8 @@ const Tab = createMaterialTopTabNavigator();
 var nav = null;
 var item = null;
 export default function AdminEventDetailScreen({route, navigation}) {
-  useFocusEffect(useCallback( () => {
-  }, []))
+  // useEffect( () => {
+  // }, []))
   item  = route.params;
   // console.log(item)
   nav = navigation;
@@ -67,7 +67,7 @@ function Details() {
     );
   };
 
-  useFocusEffect(useCallback( () => {
+  useEffect( () => {
     async function fetchData() {
       const arr = [];
       const arr2 = [];
@@ -125,7 +125,7 @@ function Details() {
       // console.log(event.date);
     }
     fetchData();
- }, []))
+ }, [])
 
  const toggleMaterial = (index) => {
   const updatedMaterials = [...materials];
@@ -268,53 +268,182 @@ const DATA = [
   },
 ];
 
-const renderItem = ({ item }) => (
-  <View style={styles.item}>
-    <View style={styles.circle} />
-    <View style={styles.textContainer}>
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.phoneNumber}>{item.phoneNumber}</Text>
-    </View>
-    <TouchableOpacity style={styles.seeMoreButton}>
-      <Text style={styles.seeMoreButtonText}>See more →</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.moreButton}>
-      <Text style={styles.moreButtonText}>...</Text>
-    </TouchableOpacity>
-  </View>
-);
+
 
 function Availability() {
-  const [selectedValueShift, setSelectedValueShift] = useState("");
-  const [isMaterialSelected, setIsMaterialSelected] = useState(false);
-  const [toggleValue, setToggleValue] = useState(false);
+  const [shiftsData, setShiftsData] = useState([]);
+  const [usersData, setUsersData] = useState([]);
+  const [flatlists, setFlatlists] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+      console.log("hello")
+      const arr = [];
+      const eventData = item.item;
+      if (eventData.shifts) {
+      const q = query(
+        collection(db, "shifts"),
+        where(documentId(), "in", 
+          eventData.shifts
+        ),
+      );
+      
+        // console.log(q.count());
+      // setFlatlists(q.length);
+      
+      const productsDocsSnap = await getDocs(q);
+      
+      productsDocsSnap.forEach(async (doc) => {
+        // if (doc.data().user) {
+        const u = query(
+          collection(db, "users"),
+          where(documentId(), "in", 
+            doc.data().user
+          ),
+        );
+        // arr2.push(u);
+      const arr2 = [];
+        
+        const usersDocsSnap = await getDocs(u);
+
+        usersDocsSnap.forEach(async (doc) => {
+          arr2.push(doc.data());
+        });
+
+        var temp = [...usersData];
+        temp.push(arr2);
+        setUsersData(temp);
+        // console.log(temp);
+      // }
+
+          arr.push({users: arr2, label: new Date(doc.data().startTime*1000).toLocaleString('en-US', {
+                weekday: 'short', // 'Fri'
+                month: 'short',   // 'May'
+                day: 'numeric',   // '03'
+                hour: '2-digit',  // '02' or '14'
+                minute: '2-digit' // '30'
+            }) + " - " + new Date(doc.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(doc.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (doc.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
+          // console.log(doc.data()); // "doc1", "doc2" and "doc3"
+          arr.sort(function(a,b){
+            // Turn your strings into dates, and then subtract them
+            // to get a value that is either negative, positive, or zero.
+            return new Date(b.date) - new Date(a.date);
+          });
+          // console.log(arr);
+          setShiftsData(arr);
+      });
+      // arr2.forEach(async (doc) => {
+      //   const usersDocsSnap = await getDocs(doc);
+      //   const arr3 = [];
+      //   usersDocsSnap.forEach(async (doc) => {
+      //     arr3.push(doc.data());
+      //   });
+
+      //   var temp = usersData;
+      //   temp.push(arr3);
+      //   console.log(arr3);
+      //   setUsersData(arr3);
+      // })
+    }
+    }
+    fetchData();
+ }, [])
+
+ 
+
+ function renderItem2() {
+  // console.log(usersData);
+  usersData.map((index) => {
+  return (
+  <View style={styles.item} key={index}>
+      {/* <View style={styles.circle} /> */}
+      <View style={styles.textContainer}>
+        {/* <Text style={styles.name}>{item.item.fname} {item.item.lname}</Text>
+        <Text style={styles.phoneNumber}>{item.item.phone}</Text> */}
+      </View>
+      <TouchableOpacity style={styles.seeMoreButton}>
+        <Text style={styles.seeMoreButtonText}>See more →</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.moreButton}>
+        <Text style={styles.moreButtonText}>...</Text>
+      </TouchableOpacity>
+    </View>
+ );
+      })
+    };
+
+    let j = -1;
+
+ const renderItem = item => {
+  return (
+  <View key={item.index}>
+    <View style={styles.container2}>
+      <Text style={styles.text}>Time Slot {item.index + 1}:</Text>
+      <TouchableOpacity style={styles.reminderButton}>
+        <Text style={styles.reminderButtonText}>Send Reminder</Text>
+      </TouchableOpacity>
+    </View>
+    <View style={styles.container3}>
+      <Text style={styles.text}>{item.item.label}</Text>
+    </View>
+    {/* {console.log(item.item.users)} */}
+    {item.item.users ? item.item.users.map(el => {
+      // console.log(item[0]);
+      // let item = el[0];
+      // el.map(item => {
+      // console.log(item);
+      j++;
+
+  return (
+  <View style={styles.item} key={el.uid}>
+      {/* <View style={styles.circle} /> */}
+      <View style={styles.textContainer}>
+        <Text style={styles.name}>{el.fname} {el.lname}</Text>
+        <Text style={styles.phoneNumber}>{el.phone}</Text>
+      </View>
+      <TouchableOpacity style={styles.seeMoreButton}>
+        <Text style={styles.seeMoreButtonText}>See more →</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.moreButton}>
+        <Text style={styles.moreButtonText}>...</Text>
+      </TouchableOpacity>
+    </View>
+ );
+  // });
+      }):null}
+    {/* {usersData.forEach(el => {
+      console.log(el);
+      return(
+      <View style={styles.container3}>
+      <Text style={styles.text}>{item.item.label}</Text>
+    </View>
+      )
+    })} */}
+    {/* {usersData ? <FlatList
+      data={usersData[item.index] ? usersData[item.index] : []}
+      renderItem={renderItem2}
+      keyExtractor={(item) => item.index}
+    /> : null} */}
+    {/* {console.log(item.item.users)} */}
+  </View>
+  )
+  };
 
   return (
     // <ScrollView contentContainerStyle={styles.container}>
-    <View contentContainerStyle={styles.container}>
-        <View style={styles.container2}>
+    <View style={styles.container}>
+        {/* <View style={styles.container2}>
           <Text style={styles.text}>Event Organizers</Text>
           <TouchableOpacity style={styles.reminderButton}>
             <Text style={styles.reminderButtonText}>Send Reminder</Text>
           </TouchableOpacity>
-        </View>
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
-        <View style={styles.container2}>
-          <Text style={styles.text}>Time Slot 1 (00:00 - 00:00)</Text>
-          <TouchableOpacity style={styles.reminderButton}>
-            <Text style={styles.reminderButtonText}>Send Reminder</Text>
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />  
-        <View style={styles.container2}>
+        </View> */}
+        {shiftsData ? <FlatList
+      data={shiftsData? shiftsData : []}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.index}
+    /> : null}
+        {/* <View style={styles.container2}>
           <Text style={styles.text}>Time Slot 2 (00:00 - 00:00)</Text>
           <TouchableOpacity style={styles.reminderButton}>
             <Text style={styles.reminderButtonText}>Send Reminder</Text>
@@ -324,7 +453,7 @@ function Availability() {
           data={DATA}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-        />  
+        />   */}
       </View>
   )
 }
@@ -482,6 +611,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
 },
+container3: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  backgroundColor: '#ECECEC',
+  paddingHorizontal: 10,
+  paddingBottom: 10,
+},
 text: {
     fontSize: 17,
     color: 'black',
@@ -512,6 +648,7 @@ item: {
   },
   textContainer: {
     flex: 1,
+    marginLeft: "5%"
   },
   name: {
     fontSize: 16,
