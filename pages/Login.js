@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { EvilIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -80,15 +80,21 @@ export default function Login({navigation}) {
             <TouchableOpacity
               style={styles.loginButton}
               onPress={async () => {
+                if (email && pword) {
                 var user = await login(email,pword, "hello");
-                setEmail("");
-                setPword("");
-                if(user.admin){
-                  navigation.navigate("AdminEvents");
+                if (user) {
+                  setEmail("");
+                  setPword("");
+                  if(user.admin){
+                    navigation.navigate("AdminEvents");
+                  }
+                  else{
+                    navigation.navigate("Events");
+                  }
                 }
-                else{
-                  navigation.navigate("Events");
-                }
+              } else {
+                Alert.alert("Cannot leave field empty");
+              }
               }}
             >
             <Text style={styles.loginButtonText}>Log In</Text>

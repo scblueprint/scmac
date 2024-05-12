@@ -14,9 +14,9 @@ import CreateEventScreen from './pages/admin/createEvent';
 import EditEventScreen from './pages/admin/editEvent';
 import AdminEvents from './pages/admin/adminEvent';
 import AdminEventDetailScreen from './pages/admin/adminIndividualEvent';
+import AdminVolunteers from './pages/admin/adminVolunteers';
 import VolunteerProfileAdmin from './pages/VolunteerProfileAdmin';
-import AdminVolunteers from './pages/adminVolunteers';
-
+import ArchivedEvents from './pages/admin/archivedEvents';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +28,7 @@ export default function App() {
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Profile" component={Profile} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
+        <Stack.Screen name="Volunteers" component={AdminVolunteers} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Notifications" component={Notifications} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Waiver" component={Waiver} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Events" component={Events} options={{ headerShown: false, gestureEnabled: false }} />
@@ -65,9 +66,23 @@ export default function App() {
             headerTitle: "Event",
             headerTintColor: "white"
           }}/>
-        <Stack.Screen name="VolunteerProfileAdmin" component={VolunteerProfileAdmin} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="AdminVolunteers" component={AdminVolunteers} options={{ headerShown: false }} />
-
+        <Stack.Screen name="VoluteerProfile" component={VolunteerProfileAdmin} options={
+          { headerShown: true, 
+            headerStyle: {backgroundColor: "#6A466C", height: 100}, 
+            headerBackTitle: " ", 
+            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+            headerTitle: "Voluteer Profile",
+            headerTintColor: "white"
+          }}/>
+        <Stack.Screen name="ArchivedEvents" component={ArchivedEvents} options={
+          { headerShown: true, 
+            headerStyle: {backgroundColor: "#6A466C", height: 110}, 
+            headerBackTitle: " ", 
+            headerTitleStyle: {color: "#fff", fontSize: 20}, 
+            headerTitle: "Archived Events",
+            headerTintColor: "white"
+          }}/>
       </Stack.Navigator>
     </NavigationContainer>
   ); 

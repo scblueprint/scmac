@@ -45,6 +45,18 @@ const Navbar = ({navigation}) => {
         <Text style={styles.navText}>Notifications</Text>
         
       </TouchableOpacity>
+
+        {admin ? 
+      <TouchableOpacity
+        style={styles.navItem}
+        onPress={() => navigation.navigate("Volunteers")}
+      >
+        <Icon name="people-outline" size={25} color="#4F4F4F" />
+
+        <Text style={styles.navText}>Volunteers</Text>
+        
+      </TouchableOpacity>
+: ""}
       
 
       <TouchableOpacity

@@ -10,8 +10,7 @@ import * as FileSystem from 'expo-file-system';
 import { PermissionsAndroid, Platform } from 'react-native';import { Alert } from 'react-native';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from '../firebaseConfig.js';
-
-
+import Navbar from '../../components/NavBar';
 
 const AdminVolunteers = () => {
   const navigation = useNavigation();
@@ -145,7 +144,6 @@ const exportAndUploadCSV = async (users) => {
       </TouchableOpacity>
     </View>
   );
-
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Volunteers</Text>
@@ -171,6 +169,7 @@ const exportAndUploadCSV = async (users) => {
         <Text style={styles.exportButton}>Export as CSV</Text>
       </TouchableOpacity>
     </View>
+        <Navbar navigation={navigation}/>
     </View>
   );
 };

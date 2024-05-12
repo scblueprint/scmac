@@ -1,8 +1,9 @@
 import React from 'react';
-import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import {signup} from "./api/users.js";
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from 'react';
+import { Feather } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
 import { faL } from '@fortawesome/free-solid-svg-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -39,6 +40,7 @@ export default function Signup({navigation}) {
   const [facilities, setFacilities] = useState(false);
   const [birthday, setBirthday] = useState("");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isEyeOpen, setIsEyeOpen] = useState(true);
 
   onSelectedItemsChange = selectedItems => {
     this.setState({ selectedItems });
@@ -89,11 +91,26 @@ export default function Signup({navigation}) {
 
       />
       <View style={styles.line} />
+      <View style={{flexDirection:'row'}}>
       <Text style = {{fontSize:15, fontWeight:500, paddingTop: 20}} >Password</Text>
+      <TouchableOpacity
+      style={{marginTop:"6%", marginLeft: "3%"}}
+            onPress={() => setIsEyeOpen(!isEyeOpen)}
+          >
+            <Feather
+              name={isEyeOpen ? 'eye' : 'eye-off'}
+              size={16}
+              color="black"
+            />
+          </TouchableOpacity>
+      </View>
       <TextInput style={styles.input} 
                onChangeText={text => setPword(text)}
               autoCapitalize='none'
+              autoComplete='password'
+              secureTextEntry={isEyeOpen} 
       />
+      
 <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
@@ -101,9 +118,9 @@ export default function Signup({navigation}) {
         onCancel={hideDatePicker}
       />
       <View style={styles.birthday}>
-        <Text style={{fontSize:15, marginLeft:30 }}>Birthday:     </Text>
+        <Text style={{fontSize:15, fontWeight:500 }}>Birthday: </Text>
         
-        <TextInput style={{}} editable={false} onPressIn={()=> showDatePicker()}>{new Date(birthday).toDateString().split(' ').slice(1).join(' ')}</TextInput>
+        <TextInput style={{textDecorationLine: 'underline', fontWeight:500}} editable={false} onPressIn={()=> showDatePicker()} placeholder='Choose Date'>{birthday ? new Date(birthday).toDateString().split(' ').slice(1).join(' ') : ""}</TextInput>
       </View>
       
       <Text style = {{fontSize:15, fontWeight:500, paddingTop: 20}}>Select Interests</Text>
@@ -143,13 +160,17 @@ export default function Signup({navigation}) {
       <TouchableOpacity 
       style={styles.continueButton}
               onPress={async () =>  {
-                const arr = [];
-                if (pottery) arr.push("Pottery");
-                if (gallery) arr.push("Gallery");
-                if (events) arr.push("Events");
-                if (facilities) arr.push("Facilities");
-                const item = await signup(email, pword, fname, lname, phone, 0, birthday);
-                navigation.navigate("Waiver", {item: item})
+                if (fname && lname && email && pword && birthday && phone) {
+                  const arr = [];
+                  if (pottery) arr.push("Pottery");
+                  if (gallery) arr.push("Gallery");
+                  if (events) arr.push("Events");
+                  if (facilities) arr.push("Facilities");
+                  const item = await signup(email, pword, fname, lname, phone, arr, birthday);
+                  if (item) navigation.navigate("Waiver", {item: item})
+                } else {
+                  Alert.alert("Cannot leave field empty");
+                }
               }}
       >
         <Text style = {{color:"white", fontSize:20}}>Continue</Text>
@@ -211,8 +232,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   birthday: {
-    marginTop: "3%",
+    marginTop: "6%",
     marginBottom: "1%",
-    flexDirection:'row'
+    flexDirection:'row',
   },
 });

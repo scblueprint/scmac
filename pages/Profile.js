@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar.js';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, FlatList } from 'react-native';
 import {getCurrentUserData} from '../pages/api/users';
 import { auth, db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { doc, snapshotEqual, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, snapshotEqual, updateDoc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker'; 
 // import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import { storage } from '../firebaseConfig.js';
 import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
-
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 export default function Profile({navigation}) {
   const [uid, setUid] = useState("");
+  const [admin, setAdmin] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,7 +33,9 @@ export default function Profile({navigation}) {
   // const [image, setImage] = useState(null); //added
   const [uploading, setUploading] = useState(false);
   const [downloadURL, setImageURL] = useState("");
-  
+  const [eventsData, setEventsData] = useState([]);
+ 
+  let i = 0;
 
   const signOutFunc = async () => {
     signOut(auth).then(() => {
@@ -91,18 +94,57 @@ export default function Profile({navigation}) {
     async function fetchData() {
       data = await getCurrentUserData();
       // console.log(data);
+      const arr2 = [];
+      if (data.events) {
+      data.events.forEach(async el => {
+        // console.log(el);
+        const eventDoc = doc(db, "events", el);
+        const temp = await getDoc(eventDoc);
+        // const temp = await getDoc(doc(db, "events", data.events[0]));
+        const eventData = temp.data();
+        eventData["id"] = el;
+        // arr2.push(eventData);
+        if (new Date() < new Date(eventData.date)) arr2.push(eventData);
+        // console.log(eventData);
+        // console.log(eventsData);
+        setEventsData(arr2);
+      });
+    }
+      // console.log(eventsData);
+      setAdmin(data.admin);
       setFirstName(data.fname);
       setLastName(data.lname);
       setEmail(data.email);
       setPhoneNumber(data.phone);
       setGender(data.gender);
-      setBirthday(data.birthday);
+      setBirthday(data.birthday*1000);
       setInterests(data.interests);
+      data.interests.forEach((el) => {
+        if (el === "Pottery") setPottery(!pottery);
+        if (el === "Gallery") setGallery(!gallery);
+        if (el === "Events") setEvents(!events);
+        if (el === "Facilities") setFacilities(!facilities);
+      })
       setUid(data.uid);
       setImageURL(data.pfp);
     }
     fetchData();
  }, [])
+
+ const EventItem = ({ item, nav }) => (                                    
+  <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>{
+    if (admin) {nav.navigate("AdminIndividualEvent", {item: item})}
+    else {nav.navigate("IndividualEvent", {item: item})}
+  }}>
+    <View style={styles.eventInfo}>
+      {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
+      <Text style={styles.date}>{item.date}</Text>
+      <Text style={styles.eventName}>{item.title}</Text>
+      <Text style={styles.location}>{item.location}</Text>
+    </View>
+	<SimpleLineIcons name="arrow-right" size={24} color="black" />
+  </TouchableOpacity>
+);
 
   return (
     <View style={styles.container}>
@@ -120,16 +162,21 @@ export default function Profile({navigation}) {
               //HANDLE ERROR HANDLING HERE (CHECK ONCE THEY EDIT IF THEY ARE VALID EMAIL, NUMBER, ETC)
               
               const userDoc = doc(db, "users", auth.currentUser.uid);
-              await updateDoc(userDoc, {
-                fname: firstName,
-                lname: lastName,
-                email: email,
-                phone: phoneNumber,
-                pfp: downloadURL,
-                gender: gender,
-                birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
-                interests: interests
-              });
+              if (!firstName || !lastName|| !email|| !phoneNumber) {
+                Alert.alert("Cannot leave field empty. Click edit again to learn more");
+              }
+              else {
+                await updateDoc(userDoc, {
+                  fname: firstName,
+                  lname: lastName,
+                  email: email,
+                  phone: phoneNumber,
+                  pfp: downloadURL,
+                  gender: gender,
+                  birthday: birthday / 1000,
+                  interests: arr
+                });
+            }
           } 
           setIsEditable(!isEditable)}}>
           <Text style={styles.editText}>{isEditable?"Save":"Edit"}</Text>
@@ -168,7 +215,7 @@ export default function Profile({navigation}) {
     <View style={styles.birthday}>
       <Text style={{fontSize:15, marginLeft:30 }}>Birthday:     </Text>
       
-      <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={false} onPressIn={()=> {if(isEditable)showDatePicker()}}>{new Date(birthday * 1000).toDateString().split(' ').slice(1).join(' ')}</TextInput>
+      <TextInput style={{fontStyle:isEditable?"italic":"normal", backgroundColor:isEditable?"#D9D9D9":"#fff"}} editable={false} onPressIn={()=> {if(isEditable)showDatePicker()}}>{new Date(birthday).toDateString().split(' ').slice(1).join(' ')}</TextInput>
     </View>
     <View style={styles.interests}>
       <Text style={{fontSize:15, marginLeft:30 }}>Interests:     <Text style={{fontSize:15, marginLeft:30 }}>{!isEditable?interests ? interests.join(', ') : "":""}</Text></Text>
@@ -208,9 +255,19 @@ export default function Profile({navigation}) {
         <Text style={{fontSize:15, fontWeight:400}}>Facilities</Text>
       </View>
       </View>)}
+      
     </View>
-
-
+    <View style={{height:"25%"}}>
+    <Text style={{fontSize:15, textAlign: 'center', marginTop: '5%' }}>Events signed up for:</Text>
+      <FlatList
+          data={eventsData}
+          renderItem={({ item }) => (
+            <EventItem key={i++} item={item} nav={navigation} />
+          )}
+          keyExtractor={item => item.id}
+        /> 
+    </View>
+      
       <TouchableOpacity style = {styles.signOutButton} onPress={signOutFunc}> 
         <Text style ={styles.buttonText}> Sign Out </Text>
       </TouchableOpacity>
@@ -224,7 +281,7 @@ export default function Profile({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F8F8F8',
   },
   header: {
     flexDirection: "row",
@@ -303,8 +360,8 @@ const styles = StyleSheet.create({
     height: "5.5%", 
     width: "80%",
     marginLeft: "10%",
-    marginTop: "10%",
-    marginBottom: "90%",
+    marginTop: "7%",
+    // marginBottom: "200%",
   },
   buttonText: {
       fontSize: 20,
@@ -318,6 +375,29 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     marginRight: 8,
-  }
-
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    marginHorizontal: 16,
+    marginTop: 16,
+    // height: "10%"
+  },
+  date: {
+    fontSize: 16,
+    color: '#000000',
+  },
+  eventName: {
+    fontSize: 21,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  location: {
+    fontSize: 21,
+    color: '#000000',
+  },
 });
