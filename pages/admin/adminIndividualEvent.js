@@ -277,7 +277,6 @@ function Availability() {
 
   useEffect(() => {
     async function fetchData() {
-      console.log("hello")
       const arr = [];
       const eventData = item.item;
       if (eventData.shifts) {
@@ -287,9 +286,6 @@ function Availability() {
           eventData.shifts
         ),
       );
-      
-        // console.log(q.count());
-      // setFlatlists(q.length);
       
       const productsDocsSnap = await getDocs(q);
       
@@ -313,8 +309,6 @@ function Availability() {
         var temp = [...usersData];
         temp.push(arr2);
         setUsersData(temp);
-        // console.log(temp);
-      // }
 
           arr.push({users: arr2, label: new Date(doc.data().startTime*1000).toLocaleString('en-US', {
                 weekday: 'short', // 'Fri'
@@ -323,58 +317,21 @@ function Availability() {
                 hour: '2-digit',  // '02' or '14'
                 minute: '2-digit' // '30'
             }) + " - " + new Date(doc.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(doc.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (doc.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
-          // console.log(doc.data()); // "doc1", "doc2" and "doc3"
-          arr.sort(function(a,b){
-            // Turn your strings into dates, and then subtract them
-            // to get a value that is either negative, positive, or zero.
-            return new Date(b.date) - new Date(a.date);
-          });
-          // console.log(arr);
-          setShiftsData(arr);
       });
-      // arr2.forEach(async (doc) => {
-      //   const usersDocsSnap = await getDocs(doc);
-      //   const arr3 = [];
-      //   usersDocsSnap.forEach(async (doc) => {
-      //     arr3.push(doc.data());
-      //   });
-
-      //   var temp = usersData;
-      //   temp.push(arr3);
-      //   console.log(arr3);
-      //   setUsersData(arr3);
-      // })
+      //DOESNT WORKKKKKK
+      arr.sort(function(a,b){
+        return new Date(b.date) - new Date(a.date);
+      });
+      // console.log(arr);
+      setShiftsData(arr);
     }
     }
     fetchData();
  }, [])
 
- 
-
- function renderItem2() {
-  // console.log(usersData);
-  usersData.map((index) => {
-  return (
-  <View style={styles.item} key={index}>
-      {/* <View style={styles.circle} /> */}
-      <View style={styles.textContainer}>
-        {/* <Text style={styles.name}>{item.item.fname} {item.item.lname}</Text>
-        <Text style={styles.phoneNumber}>{item.item.phone}</Text> */}
-      </View>
-      <TouchableOpacity style={styles.seeMoreButton}>
-        <Text style={styles.seeMoreButtonText}>See more →</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.moreButton}>
-        <Text style={styles.moreButtonText}>...</Text>
-      </TouchableOpacity>
-    </View>
- );
-      })
-    };
-
-    let j = -1;
-
  const renderItem = item => {
+  // console.log(shiftsData);
+  if (item) {
   return (
   <View key={item.index}>
     <View style={styles.container2}>
@@ -386,13 +343,7 @@ function Availability() {
     <View style={styles.container3}>
       <Text style={styles.text}>{item.item.label}</Text>
     </View>
-    {/* {console.log(item.item.users)} */}
     {item.item.users ? item.item.users.map(el => {
-      // console.log(item[0]);
-      // let item = el[0];
-      // el.map(item => {
-      // console.log(item);
-      j++;
 
   return (
   <View style={styles.item} key={el.uid}>
@@ -411,22 +362,9 @@ function Availability() {
  );
   // });
       }):null}
-    {/* {usersData.forEach(el => {
-      console.log(el);
-      return(
-      <View style={styles.container3}>
-      <Text style={styles.text}>{item.item.label}</Text>
-    </View>
-      )
-    })} */}
-    {/* {usersData ? <FlatList
-      data={usersData[item.index] ? usersData[item.index] : []}
-      renderItem={renderItem2}
-      keyExtractor={(item) => item.index}
-    /> : null} */}
-    {/* {console.log(item.item.users)} */}
   </View>
-  )
+  // )
+  )} else {return (<View></View>)}
   };
 
   return (
