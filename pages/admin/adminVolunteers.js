@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebaseConfig';
+import { auth, db, storage } from '../../firebaseConfig.js';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import Papa from 'papaparse';
 import * as FileSystem from 'expo-file-system';
-import { PermissionsAndroid, Platform } from 'react-native';import { Alert } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from '../firebaseConfig.js';
 import Navbar from '../../components/NavBar';
 
 const AdminVolunteers = () => {
@@ -27,7 +27,10 @@ const AdminVolunteers = () => {
           fname: doc.data().fname || 'Unknown First Name',
           lname: doc.data().lname || 'Unknown Last Name',
           phone: doc.data().phone || 'Missing Phone Number',
-          interests: doc.data().interests || []
+          interests: doc.data().interests || [],
+          email: doc.data().email,
+          gender: doc.data().gender,
+          events: doc.data().events || [],
         }));
         setUsers(usersData);
       } catch (error) {
@@ -90,12 +93,6 @@ const exportAndUploadCSV = async (users) => {
   }
 };
 
-
-
-
-
-
-
   const fetchCSVUrl = async () => {
     const storage = getStorage();
     const pathReference = ref(storage, 'path/to/save/users.csv');
@@ -138,7 +135,8 @@ const exportAndUploadCSV = async (users) => {
       </View>
       <TouchableOpacity 
         style={styles.seeMoreButton} 
-        onPress={() => navigation.navigate('VolunteerProfileAdmin', { userId: item.id })}
+        onPress={() => navigation.navigate('VoluteerProfile', { item: item })}
+        // onPress={() => navigation.navigate('VoluteerProfile')}
       >
         <Text style={styles.seeMoreButtonText}>See more →</Text>
       </TouchableOpacity>
@@ -162,7 +160,7 @@ const exportAndUploadCSV = async (users) => {
         data={users.filter(user => activeFilter === 'All' || (user.interests && user.interests.includes(activeFilter)))}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 10, marginTop: "2%", marginLeft: "2%" }}
       />
       <View style={styles.exportButtonContainer}>
       <TouchableOpacity style={styles.button2} onPress={exportUsersToCSV}>
@@ -401,12 +399,12 @@ const styles = StyleSheet.create({
   },
   button2: {
     backgroundColor: '#6A466C',
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 2,
     width: 160,
     marginHorizontal: 120,
-    marginVertical: 120,
+    marginVertical: 40,
     alignItems: 'center',
     justifyContent: 'center',
     alignContent: 'center',

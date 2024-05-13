@@ -15,7 +15,7 @@ import EditEventScreen from './pages/admin/editEvent';
 import AdminEvents from './pages/admin/adminEvent';
 import AdminEventDetailScreen from './pages/admin/adminIndividualEvent';
 import AdminVolunteers from './pages/admin/adminVolunteers';
-import VolunteerProfileAdmin from './pages/VolunteerProfileAdmin';
+import VolunteerProfileAdmin from './pages/admin/VolunteerProfileAdmin';
 import ArchivedEvents from './pages/admin/archivedEvents';
 
 const Stack = createStackNavigator();
@@ -24,7 +24,7 @@ export default function App() {
   // persistence: getReactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName='AdminVolunteers'>
+      <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Profile" component={Profile} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
