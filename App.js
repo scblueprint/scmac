@@ -72,7 +72,7 @@ export default function App() {
             headerStyle: {backgroundColor: "#6A466C", height: 100}, 
             headerBackTitle: " ", 
             headerTitleStyle: {color: "#fff", fontSize: 20}, 
-            headerTitle: "Voluteer Profile",
+            headerTitle: "Volunteer Profile",
             headerTintColor: "white"
           }}/>
         <Stack.Screen name="ArchivedEvents" component={ArchivedEvents} options={

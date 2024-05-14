@@ -2,7 +2,7 @@ import React,  { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import NavBar from '../../components/NavBar.js'
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { AntDesign } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -13,7 +13,14 @@ const EventItem = ({ item, nav }) => (
   <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={()=>nav.navigate("AdminIndividualEvent", {item: item})}>
     <View style={styles.eventInfo}>
       {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
-      <Text style={styles.date}>{item.date}</Text>
+      <Text style={styles.date}>{new Date(item.date * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
       <Text style={styles.eventName}>{item.title}</Text>
       <Text style={styles.location}>{item.location}</Text>
     </View>
@@ -35,7 +42,8 @@ export default function AdminEvents({navigation}) {
       eventsData.forEach(doc => {
         var temp = doc.data();
         temp.id = doc.id;
-        if (new Date() < new Date(temp.date)) arr.push(temp);
+        // console.log(new Date(), new Date(temp.date*1000));
+        if (new Date() < new Date(temp.date*1000)) arr.push(temp);
       })
       setEvents(arr);
       // console.log(events);
