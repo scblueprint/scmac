@@ -42,13 +42,16 @@ export default function EditEventScreen({route, navigation}) {
   };
   
   const handleEventStartConfirm = (date) => {
-    setEventStart(`${date.toLocaleString('en-US', {
-      weekday: 'short', // 'Fri'
-      month: 'short',   // 'May'
-      day: 'numeric',   // '03'
-      hour: '2-digit',  // '02' or '14'
-      minute: '2-digit' // '30'
-  })}`);};
+    setEventStart(`${Math.floor(date.getTime() / 1000)
+  //     .toLocaleString('en-US', 
+  //   {
+  //     weekday: 'short', // 'Fri'
+  //     month: 'short',   // 'May'
+  //     day: 'numeric',   // '03'
+  //     hour: '2-digit',  // '02' or '14'
+  //     minute: '2-digit' // '30'
+  // })
+}`);};
   
   const showEventEndPicker = () => {
       setEventEndPickerVisibility(true);
@@ -59,13 +62,15 @@ export default function EditEventScreen({route, navigation}) {
   };
   
   const handleEventEndConfirm = (date) => {
-      setEventEnd(`${date.toLocaleString('en-US', {
-        weekday: 'short', // 'Fri'
-        month: 'short',   // 'May'
-        day: 'numeric',   // '03'
-        hour: '2-digit',  // '02' or '14'
-        minute: '2-digit' // '30'
-    })}`);
+      setEventEnd(`${Math.floor(date.getTime() / 1000)
+    //     .toLocaleString('en-US', {
+    //     weekday: 'short', // 'Fri'
+    //     month: 'short',   // 'May'
+    //     day: 'numeric',   // '03'
+    //     hour: '2-digit',  // '02' or '14'
+    //     minute: '2-digit' // '30'
+    // })
+  }`);
       hideEventEndPicker();
   };
   
@@ -152,12 +157,26 @@ export default function EditEventScreen({route, navigation}) {
 
             <TouchableOpacity style={styles.date} onPress={showEventStartPicker}>
                 <Entypo name="calendar" size={30} color="black" />
-                <Text style={styles.subtitle}>{eventStart}</Text>
+                <Text style={styles.subtitle}>{new Date(eventStart * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.date} onPress={showEventEndPicker}>
                 <Entypo name="calendar" size={30} color="black" />
-                <Text style={styles.subtitle}>{eventEnd}</Text>
+                <Text style={styles.subtitle}>{new Date(eventEnd * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
             </TouchableOpacity>
 
             <View style={styles.location}>

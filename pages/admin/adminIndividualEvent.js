@@ -183,8 +183,22 @@ const deleteEvent = async () => {
   </View>
     
       {/* <Text style={styles.subtitle}>Date: {new Date(event.date).toLocaleDateString()}</Text> */}
-      <Text style={styles.subtitle}>Start Date: {event.date}</Text>
-      <Text style={styles.subtitle}>End Date: {event.endDate}</Text>
+      <Text style={styles.subtitle}>Start Date: {new Date(event.date * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
+      <Text style={styles.subtitle}>End Date: {new Date(event.endDate * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
       <Text style={styles.subtitle}>Location: {event.location}</Text>
       <Text style={styles.sectionTitle}>Event Description: </Text>
       <Text style={styles.description}>{event.description}</Text>
@@ -279,7 +293,8 @@ function Availability() {
     async function fetchData() {
       const arr = [];
       const eventData = item.item;
-      if (eventData.shifts) {
+      // console.log(eventData)
+      if (eventData.shifts.length !== 0) {
       const q = query(
         collection(db, "shifts"),
         where(documentId(), "in", 
@@ -290,7 +305,8 @@ function Availability() {
       const productsDocsSnap = await getDocs(q);
       
       productsDocsSnap.forEach(async (doc) => {
-        // if (doc.data().user) {
+        // console.log(doc);
+        if (doc.data().user.length !== 0) {
         const u = query(
           collection(db, "users"),
           where(documentId(), "in", 
@@ -301,7 +317,7 @@ function Availability() {
       const arr2 = [];
         
         const usersDocsSnap = await getDocs(u);
-
+          // console.log(usersDocsSnap)
         usersDocsSnap.forEach(async (doc) => {
           arr2.push(doc.data());
         });
@@ -310,21 +326,23 @@ function Availability() {
         temp.push(arr2);
         setUsersData(temp);
 
-          arr.push({users: arr2, label: new Date(doc.data().startTime*1000).toLocaleString('en-US', {
+        // console.log(temp)
+
+          arr.push({id: doc.id, users: arr2, label: new Date(doc.data().startTime*1000).toLocaleString('en-US', {
                 weekday: 'short', // 'Fri'
                 month: 'short',   // 'May'
                 day: 'numeric',   // '03'
                 hour: '2-digit',  // '02' or '14'
                 minute: '2-digit' // '30'
             }) + " - " + new Date(doc.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(doc.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (doc.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
-      });
+      }});
       //DOESNT WORKKKKKK
       arr.sort(function(a,b){
         return new Date(b.date) - new Date(a.date);
       });
       // console.log(arr);
       setShiftsData(arr);
-    }
+      }
     }
     fetchData();
  }, [])
@@ -333,7 +351,7 @@ function Availability() {
   // console.log(shiftsData);
   if (item) {
   return (
-  <View key={item.index}>
+  <View key={item.item.id}>
     <View style={styles.container2}>
       <Text style={styles.text}>Time Slot {item.index + 1}:</Text>
       <TouchableOpacity style={styles.reminderButton}>
@@ -379,7 +397,7 @@ function Availability() {
         {shiftsData ? <FlatList
       data={shiftsData? shiftsData : []}
       renderItem={renderItem}
-      keyExtractor={(item) => item.index}
+      keyExtractor={(item) => item.id}
     /> : null}
         {/* <View style={styles.container2}>
           <Text style={styles.text}>Time Slot 2 (00:00 - 00:00)</Text>

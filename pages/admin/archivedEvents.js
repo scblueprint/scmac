@@ -22,7 +22,7 @@ export default function ArchivedEvents({navigation}) {
       eventsData.forEach(doc => {
         var temp = doc.data();
         temp.id = doc.id;
-        if (!(new Date() < new Date(temp.date))) arr.push(temp);
+        if (!(new Date() < new Date(temp.date*1000))) arr.push(temp);
         // console.log(!(new Date() < new Date(temp.date)))
       })
       setEvents(arr);
@@ -36,7 +36,14 @@ export default function ArchivedEvents({navigation}) {
     else {nav.navigate("IndividualEvent", {item: item})}}}>
       <View style={styles.eventInfo}>
         {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
-        <Text style={styles.date}>{item.date}</Text>
+        <Text style={styles.date}>{new Date(item.date * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
         <Text style={styles.eventName}>{item.title}</Text>
         <Text style={styles.location}>{item.location}</Text>
       </View>

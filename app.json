@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.scmac"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +27,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "80cbe7be-cdd0-45e1-a385-2679c831324c"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }

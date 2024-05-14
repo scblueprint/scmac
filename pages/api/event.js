@@ -30,7 +30,6 @@ const createEvent = async (date, endDate, eventDesc, materials, shifts, title, l
       materials: materialsObj,
       shifts: shiftIDS,
       title: title,
-      
     };
     const doc = await addDoc(collection(db, "events"), data);
     return doc;

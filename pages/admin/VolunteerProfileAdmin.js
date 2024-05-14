@@ -13,7 +13,14 @@ const EventItem = ({ item, nav }) => (
   }}>
     <View style={styles.eventInfo}>
       {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
-      <Text style={styles.date}>{item.date}</Text>
+      <Text style={styles.date}>{new Date(item.date * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
       <Text style={styles.eventName}>{item.title}</Text>
       <Text style={styles.location}>{item.location}</Text>
     </View>
@@ -37,7 +44,8 @@ const VolunteerProfileAdmin = ({route,navigation}) => {
           const temp = await getDoc(eventDoc);
           const eventData = temp.data();
           eventData["id"] = el;
-          if (new Date() < new Date(eventData.date)) arr2.push(eventData);
+          arr2.push(eventData);
+          // if (new Date() < new Date(eventData.date*1000)) arr2.push(eventData);
           setEventsData(arr2);
         });
       }

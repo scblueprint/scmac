@@ -99,8 +99,22 @@ export default function EventDetailScreen({route,navigation}) {
     <ScrollView style={styles.container}>
         <View key={event.id}>
           <Text style={styles.title}>{event.title}</Text>
-          <Text style={styles.subtitle}>Start Date: {event.date}</Text>
-          <Text style={styles.subtitle}>End Date: {event.endDate}</Text>
+          <Text style={styles.subtitle}>Start Date: {new Date(event.date * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
+          <Text style={styles.subtitle}>End Date: {new Date(event.endDate * 1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03',
+        year: '2-digit',
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    })}</Text>
           <Text style={styles.subtitle}>Location: {event.location}</Text>
           <Text style={styles.sectionTitle}>Event Description: </Text>
           <Text style={styles.description}>{event.description}</Text>
