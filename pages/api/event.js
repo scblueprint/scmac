@@ -2,7 +2,7 @@ import { auth, db } from '../../firebaseConfig';
 import { collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 
 
-const createEvent = async (date, endDate, eventDesc, materials, shifts, title, location ) => {
+const createEvent = async (date, endDate, eventDesc, materials, shifts, title, location, category ) => {
     try {
     var materialsObj = []
     var shiftIDS = []
@@ -30,6 +30,7 @@ const createEvent = async (date, endDate, eventDesc, materials, shifts, title, l
       materials: materialsObj,
       shifts: shiftIDS,
       title: title,
+      category: category
     };
     const doc = await addDoc(collection(db, "events"), data);
     return doc;
@@ -40,7 +41,7 @@ const createEvent = async (date, endDate, eventDesc, materials, shifts, title, l
 };
 
 
-const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, shifts, title, location) => {
+const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, shifts, title, location, category) => {
   try {
     var materialsObj = [];
     var shiftIDS = [];
@@ -67,6 +68,7 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
       materials: materialsObj,
       shifts: shiftIDS,
       title: title,
+      category: category
     };
     const eventRef = doc(db, "events", eventId); // Now using a document reference
     await updateDoc(eventRef, data);

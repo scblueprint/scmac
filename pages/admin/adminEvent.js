@@ -42,8 +42,8 @@ export default function AdminEvents({navigation}) {
       eventsData.forEach(doc => {
         var temp = doc.data();
         temp.id = doc.id;
-        // console.log(new Date(), new Date(temp.date*1000));
-        if (new Date() < new Date(temp.date*1000)) arr.push(temp);
+        console.log(new Date(), new Date(temp.endDate*1000));
+        if (new Date() < new Date(temp.endDate*1000)) arr.push(temp);
       })
       setEvents(arr);
       // console.log(events);

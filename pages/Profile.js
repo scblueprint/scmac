@@ -6,13 +6,13 @@ import { auth, db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { collection, doc, getDoc, getDocs, snapshotEqual, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, snapshotEqual, updateDoc, query, collection, where, documentId, arrayRemove } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker'; 
 // import * as FileSystem from 'expo-file-system';
 import { Alert } from 'react-native';
 import { storage } from '../firebaseConfig.js';
 import {ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
 export default function Profile({navigation}) {
   const [uid, setUid] = useState("");
@@ -104,9 +104,8 @@ export default function Profile({navigation}) {
         const eventData = temp.data();
         eventData["id"] = el;
         // arr2.push(eventData);
-        if (new Date() < new Date(eventData.date*1000)) arr2.push(eventData);
+        if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
         // console.log(eventData);
-        // console.log(eventsData);
         setEventsData(arr2);
       });
     }
@@ -136,6 +135,55 @@ export default function Profile({navigation}) {
     if (admin) {nav.navigate("AdminIndividualEvent", {item: item})}
     else {nav.navigate("IndividualEvent", {item: item})}
   }}>
+    <AntDesign name="delete" size={24} color="black" onPress={() => {
+      Alert.alert('Are you sure you want to drop out of this event?', '', [
+        {
+          text: 'Cancel',
+          // onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: async () => {
+          if (item.shifts.length !== 0) {
+            const q = query(
+              collection(db, "shifts"),
+              where(documentId(), "in", 
+                item.shifts
+              ),
+            );
+            const productsDocsSnap = await getDocs(q);
+      
+            productsDocsSnap.forEach(async (document) => {
+              // console.log(doc.id)
+              if (document.data().user.includes(auth.currentUser.uid)) {
+                console.log(document.id)
+
+              await updateDoc(doc(db, "shifts", document.id), {
+                user: arrayRemove(auth.currentUser.uid)
+              })
+
+              await updateDoc(doc(db, "users", auth.currentUser.uid), {
+                events: arrayRemove(item.id)
+              })
+
+              data = await getCurrentUserData();
+              const arr2 = [];
+              if (data.events) {
+              data.events.forEach(async el => {
+                const eventDoc = doc(db, "events", el);
+                const temp = await getDoc(eventDoc);
+                const eventData = temp.data();
+                eventData["id"] = el;
+                if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
+                setEventsData(arr2);
+              });
+              }
+            }
+            });
+
+          }
+        }},
+      ]);}
+      } />
     <View style={styles.eventInfo}>
       {/* <Text style={styles.date}>{new Date(item.date).toDateString().split(' ').slice(1).join(' ')}</Text> */}
       <Text style={styles.date}>{new Date(item.date * 1000).toLocaleString('en-US', {

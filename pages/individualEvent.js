@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native'; 
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, Switch } from 'react-native'; 
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
 import { Dropdown } from 'react-native-element-dropdown';
 import { AntDesign } from '@expo/vector-icons';
@@ -12,6 +12,8 @@ export default function EventDetailScreen({route,navigation}) {
   const [event, setEvent] = useState({});
   const [materials, setMaterials] = useState([]);
   const [shiftsData, setShiftsData] = useState([]);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const renderItem = item => {
     return (
@@ -49,13 +51,20 @@ export default function EventDetailScreen({route,navigation}) {
         const shiftDoc = doc(db, 'shifts', element);
         const shift = await getDoc(doc(db, 'shifts', element));
         // console.log(shift.data())
-        arr.push({shift: shiftDoc, label: new Date(shift.data().startTime*1000).toLocaleString('en-US', {
+        arr.push({shift: shiftDoc, label: shift.data().user.includes(auth.currentUser.uid) ? new Date(shift.data().startTime*1000).toLocaleString('en-US', {
           weekday: 'short', // 'Fri'
           month: 'short',   // 'May'
           day: 'numeric',   // '03'
           hour: '2-digit',  // '02' or '14'
           minute: '2-digit' // '30'
-      }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})// console.log(arr);
+      }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " (Already Signed Up)" : 
+      new Date(shift.data().startTime*1000).toLocaleString('en-US', {
+        weekday: 'short', // 'Fri'
+        month: 'short',   // 'May'
+        day: 'numeric',   // '03'
+        hour: '2-digit',  // '02' or '14'
+        minute: '2-digit' // '30'
+    }) + " - " + new Date(shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), value:new Date(shift.data().startTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " - " + new Date (shift.data().endTime*1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
       });
       arr.sort(function(a,b){
         // Turn your strings into dates, and then subtract them
@@ -149,14 +158,32 @@ export default function EventDetailScreen({route,navigation}) {
               <Text style={styles.label}>{material ? material.item : ""}</Text>
             </View>
           )):null}
+
+<Text style={styles.sectionTitle}>Event Organizer</Text>
+        <Switch
+          trackColor={{false: '#767577', true: '#6A466C'}}
+          thumbColor={isEnabled ? '#fff' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+          style={{marginLeft: "5%"}}
+        />
+
           <Text style={styles.sectionTitle}>Comments</Text>
           <TextInput style={styles.textInput} multiline placeholder="Additional comments" />
           <TouchableOpacity style={styles.button} onPress={async ()=> 
             {
               // console.log(value.shift._key.path.segments[1]);
-              await updateDoc(value.shift, {
-              user: arrayUnion(auth.currentUser.uid),
-          });
+              if (isEnabled) {
+                await updateDoc(value.shift, {
+                  user: arrayUnion(auth.currentUser.uid),
+                  organizers: arrayUnion(auth.currentUser.uid)
+                });
+              } else {
+                await updateDoc(value.shift, {
+                  user: arrayUnion(auth.currentUser.uid),
+                });
+              }
           const eventDoc = doc(db, "events", event.id);
           console.log(eventDoc);
           let index = 0;

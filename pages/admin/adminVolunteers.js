@@ -31,6 +31,7 @@ const AdminVolunteers = () => {
           email: doc.data().email,
           gender: doc.data().gender,
           events: doc.data().events || [],
+          pfp: doc.data().pfp || "",
         }));
         setUsers(usersData);
       } catch (error) {
@@ -128,7 +129,7 @@ const exportAndUploadCSV = async (users) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <View style={styles.circle} />
+      {/* <View style={styles.circle} /> */}
       <View style={styles.textContainer}>
         <Text style={styles.name}>{item.fname} {item.lname}</Text>
         <Text style={styles.phoneNumber}>{item.phone}</Text>
@@ -171,145 +172,6 @@ const exportAndUploadCSV = async (users) => {
     </View>
   );
 };
-
-
-
-
-
-// const DATA = [
-//   {
-//     id: '1',
-//     name: 'Name',
-//     phoneNumber: 'Phone Number',
-//   },
-//   {
-//     id: '2',
-//     name: 'Name',
-//     phoneNumber: 'Phone Number',
-//   },
-//   {
-//     id: '3',
-//     name: 'Name',
-//     phoneNumber: 'Phone Number',
-//   },
-//   {
-//     id: '4',
-//     name: 'Name',
-//     phoneNumber: 'Phone Number',
-//   },
-// ];
-
-
-
-
-
-// const AdminVolunteers = () => {
-//   const navigation = useNavigation(); //added
-//   const [users, setUsers] = useState([]);
-//   const [activeFilter, setActiveFilter] = useState('All');  // 'All' by default
-
-//   useEffect(() => {
-
-//   const fetchUsers = async () =>{
-//     try {
-//       const usersRef = collection(db, 'users') //access collection
-//       const snapshot = await getDocs(usersRef); //fixed: getDocs not getDoc
-//       const usersData = snapshot.docs.map(doc => ({
-//         id: doc.id, 
-//         fname: doc.data().fname || 'Unknown First Name',
-//         lname: doc.data().lname || 'Unknown Last Name',
-//         phone: doc.data().phone || 'Missing Phone Number',
-//         uid: doc.id,       
-//         interests: doc.data().interests || [],
-  
-//         // ...doc.data() //each field: doc.data.field
-//       }));
-//       console.log("Users data:", usersData);
-//       setUsers(usersData);
-//     } catch (error){
-//       console.error("Fail to fetch users:", error);
-//     }
-//   };
-//     fetchUsers();
-// }, []);
-
-
-
-
-// const filterBar = users.filter(user => {
-//   if (activeFilter === 'All') return true;
-//   return user.interests.includes(activeFilter); //filter by interests
-// });
-
-
-// const renderItem = ({ item, navigation}) => {
-//   console.log(item); //log to see what's in item
-
-//   if (!item.fname || !item.lname || !item.phone || !item.uid) {
-//     console.warn("Missing data for item:", item.id);
-//     return null; 
-//   }
-
-
-//   return (
-//     <View style={styles.item}>
-//       <View style={styles.circle} />
-//       <View style={styles.textContainer}>
-//         <Text style={styles.name}>{item.fname} {item.lname} </Text>
-//         <Text style={styles.phoneNumber}>{item.phone}</Text>
-//       </View>
-//       <TouchableOpacity 
-//         style={styles.seeMoreButton} 
-//         onPress={() => navigation.navigate('VolunteerProfileAdmin',  { userId: item.uid })}
-//         >
-//         <Text style={styles.seeMoreButtonText}>See more →</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity style={styles.moreButton}>
-//         <Text style={styles.moreButtonText}>...</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.header}>Volunteers</Text>
-//       <View style={styles.filterContainer}>
-//         {['All', 'Ceramics', 'Pottery', 'Gallery'].map(filter => (
-//         <TouchableOpacity
-//         key = {filter}
-//         style={[styles.button, activeFilter === filter && styles.activeButton]} 
-//         onPress={() => setActiveFilter(filter)}
-//         >
-//           <Text style={styles.buttonText}>{filter}</Text>
-//         </TouchableOpacity>
-//      ))}
-//         {/* <Text style={styles.dateHeader}>Filter By:</Text>
-//         <View style={styles.buttonContainer}>
-//           <TouchableOpacity style={styles.button}>
-//             <Text style={styles.buttonText}>Ceramics</Text>
-//           </TouchableOpacity>
-//           <TouchableOpacity style={styles.button}>
-//             <Text style={styles.buttonText}>Shows</Text>
-//           </TouchableOpacity>
-//           <TouchableOpacity style={styles.button}>
-//             <Text style={styles.buttonText}>Art Gallery</Text> */}
-//           {/* </TouchableOpacity> */}
-//         {/* </View> */}
-//       </View>
-//       <FlatList
-//           data={filterBar} //changed DATA to users
-//           // renderItem={renderItem}
-//           renderItem={({ item }) => renderItem({ item, navigation })}
-//           // keyExtractor={(item) => item.id}  
-//           keyExtractor={(item) => item.id.toString()}  
-//         />
-//         <TouchableOpacity style={styles.button2}>
-//           <Text style={styles.exportButton}>Export as CSV</Text>
-//         </TouchableOpacity>
-//     </View>
-//   );
-// };
 
 const styles = StyleSheet.create({
   container: {
@@ -366,6 +228,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+    marginLeft: "5%"
   },
   name: {
     fontSize: 16,

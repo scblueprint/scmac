@@ -4,9 +4,16 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AntDesign, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox';
 import { createEvent } from "../api/event.js"
+import { Dropdown } from 'react-native-element-dropdown';
 
 let nextId = 0;
 let nextShiftsId = 0;
+
+const DATA = [
+  { label: 'Ceramics', value: '1' },
+  { label: 'Show', value: '2' },
+  { label: 'Gallery', value: '3' },
+];
 
 export default function CreateEventScreen({ navigation }) {
   const [selectedValueShift, setSelectedValueShift] = useState("");
@@ -15,14 +22,39 @@ export default function CreateEventScreen({ navigation }) {
   const [shifts, setShifts] = useState([]);
   const [isEventStartPickerVisible, setEventStartPickerVisibility] = useState(false);
   const [isEventEndPickerVisible, setEventEndPickerVisibility] = useState(false);
-  const [eventStart, setEventStart] = useState("Start Day, Date");
-  const [eventEnd, setEventEnd] = useState("End Day, Date");
+  const [eventStart, setEventStart] = useState("Choose Start Date and Time");
+  const [eventEnd, setEventEnd] = useState("Choose End Date and Time");
   const [isDateTimePickerVisible, setDateTimePickerVisibility] = useState(false);
   const [editingTimeShiftID, setEditingTimeShiftID] = useState(null);
   const [editingType, setEditingType] = useState(""); // "start" or "end"
   const [desc, setDesc] = useState("");
   const [location, setLocation] = useState("");
   const [name, setName] = useState("");
+  const [value, setValue] = useState("");
+
+  const renderItem = item => {
+    return (
+      <View style={styles.item}>
+        <Text style={styles.textItem}>{item.label}</Text>
+        {/* {console.log(item.value)}
+        {console.log(value)} */}
+        {item.value === value && (
+          <AntDesign
+            style={styles.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          />
+        )}
+        {/* <AntDesign
+            style={styles.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          /> */}
+      </View>
+    );
+  };
 
   const showEventStartPicker = () => {
     setEventStartPickerVisibility(true);
@@ -125,34 +157,30 @@ const isEmpty = (value) => {
                 onCancel={hideDateTimePicker}
             />
 
-            <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Save</Text>
-            </TouchableOpacity>
-
             <TextInput style={styles.eventTextInput} onChangeText={text => setName(text)} placeholder="Event Name" />
 
             <TouchableOpacity style={styles.date} onPress={showEventStartPicker}>
                 <Entypo name="calendar" size={30} color="black" />
-                <Text style={styles.subtitle}>{new Date(eventStart * 1000).toLocaleString('en-US', {
+                <Text style={styles.subtitle}>{eventStart != "Choose Start Date and Time" ? new Date(eventStart * 1000).toLocaleString('en-US', {
         weekday: 'short', // 'Fri'
         month: 'short',   // 'May'
         day: 'numeric',   // '03',
         year: '2-digit',
         hour: '2-digit',  // '02' or '14'
         minute: '2-digit' // '30'
-    })}</Text>
+    }) : "Choose Start Date"}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.date} onPress={showEventEndPicker}>
                 <Entypo name="calendar" size={30} color="black" />
-                <Text style={styles.subtitle}>{new Date(eventEnd * 1000).toLocaleString('en-US', {
+                <Text style={styles.subtitle}>{eventEnd != "Choose End Date and Time" ? new Date(eventEnd * 1000).toLocaleString('en-US', {
         weekday: 'short', // 'Fri'
         month: 'short',   // 'May'
         day: 'numeric',   // '03',
         year: '2-digit',
         hour: '2-digit',  // '02' or '14'
         minute: '2-digit' // '30'
-    })}</Text>
+    }): "Choose End Date"}</Text>
             </TouchableOpacity>
 
             <View style={styles.location}>
@@ -206,6 +234,27 @@ const isEmpty = (value) => {
                 </TouchableOpacity>
             </View>
 
+            <Text style={styles.sectionTitle}>Event Category</Text>
+            <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={DATA}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Select item"
+              searchPlaceholder="Search..."
+              value={value}
+              onChange={item => {
+                // console.log(item)
+                setValue(item);
+              }}
+              renderItem={renderItem}
+            />
+
             <Text style={styles.sectionTitle}>Event Description</Text>
             <TextInput
                 onChangeText={text => setDesc(text)}
@@ -220,7 +269,7 @@ const isEmpty = (value) => {
                         Alert.alert("Event Name Required");
                         return;
                     }
-                    await createEvent(eventStart, eventEnd, desc, materials, shifts, name, location);
+                    await createEvent(eventStart, eventEnd, desc, materials, shifts, name, location, value);
                     navigation.navigate("AdminEvents");
                 }}
                 style={styles.button}
@@ -244,6 +293,40 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', // Align vertically to bottom
     padding: 80,
     paddingBottom: 10, // Add padding at the bottom if needed for visual appeal
+  },
+  dropdown: {
+    marginLeft: "4%",
+    height: "7%",
+    width: "90%",
+    backgroundColor: 'F1F1F2',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor:"8E8E93",
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  item: {
+    padding: 17,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textItem: {
+    flex: 1,
+    fontSize: 16,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
   },
     title: {
     fontSize: 24,

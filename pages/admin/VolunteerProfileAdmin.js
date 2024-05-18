@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, storage } from '../../firebaseConfig.js';
@@ -29,7 +29,7 @@ const EventItem = ({ item, nav }) => (
 );
 
 const VolunteerProfileAdmin = ({route,navigation}) => {
-  const [user, setUser] = useState({"item": {"email": "", "events": [], "fname": "", "gender": "", "id": "", "interests": [], "lname": "", "phone": ""}});
+  const [user, setUser] = useState({"item": {"email": "", "events": [], "fname": "", "gender": "", "id": "", "interests": [], "lname": "", "phone": "", "pfp": ""}});
   const [eventsData, setEventsData] = useState([]);
 
   useEffect( () => {
@@ -44,8 +44,8 @@ const VolunteerProfileAdmin = ({route,navigation}) => {
           const temp = await getDoc(eventDoc);
           const eventData = temp.data();
           eventData["id"] = el;
-          arr2.push(eventData);
-          // if (new Date() < new Date(eventData.date*1000)) arr2.push(eventData);
+          // arr2.push(eventData);
+        if (new Date() < new Date(eventData.endDate*1000)) arr2.push(eventData);
           setEventsData(arr2);
         });
       }
@@ -56,9 +56,12 @@ const VolunteerProfileAdmin = ({route,navigation}) => {
     <View style={styles.container}>
         {/* <Text style={styles.header}>Volunteer Profile</Text> */}
         <View style={styles.profileContainer}>
-            <View style={styles.pfpCircle}>
-                <Text>PFP</Text>
+          <View style={styles.imageContainer}>
+              {user.item.pfp && <Image source={{ uri: user.item.pfp}} style={styles.image}/>}
             </View>
+            {/* <View style={styles.pfpCircle}>
+                <Text>PFP</Text>
+            </View> */}
         </View>
         <View style={styles.name}>
             <Text style={{fontSize:20}}>{user.item.fname} {user.item.lname}</Text>
@@ -178,6 +181,25 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 21,
     color: '#000000',
+  },
+  imageContainer:{
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    fontSize:30,
+    backgroundColor: '#D9D9D9',
+    // marginBottom: "2%",
+    // marginTop: 30,
+    // marginLeft: "20%",
+    justifyContent: 'center',
+    alignItems: 'center',
+    // position: 'relative'
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    // position: 'absolute',
   },
 });
 

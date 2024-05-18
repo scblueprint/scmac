@@ -7,8 +7,15 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {editEvent, getShiftData} from '../api/event'
+import { Dropdown } from 'react-native-element-dropdown';
 let nextId = 0;
 let nextShiftsId = 0;
+
+const DATA = [
+  { label: 'Ceramics', value: '1' },
+  { label: 'Show', value: '2' },
+  { label: 'Gallery', value: '3' },
+];
 
 export default function EditEventScreen({route, navigation}) {
     const { item } = route.params;
@@ -30,7 +37,31 @@ export default function EditEventScreen({route, navigation}) {
     const [location, setLocation] = useState(item.item.location);
     const [name, setName] = useState(item.item.title);
     const [isDateTimePickerVisible, setDateTimePickerVisibility] = useState(false);
+    const [value, setValue] = useState(item.item.category);
 
+  const renderItem = item => {
+    return (
+      <View style={styles.item}>
+        <Text style={styles.textItem}>{item.label}</Text>
+        {/* {console.log(item.value)}
+        {console.log(value)} */}
+        {item.value === value && (
+          <AntDesign
+            style={styles.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          />
+        )}
+        {/* <AntDesign
+            style={styles.icon}
+            color="black"
+            name="Safety"
+            size={20}
+          /> */}
+      </View>
+    );
+  };
 
 
     const showEventStartPicker = () => {
@@ -148,7 +179,7 @@ export default function EditEventScreen({route, navigation}) {
             />
 
 <TouchableOpacity style={styles.saveButton} onPress={async () => {
-                  await editEvent(item.item.id, eventStart, eventEnd, desc, materials, shifts, name, location);
+                  await editEvent(item.item.id, eventStart, eventEnd, desc, materials, shifts, name, location, value);
                   navigation.goBack();
                   navigation.goBack();
                 }}><Text style={styles.saveButtonText}>Save</Text></TouchableOpacity>
@@ -239,6 +270,26 @@ export default function EditEventScreen({route, navigation}) {
       </View>
       <View style={styles.checkboxContainer}>
       </View>
+      <Text style={styles.sectionTitle}>Event Category</Text>
+            <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={DATA}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Select item"
+              searchPlaceholder="Search..."
+              value={value}
+              onChange={item => {
+                // console.log(item)
+                setValue(item);
+              }}
+              renderItem={renderItem}
+            />
       <Text style={styles.sectionTitle}>Event Description</Text>
       <TextInput style={styles.textInput} onChangeText={text => setDesc(text)} multiline placeholder={desc} />
     </ScrollView>
@@ -286,6 +337,40 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontWeight: '400',
 
+  },
+  dropdown: {
+    marginLeft: "4%",
+    height: "7%",
+    width: "90%",
+    backgroundColor: 'F1F1F2',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor:"8E8E93",
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  item: {
+    padding: 17,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textItem: {
+    flex: 1,
+    fontSize: 16,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
   },
   label: {
     fontSize: 16,
