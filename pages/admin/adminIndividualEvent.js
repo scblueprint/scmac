@@ -324,7 +324,7 @@ function Availability() {
       const arr3 = [];
       const eventData = item.item;
       // console.log(eventData)
-      if (eventData.shifts.length !== 0) {
+      if (eventData.shifts && eventData.shifts.length !== 0) {
       const q = query(
         collection(db, "shifts"),
         where(documentId(), "in", 
@@ -335,7 +335,7 @@ function Availability() {
       const productsDocsSnap = await getDocs(q);
       
       productsDocsSnap.forEach(async (doc) => {
-        if (doc.data().organizers.length !== 0) {
+        if (doc.data().organizers && doc.data().organizers.length !== 0) {
           // console.log(doc.data());
           const o = query(
             collection(db, "users"),
@@ -350,7 +350,7 @@ function Availability() {
           });
         }
         // console.log(doc);
-        if (doc.data().user.length !== 0) {
+        if (doc.data().user && doc.data().user.length !== 0) {
         const u = query(
           collection(db, "users"),
           where(documentId(), "in", 
