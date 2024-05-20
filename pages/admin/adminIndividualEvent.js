@@ -9,7 +9,7 @@ import { auth, db } from '../../firebaseConfig';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { Octicons, Entypo } from '@expo/vector-icons';
-import OptionsMenu from "react-native-options-menu";
+// import OptionsMenu from "react-native-options-menu";
 import { createEvent } from '../api/event';
 
 const Tab = createMaterialTopTabNavigator();

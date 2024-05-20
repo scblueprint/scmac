@@ -79,7 +79,12 @@ export default function Waiver({route, navigation}) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
-        <Image source={require('../assets/scmac-logo.png')} style={styles.logo} />
+        {/* <Image source={require('../assets/scmac-logo.png')} style={styles.logo} /> */}
+        <View style={styles.logoContainer}>
+          <Image source={require('../assets/scmac-logo.png')} style={styles.logo} />
+          <Text style={styles.addressText}>9341 Mill Street, Ben Lomond, CA 95005  831-336-3513</Text>
+          <Text style={styles.scmacEmail}>www.mountainartcenter.org</Text>
+        </View>
         <View style={styles.headerRight}>
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Last Name  </Text>
@@ -99,8 +104,8 @@ export default function Waiver({route, navigation}) {
           </View>
         </View>
       </View>
-      <Text style={styles.addressText}>9341 Mill Street, Ben Lomond, CA 95005  831-336-3513</Text>
-      <Text style={styles.scmacEmail}>www.mountainartcenter.org</Text> 
+      {/* <Text style={styles.addressText}>9341 Mill Street, Ben Lomond, CA 95005  831-336-3513</Text>
+      <Text style={styles.scmacEmail}>www.mountainartcenter.org</Text> */}
       <Text style={styles.title}>VOLUNTEER WAIVER</Text>
       <Text style={styles.subtitle}>Release Agreement & Emergency Contact Information</Text>
       <View style={styles.formContainer}>
@@ -316,44 +321,56 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     // justifyContent: 'space-between',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',//align logo and Last name/1st init inputs with main content
+    // width: '105%',
+    width: '90%',
+//    paddingHorizontal: "5%"
+  },
+  logoContainer: {
+    alignItems: 'flex-start',
   },
   headerRight: { //initial identity
-    marginTop: 100,
+    marginTop: 50,
     alignItems: 'flex-line',
     flexDirection:'row',
-    marginLeft: 20,
+//    marginLeft: 20,
+    // justifyContent:'space-around'
   },
   logo: {
-    marginTop: 100,
+    marginTop: 50,
     width: 150,
     height: 50,
-    marginRight: 20, //distance between logo and init identity
+    // marginRight: 20, //distance between logo and init identity
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    resizeMode: 'contain'
   },
   inputContainer: {
     // marginBottom: 10,
-    width: 70,
-    marginLeft: 20,
+    width: 60,
+    marginLeft: 10,
+    justifyContent: "space-around",
+    marginRight: -6
   },
   inputLabel: {
     marginBottom: 5,
-    fontSize: 14,
+    marginLeft: 5,
+    fontSize: 10,
     color: '#333',
     fontWeight: 'normal', 
   },
   addressText: {
     fontSize: 8,
     textAlign: 'left',
-    marginBottom: 10,
-    marginRight: 124,
+    // marginRight: 485,
   },
   scmacEmail: {
     fontSize: 8,
     textAlign: 'left',
     marginBottom: 10,
-    marginTop: 0.05,
-    marginRight: 240,
+    // marginTop: 0.05,
+    // marginLeft: -600,
   },
   formContainer: {
     width: '80%',
