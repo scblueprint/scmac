@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SimpleLineIcons, Feather, AntDesign, Ionicons } from '@expo/vector-icons';
 import { collection, getDocs } from 'firebase/firestore';
@@ -51,12 +51,11 @@ export default function AdminEvents({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <Feather name="inbox" size={24} color="white" onPress={() => { navigation.navigate("ArchivedEvents"); }} style={styles.iconLeft} />
         <Text style={styles.headerText}>Events</Text>
-        <Feather name="inbox" size={24} color="white" onPress={() => { navigation.navigate("ArchivedEvents"); }} style={styles.icon} />
-        <AntDesign onPress={() => { navigation.navigate("CreateEvent"); }} name="plus" size={24} color="white" style={styles.icon} />
+        <AntDesign onPress={() => { navigation.navigate("CreateEvent"); }} name="plus" size={24} color="white" style={styles.iconRight} />
       </View>
       <View style={styles.filter}>
-        <Ionicons name="filter-outline" size={30} color="black" />
         {['All', 'Ceramics', 'Shows', 'Art Gallery'].map((filter, index) => (
           <TouchableOpacity
             key={index}
@@ -82,23 +81,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
   },
   header: {
-    position: 'relative',
-    alignItems: 'center',
     backgroundColor: '#6A466C',
     paddingTop: 80,
     paddingBottom: 10,
     paddingHorizontal: 16,
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    textAlign: 'center',
   },
-  icon: {
+  iconLeft: {
     position: 'absolute',
+    left: 16,
     top: 80,
-    marginLeft: 20,
+  },
+  iconRight: {
+    position: 'absolute',
+    right: 16,
+    top: 80,
   },
   itemContainer: {
     flexDirection: 'row',
