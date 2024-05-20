@@ -316,10 +316,12 @@ function Availability() {
   const [shiftsData, setShiftsData] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const [flatlists, setFlatlists] = useState(0);
+  const [organizers, setOrganizers] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       const arr = [];
+      const arr3 = [];
       const eventData = item.item;
       // console.log(eventData)
       if (eventData.shifts.length !== 0) {
@@ -333,6 +335,20 @@ function Availability() {
       const productsDocsSnap = await getDocs(q);
       
       productsDocsSnap.forEach(async (doc) => {
+        if (doc.data().organizers.length !== 0) {
+          // console.log(doc.data());
+          const o = query(
+            collection(db, "users"),
+            where(documentId(), "in", 
+              doc.data().organizers
+            ),
+          );
+          const orgsDocsSnap = await getDocs(o);
+          orgsDocsSnap.forEach(async (doc) => {
+            // console.log(doc.data());
+            arr3.push(doc.data());
+          });
+        }
         // console.log(doc);
         if (doc.data().user.length !== 0) {
         const u = query(
@@ -370,6 +386,7 @@ function Availability() {
       });
       // console.log(arr);
       setShiftsData(arr);
+      setOrganizers(arr3);
       }
     }
     fetchData();
@@ -398,7 +415,7 @@ function Availability() {
         <Text style={styles.name}>{el.fname} {el.lname}</Text>
         <Text style={styles.phoneNumber}>{el.phone}</Text>
       </View>
-      <TouchableOpacity style={styles.seeMoreButton}>
+      <TouchableOpacity style={styles.seeMoreButton} onPress={() => nav.navigate('VoluteerProfile', { item: el })}>
         <Text style={styles.seeMoreButtonText}>See more →</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.moreButton}>
@@ -413,31 +430,43 @@ function Availability() {
   )} else {return (<View></View>)}
   };
 
+  const renderItem2 = el => {
+  return (
+    <View style={styles.item} key={el.item.uid}>
+        {/* <View style={styles.circle} /> */}
+        <View style={styles.textContainer}>
+          <Text style={styles.name}>{el.item.fname} {el.item.lname}</Text>
+          <Text style={styles.phoneNumber}>{el.item.phone}</Text>
+        </View>
+        <TouchableOpacity style={styles.moreButton}>
+          <Text style={styles.moreButtonText}>...</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.seeMoreButton} onPress={() => nav.navigate('VoluteerProfile', { item: el.item })}>
+          <Text style={styles.seeMoreButtonText}>See more →</Text>
+        </TouchableOpacity>
+      </View>
+   );
+  }
+
   return (
     // <ScrollView contentContainerStyle={styles.container}>
     <View style={styles.container}>
-        {/* <View style={styles.container2}>
+        <View style={styles.container2}>
           <Text style={styles.text}>Event Organizers</Text>
-          <TouchableOpacity style={styles.reminderButton}>
-            <Text style={styles.reminderButtonText}>Send Reminder</Text>
-          </TouchableOpacity>
-        </View> */}
-        {shiftsData ? <FlatList
-      data={shiftsData? shiftsData : []}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-    /> : null}
-        {/* <View style={styles.container2}>
-          <Text style={styles.text}>Time Slot 2 (00:00 - 00:00)</Text>
           <TouchableOpacity style={styles.reminderButton}>
             <Text style={styles.reminderButtonText}>Send Reminder</Text>
           </TouchableOpacity>
         </View>
         <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />   */}
+          data={organizers}
+          renderItem={renderItem2}
+          // keyExtractor={(item) => item.id}
+        />
+        {shiftsData ? <FlatList
+      data={shiftsData? shiftsData : []}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+    /> : null}
       </View>
   )
 }
@@ -544,6 +573,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#6A466C"
   },
+  seeMoreButton: {
+    position: 'absolute',
+    top: "60%",
+    right: "4%",
+  },
+  seeMoreButtonText: {
+    color: '#6A466C',
+    fontWeight: 'bold',
+  },
   dropdown: {
     marginLeft: "4%",
     marginBottom:"2%",
@@ -645,10 +683,10 @@ item: {
     color: 'grey',
   },
   moreButton: {
-    paddingHorizontal: 10,
-    marginRight: 10,
+    paddingHorizontal: "2%",
+    marginRight: "2%",
     position: 'absolute',
-    top: -10,
+    top: "-2%",
     right: 0,
   },
   moreButtonText: {
