@@ -269,6 +269,15 @@ const isEmpty = (value) => {
                         Alert.alert("Event Name Required");
                         return;
                     }
+                    if (eventStart == "Choose Start Date and Time") {
+                      Alert.alert("Start Date Required");
+                      return;
+                    }
+                    if (eventEnd == "Choose End Date and Time") {
+                      Alert.alert("End Date Required");
+                      return;
+                    }
+                    if (isEmpty(desc)) {Alert.alert("Description Required"); return;}
                     await createEvent(eventStart, eventEnd, desc, materials, shifts, name, location, value);
                     navigation.navigate("AdminEvents");
                 }}

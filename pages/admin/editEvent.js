@@ -141,8 +141,6 @@ export default function EditEventScreen({route, navigation}) {
       return (value == null || (typeof value === "string" && value.trim().length === 0));
   };
 
-
-
   useEffect(() => {
     async function fetchData() {
       // You can await here
@@ -179,6 +177,19 @@ export default function EditEventScreen({route, navigation}) {
             />
 
 <TouchableOpacity style={styles.saveButton} onPress={async () => {
+  if (isEmpty(name)) {
+    Alert.alert("Event Name Required");
+    return;
+}
+if (eventStart == "Choose Start Date and Time") {
+  Alert.alert("Start Date Required");
+  return;
+}
+if (eventEnd == "Choose End Date and Time") {
+  Alert.alert("End Date Required");
+  return;
+}
+if (isEmpty(desc)) {Alert.alert("Description Required"); return;}
                   await editEvent(item.item.id, eventStart, eventEnd, desc, materials, shifts, name, location, value);
                   navigation.goBack();
                   navigation.goBack();
