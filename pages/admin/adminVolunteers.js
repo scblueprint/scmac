@@ -197,7 +197,8 @@ const styles = StyleSheet.create({
   filterContainer: {
     marginTop: 10,
     padding: 10,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-around' // adjust filter spacing
     // backgroundColor: 'rgba(255, 0, 0, 0.3)',
   },
   dateHeader: {
@@ -207,6 +208,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
+    justifyContent:'center'
   },
   button: {
     paddingVertical: 5,
@@ -218,6 +220,7 @@ const styles = StyleSheet.create({
     color: '#939393',
     fontSize: 16,
     fontWeight: 'bold',
+    
   },
   circle: {
     width: 40,
@@ -228,7 +231,8 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    marginLeft: "5%"
+    marginLeft: "5%",
+    justifyContent: 'center'
   },
   name: {
     fontSize: 16,
@@ -245,6 +249,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -10,
     right: 0,
+    // textAlign:'center'
   },
   moreButtonText: {
     fontSize: 20,
@@ -272,10 +277,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
   },
+  exportButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: "100%",
+    marginTop: 20,
+  },
   exportButton: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    
   },
 });
 
