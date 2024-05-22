@@ -243,20 +243,20 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: '500',
-    marginTop: 20,
-    marginBottom: 10,
-    marginLeft: 10,
+    marginTop: '4%',
+    marginBottom: '2%',
+    marginLeft: '2%',
   },
   description: {
     fontSize: 16,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: '2%',
+    marginRight: '5%',
     fontWeight: '400',
 
   },
   label: {
     fontSize: 16,
-    marginBottom: 10
+    marginBottom: '5%'
   },
   addLabel: {
     fontSize: 16,
@@ -350,7 +350,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     borderRadius: 10,
-
   },
   buttonText: {
     color: 'white',

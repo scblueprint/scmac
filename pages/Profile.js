@@ -224,39 +224,44 @@ export default function Profile({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+     backgroundColor: 'white',
+ //   justifyContent: 'center',
+    alignItems: 'center'
+
   },
   header: {
     flexDirection: "row",
     backgroundColor: '#6A466C',
     textAlign: 'center',
     justifyContent: 'center',
-    paddingTop: 80,
+    paddingTop: 100,
     paddingBottom: 10,
+
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    marginLeft: "55%",
+    marginLeft: "80%",
     marginBottom: "2%"
   },
   editText: {
     fontSize: 18, 
     fontWeight: '400',
     color: 'white',
-    marginLeft:"45%",
+    marginLeft:"50%",
     marginTop: "2%"
   },
   imageContainer:{
     width: 100,
     height: 100,
     borderRadius: 50,
-    fontSize:30,
+    fontSize: 30,
     backgroundColor: '#D9D9D9',
     marginBottom: 20,
     marginTop: 30,
-    marginLeft: "37%",
+    marginTop: "5%",
+   // marginLeft: "36%",
     justifyContent: 'center',
     alignItems: 'center',
     // position: 'relative'
@@ -274,7 +279,7 @@ const styles = StyleSheet.create({
   },
   email: {
     marginBottom: "1%",
-    flexDirection:'row'
+    flexDirection:'row',
   },
   number: {
     marginBottom: "1%",
@@ -302,7 +307,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: "5.5%", 
     width: "80%",
-    marginLeft: "10%",
     marginTop: "10%",
     marginBottom: "90%",
   },
