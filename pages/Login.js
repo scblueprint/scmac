@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const windowHeight = Dimensions.get('window').height; // 667
 const windowWidth = Dimensions.get('window').width; // 375
 
-export default function Login({navigation}) {
+export default function Login({navigation, expoPushToken}) {
   const [isEyeOpen, setIsEyeOpen] = useState(true);
   const [email, setEmail] = useState("");
   const [pword, setPword] = useState("");
@@ -81,7 +81,7 @@ export default function Login({navigation}) {
               style={styles.loginButton}
               onPress={async () => {
                 if (email && pword) {
-                var user = await login(email,pword, "hello");
+                var user = await login(email,pword, expoPushToken);
                 if (user) {
                   setEmail("");
                   setPword("");
