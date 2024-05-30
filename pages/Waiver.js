@@ -2,8 +2,10 @@ import Checkbox from 'expo-checkbox';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Text, TextInput, TouchableOpacity, StyleSheet, Image, CheckBox, Alert } from 'react-native';
 import { addWaiver } from "./api/waivers.js"
+import { collection, addDoc } from 'firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
+import { getAuth } from 'firebase/auth';
 
 export default function Waiver({route, navigation}) {
   const [lastName, setLastName] = useState('');
@@ -34,47 +36,197 @@ export default function Waiver({route, navigation}) {
   const [isChecked, setIsChecked] = useState(false);
   const [uid, setUid] = useState('');
 
-  // await and async?
-  const handleSubmit = () => {
-    // Firebase
-    if (isChecked) {
-      if (lastName || firstInitial || volunteerName || volunteerEmail || volunteerPhoneCell || volunteerPhoneHome
-        || homeAddress || homeCity || homeZip || mailingAddress || mailingCity || mailingZip || emergencyContactName
-        || emergencyContactRelationship || emergencyContactPhoneCell || emergencyContactPhoneHome || volunteerAgreement
-        || volunteerDate) {
-          addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
-            emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
-            mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
-            parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
-            volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
-          navigation.navigate("Events");
-      }
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     if (route.params && route.params.item) {
+  //       const { item } = route.params;
+  //       setUid(item.uid);
+  //       const userRef = await getDoc(doc(db, "users", item.uid));
+
+  //       if (userRef.exists()) {
+  //         const userData = userRef.data();
+  //         console.log("User Data:", userData);
+  //         setLastName(userData.lname);
+  //         setFirstInitial(userData.fname[0]);
+  //         setVolunteerName(`${userData.fname} ${userData.lname}`);
+  //         setVolunteerEmail(userData.email);
+  //         setVolunteerPhoneCell(userData.phone);
+  //       } else {
+  //         console.error("User document does not exist!");
+  //       }
+  //     } else {
+  //       console.error("Route parameters are missing!");
+  //     }
+  //   }
+  //   fetchData();
+  // }, [route.params]);
+
+  // const handleSubmit = async () => {
+  //   if (isChecked) {
+  //     console.log("lastName:", lastName);
+  //     console.log("firstInitial:", firstInitial);
+  //     console.log("volunteerName:", volunteerName);
+  //     console.log("volunteerEmail:", volunteerEmail);
+  //     console.log("volunteerPhoneCell:", volunteerPhoneCell);
+  //     console.log("homeAddress:", homeAddress);
+  //     console.log("homeCity:", homeCity);
+  //     console.log("homeZip:", homeZip);
+  //     console.log("mailingAddress:", mailingAddress);
+  //     console.log("mailingCity:", mailingCity);
+  //     console.log("mailingZip:", mailingZip);
+  //     console.log("emergencyContactName:", emergencyContactName);
+  //     console.log("emergencyContactRelationship:", emergencyContactRelationship);
+  //     console.log("emergencyContactPhoneCell:", emergencyContactPhoneCell);
+  //     console.log("emergencyContactPhoneHome:", emergencyContactPhoneHome);
+  //     console.log("volunteerAgreement:", volunteerAgreement);
+  //     console.log("volunteerDate:", volunteerDate);
+
+  //     if (
+  //       lastName && firstInitial && volunteerName && volunteerEmail && volunteerPhoneCell &&
+  //       homeAddress && homeCity && homeZip && mailingAddress && mailingCity && mailingZip &&
+  //       emergencyContactName && emergencyContactRelationship && emergencyContactPhoneCell &&
+  //       emergencyContactPhoneHome && volunteerAgreement && volunteerDate &&
+  //       lastName.trim() && firstInitial.trim() && volunteerName.trim() && volunteerEmail.trim() && volunteerPhoneCell.trim() &&
+  //       homeAddress.trim() && homeCity.trim() && homeZip.trim() && mailingAddress.trim() && mailingCity.trim() && mailingZip.trim() &&
+  //       emergencyContactName.trim() && emergencyContactRelationship.trim() && emergencyContactPhoneCell.trim() &&
+  //       emergencyContactPhoneHome.trim() && volunteerAgreement.trim() && volunteerDate.trim()
+  //     ) {
+  //       try {
+  //         const waiverData = {
+  //           emergencyContactName,
+  //           emergencyContactPhoneCell,
+  //           emergencyContactPhoneHome,
+  //           emergencyContactRelationship,
+  //           firstInitial,
+  //           homeAddress,
+  //           homeCity,
+  //           homeZip,
+  //           lastName,
+  //           mailingAddress,
+  //           mailingCity,
+  //           mailingZip,
+  //           parentGuardianAddress,
+  //           parentGuardianEmail,
+  //           parentGuardianName,
+  //           parentGuardianSignature,
+  //           volunteerDate,
+  //           volunteerEmail,
+  //           volunteerName,
+  //           volunteerPhoneCell,
+  //           volunteerPhoneHome,
+  //           volunteerSignature,
+  //         };
+
+  //         await addWaiver(uid, waiverData);
+  //         navigation.navigate("Events");
+  //       } catch (error) {
+  //         console.error("Error submitting waiver:", error);
+  //         Alert.alert("Error submitting waiver. Please try again.");
+  //       }
+  //     } else {
+  //       Alert.alert("Please fill out all required fields.");
+  //     }
+  //   } else {
+  //     Alert.alert("Please agree to the Terms and Conditions");
+  //   }
+  // };
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setUid(user.uid);
     }
-    else {
+  }, []);
+
+  const handleSubmit = async () => {
+    if (isChecked) {
+      const waiverData = {
+        uid,  // Include uid in the waiver data
+        emergencyContactName,
+        emergencyContactPhoneCell,
+        emergencyContactPhoneHome,
+        emergencyContactRelationship,
+        firstInitial,
+        homeAddress,
+        homeCity,
+        homeZip,
+        lastName,
+        mailingAddress,
+        mailingCity,
+        mailingZip,
+        parentGuardianAddress,
+        parentGuardianEmail,
+        parentGuardianName,
+        parentGuardianSignature,
+        volunteerDate,
+        volunteerEmail,
+        volunteerName,
+        volunteerPhoneCell,
+        volunteerPhoneHome,
+        volunteerSignature,
+      };
+
+      const hasData = Object.values(waiverData).some(value => value && value.trim());
+
+      if (hasData) {
+        try {
+          await addDoc(collection(db, "waivers"), waiverData);
+          Alert.alert("Waiver submitted successfully!");
+          navigation.navigate("Events");
+        } catch (error) {
+          console.error("Error submitting waiver:", error);
+          Alert.alert("Error submitting waiver. Please try again.");
+        }
+      } else {
+        Alert.alert("Please fill out at least one field.");
+      }
+    } else {
       Alert.alert("Please agree to the Terms and Conditions");
     }
   };
 
-  useEffect( () => {
-    async function fetchData() {
-      const { item } = route.params;
-      setUid(item.uid);
-      console.log(item.uid);
+//   // await and async?
+//   const handleSubmit = () => {
+//     // Firebase
+//     if (isChecked) {
+//       if (lastName || firstInitial || volunteerName || volunteerEmail || volunteerPhoneCell || volunteerPhoneHome
+//         || homeAddress || homeCity || homeZip || mailingAddress || mailingCity || mailingZip || emergencyContactName
+//         || emergencyContactRelationship || emergencyContactPhoneCell || emergencyContactPhoneHome || volunteerAgreement
+//         || volunteerDate) {
+//           addWaiver(uid, emergencyContactName, emergencyContactPhoneCell, emergencyContactPhoneHome, 
+//             emergencyContactRelationship, firstInitial, homeAddress, homeCity, homeZip, lastName, 
+//             mailingAddress, mailingCity, mailingZip, parentGuardianAddress, parentGuardianEmail, 
+//             parentGuardianName, parentGuardianSignature, volunteerDate, volunteerEmail, volunteerName, 
+//             volunteerPhoneCell, volunteerPhoneHome, volunteerSignature);
+//           navigation.navigate("Events");
+//       }
+//     }
+//     else {
+//       Alert.alert("Please agree to the Terms and Conditions");
+//     }
+//   };
+  
+//   useEffect( () => {
+//     async function fetchData() {
+//       const { item } = route.params;
+//       setUid(item.uid);
+//       console.log(item.uid);
 
-      const userRef = await getDoc(doc(db, "users", item.uid));
+//       const userRef = await getDoc(doc(db, "users", item.uid));
 
-      setLastName(userRef.data().lname);
-      setFirstInitial(userRef.data().fname[0]);
-      setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
-      setVolunteerEmail(userRef.data().email);
-      setVolunteerPhoneCell(userRef.data().phone);
+//       setLastName(userRef.data().lname);
+//       setFirstInitial(userRef.data().fname[0]);
+//       setVolunteerName(userRef.data().fname + " " + userRef.data().lname);
+//       setVolunteerEmail(userRef.data().email);
+//       setVolunteerPhoneCell(userRef.data().phone);
 
-      // cpontinue doing all the fields from signup!!! slay
-      // const event = item;
-      // const eventData = event.data();
-    }
-    fetchData();
- }, [])
+//       // cpontinue doing all the fields from signup!!! slay
+//       // const event = item;
+//       // const eventData = event.data();
+//     }
+//     fetchData();
+//  }, [])
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

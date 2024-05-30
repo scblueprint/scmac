@@ -24,7 +24,7 @@ export default function App() {
   // persistence: getReactNativePersistence(ReactNativeAsyncStorage) //async-storage in Waiver page
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName='Volunteers'>
+      <Stack.Navigator initialRouteName='Waiver'>
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Profile" component={Profile} options={{ animationEnabled: false, headerShown: false, gestureEnabled: false }} />
