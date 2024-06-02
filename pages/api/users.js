@@ -28,7 +28,7 @@ const login = async (email, password, notifToken) => {
   }
 };
 
-const signup = async (email, password, fname, lname, phoneNumber, interests, birthday) => {
+const signup = async (email, password, fname, lname, phoneNumber, interests, birthday, expoPushToken) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -40,7 +40,7 @@ const signup = async (email, password, fname, lname, phoneNumber, interests, bir
       phone: phoneNumber,
       admin: false,
       birthday: typeof birthday === 'number'? birthday: Math.floor(birthday.getTime() / 1000),
-      devToken: 0,
+      notifToken: expoPushToken,
       downloadURL: "",
       notifications: [],
       gender: "",

@@ -28,7 +28,7 @@ const items = [{
 }
 ];
 
-export default function Signup({navigation}) {
+export default function Signup({navigation, expoPushToken}) {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [email, setEmail] = useState("");
@@ -166,7 +166,7 @@ export default function Signup({navigation}) {
                   if (gallery) arr.push("Gallery");
                   if (events) arr.push("Events");
                   if (facilities) arr.push("Facilities");
-                  const item = await signup(email, pword, fname, lname, phone, arr, birthday);
+                  const item = await signup(email, pword, fname, lname, phone, arr, birthday, expoPushToken);
                   if (item) navigation.navigate("Waiver", {item: item})
                 } else {
                   Alert.alert("Cannot leave field empty");
