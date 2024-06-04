@@ -56,7 +56,7 @@ export default function AdminEvents({ navigation }) {
         <AntDesign onPress={() => { navigation.navigate("CreateEvent"); }} name="plus" size={24} color="white" style={styles.iconRight} />
       </View>
       <View style={styles.filter}>
-        {['All', 'Ceramics', 'Shows', 'Art Gallery'].map((filter, index) => (
+        {['All', 'Ceramics', 'Gallery', 'Special Events'].map((filter, index) => (
           <TouchableOpacity
             key={index}
             style={{ ...styles.filterButton, backgroundColor: filterColors[index] }}
