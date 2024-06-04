@@ -46,7 +46,7 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
     var materialsObj = [];
     var shiftIDS = [];
     materials.forEach(mat => {
-      materialsObj.push({item: mat["name"], user: ""});
+      materialsObj.push({ item: mat["name"], user: "" });
     });
     for (let i = 0; i < shifts.length; i++) {
       const shift = shifts[i];
@@ -70,15 +70,79 @@ const editEvent = async (eventId, eventStart, eventEnd, eventDesc, materials, sh
       title: title,
       category: category
     };
-    const eventRef = doc(db, "events", eventId); // Now using a document reference
+    const eventRef = doc(db, "events", eventId);
+    await getUserNotifTokens((await getDoc(eventRef)).data().shifts, title);
     await updateDoc(eventRef, data);
+
   } catch (error) {
     console.error("Event Update Error:", error);
     throw error;
   }
 };
 
+const getUserNotifTokens = async (shiftIds, title) => {
+  try {
+    for (const shiftId of shiftIds) {
+      const shiftDocRef = doc(db, "shifts", shiftId);
+      const shiftDocSnap = await getDoc(shiftDocRef);
 
+      if (!shiftDocSnap.exists()) {
+        console.log("No such document!");
+        continue;
+      }
+
+      const shiftData = shiftDocSnap.data();
+      const userId = shiftData.user;
+
+      if (userId && userId.length > 0) {
+        for (const uid of userId) {
+          const userDocRef = doc(db, "users", uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (!userDocSnap.exists()) {
+            console.log("No such document!");
+            continue;
+          }
+
+          const userData = userDocSnap.data();
+          const notifToken = userData.notifToken;
+          sendPushNotification(notifToken, title)
+          console.log(`User ID: ${uid}, Notification Token: ${notifToken}`);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error getting user notification tokens: ", error);
+  }
+};
+async function sendPushNotification(notiToken, eventName) {
+  const url = "https://exp.host/--/api/v2/push/send";
+  const payload = {
+    to: notiToken,
+    title: "Event Update",
+    body: "an event you are signed up for has been updated: "+ eventName 
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Push notification sent successfully:", data);
+  } catch (error) {
+    console.error("Error sending push notification:", error);
+  }
+}
 const getShiftData = async (shiftList) => {
   try {
 
