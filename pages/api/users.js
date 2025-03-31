@@ -12,7 +12,9 @@ const login = async (email, password, notifToken) => {
     const user = userCredential.user;
     
     // Update the user's document with the notification token
-    await setDoc(doc(db, "users", user.uid), { notifToken: notifToken }, { merge: true });
+    if (notifToken) {
+      await setDoc(doc(db, "users", user.uid), { notifToken: notifToken }, { merge: true });
+    }
     
     // Return the user object on successful login and Firestore update
     const userData = await getDoc(doc(db, "users", user.uid));
